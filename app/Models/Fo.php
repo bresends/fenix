@@ -10,12 +10,12 @@ class Fo extends Model
     use HasFactory;
 
     protected $fillable = [
-        'aluno_id',
+        'military_id',
         'punished',
     ];
 
     public function military()
     {
-        return $this->belongsTo(Military::class, 'aluno_id');
+        return $this->belongsTo(Military::class, 'military_id');
     }
 }

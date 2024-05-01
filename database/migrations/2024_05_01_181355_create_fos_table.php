@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('fos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('aluno_id')->constrained('alunos')->cascadeOnDelete();
+            $table->foreignId('military_id')->constrained('militaries')->cascadeOnDelete();
             $table->boolean('punished')->default(false);
             $table->timestamps();
         });
