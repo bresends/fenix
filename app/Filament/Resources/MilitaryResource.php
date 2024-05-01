@@ -41,11 +41,17 @@ class MilitaryResource extends Resource
                     ->unique(),
                 TextInput::make('email')->email()->required(),
                 Select::make('rank')
-                    ->options(RankEnum::class)->label(__('Posto/Graduação')),
+                    ->options(RankEnum::class)
+                    ->label(__('Posto/Graduação'))
+                    ->native(false),
                 Select::make('division')
-                    ->options(DivisionEnum::class)->label(__('Quadro')),
+                    ->options(DivisionEnum::class)
+                    ->label(__('Quadro'))
+                    ->native(false),
                 Select::make('blood_type')
-                    ->options(BloodTypeEnum::class)->label(__('Tipo sanguíneo')),
+                    ->options(BloodTypeEnum::class)
+                    ->label(__('Tipo sanguíneo'))
+                    ->native(false),
             ]);
     }
 
