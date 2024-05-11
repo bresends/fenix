@@ -10,8 +10,15 @@ class Fo extends Model
     use HasFactory;
 
     protected $fillable = [
+        'type',
         'military_id',
-        'punished',
+        'issuer',
+        'reason',
+        'excuse',
+        'final_judgment',
+        'final_judgment_reason',
+        'paid',
+        'date_issued',
     ];
 
     public function military()

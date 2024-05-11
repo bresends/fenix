@@ -11,6 +11,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -19,13 +20,11 @@ class MilitaryResource extends Resource
 {
     protected static ?string $model = Military::class;
 
-    protected static ?string $label = 'Militar';
+    protected static ?string $navigationIcon = 'heroicon-o-shield-check';
 
-    protected static ?string $navigationIcon = 'heroicon-o-bolt';
+    protected static ?string $label = 'Militares';
 
-    protected static ?string $navigationLabel = 'Militares';
-
-    protected static ?string $navigationGroup = 'Gestão de Militares';
+    protected static ?string $navigationGroup = 'Gestão';
 
     public static function form(Form $form): Form
     {
@@ -43,15 +42,27 @@ class MilitaryResource extends Resource
                 Select::make('rank')
                     ->options(RankEnum::class)
                     ->label(__('Posto/Graduação'))
+                    ->searchable()
+                    ->required()
                     ->native(false),
                 Select::make('division')
                     ->options(DivisionEnum::class)
                     ->label(__('Quadro'))
+                    ->default('QP/Combatente')
+                    ->required()
                     ->native(false),
                 Select::make('blood_type')
                     ->options(BloodTypeEnum::class)
                     ->label(__('Tipo sanguíneo'))
+                    ->default('A+')
+                    ->required()
                     ->native(false),
+                TextInput::make('tel')
+                    ->label(__('Telefone'))
+                    ->mask(RawJs::make(<<<'JS'
+        $input.length >= 14 ? '(99) 99999-9999' : '(99) 9999-9999'
+    JS
+                    )),
             ]);
     }
 
@@ -63,8 +74,7 @@ class MilitaryResource extends Resource
                 TextColumn::make('division')->label('Quadro'),
                 TextColumn::make('rg')->searchable()->label('RG')->sortable(),
                 TextColumn::make('name')->label('Nome')->searchable()->label('Nome')->sortable(),
-                TextColumn::make('email'),
-                TextColumn::make('blood_type')->label('Tipo sanguíneo'),
+                TextColumn::make('tel')->label('Telefone'),
             ])
             ->filters([
                 //

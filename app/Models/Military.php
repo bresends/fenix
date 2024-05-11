@@ -16,5 +16,6 @@ class Military extends Model
         'rank',
         'division',
         'blood_type',
+        'tel',
     ];
 }
