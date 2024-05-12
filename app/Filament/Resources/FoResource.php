@@ -6,6 +6,7 @@ use App\Enums\FoEnum;
 use App\Enums\InfractionEnum;
 use App\Filament\Resources\FoResource\Pages;
 use App\Models\Fo;
+use App\Models\Military;
 use Filament\Forms;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Section;
@@ -60,13 +61,15 @@ class FoResource extends Resource
                             ->preload()
                             ->required(),
 
-                        Forms\Components\Select::make('issuer')
-                            ->label('Observador')
-                            ->relationship('user', 'name')
+                        Select::make('issuer')
+                            ->label('Author')
                             ->prefix('🕵️')
+                            ->options(Military::all()->pluck('name', 'id'))
                             ->required()
                             ->preload()
-                            ->searchable(['name', 'id']),
+                            ->searchable(['name', 'id'])
+                            ->label('Observador')
+                            ->searchable(),
 
                         Forms\Components\Select::make('reason')
                             ->label('Descrição do fato')
@@ -88,7 +91,7 @@ class FoResource extends Resource
                     ->schema([
                         Select::make('status')
                             ->options([
-                                'Aguardando Justificativa' => 'Aguardando Justificativa',
+                                'Em andamento' => 'Em andamento',
                                 'Justificativa Aceita' => 'Justificativa Aceita',
                                 'Justificativa Negada' => 'Justificativa Negada',
                             ])
@@ -117,18 +120,14 @@ class FoResource extends Resource
                 }
             })
             ->columns([
-                Tables\Columns\TextColumn::make('military.rank')
-                    ->label('Posto/Grad.')
-                    ->sortable(),
 
-                Tables\Columns\TextColumn::make('military.id')
-                    ->label('Rg')
-                    ->sortable(),
-
-                Tables\Columns\TextColumn::make('military.name')
+                Tables\Columns\TextColumn::make('user.name')
                     ->label('Nome')
                     ->sortable(),
 
+                Tables\Columns\TextColumn::make('user.rg')
+                    ->label('Rg')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('date_issued')
                     ->dateTime($format = 'd-m-Y')
                     ->sortable()
@@ -160,12 +159,12 @@ class FoResource extends Resource
                     ->badge()
                     ->searchable()
                     ->color(fn (string $state): string => match ($state) {
-                        'Aguardando Justificativa' => 'warning',
+                        'Em andamento' => 'warning',
                         'Justificativa Aceita' => 'success',
                         'Justificativa Negada' => 'danger',
                     })
                     ->icons([
-                        'heroicon-s-exclamation-triangle' => 'Aguardando Justificativa',
+                        'heroicon-s-exclamation-triangle' => 'Em andamento',
                         'heroicon-s-x-circle' => 'Justificativa Negada',
                         'heroicon-s-check-badge' => 'Justificativa Aceita',
                     ])
