@@ -10,6 +10,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -64,6 +65,8 @@ class SickNoteResource extends Resource
                 }
             })
             ->columns([
+                ImageColumn::make('file')
+                    ->label('Arquivo'),
                 TextColumn::make('user.rg')->label('Rg'),
                 TextColumn::make('user.name')->label('Nome'),
                 Tables\Columns\TextColumn::make('date_issued')
@@ -72,10 +75,9 @@ class SickNoteResource extends Resource
                     ->label('Data do Atestado'),
                 Tables\Columns\TextColumn::make('days_absent')
                     ->label('Dias Afastado'),
-                Tables\Columns\IconColumn::make('file')
-                    ->label('Contém arquivo?')
-                    ->boolean()
-                    ->searchable(),
+//                Tables\Columns\IconColumn::make('file')
+//                    ->label('Contém arquivo?')
+//                    ->boolean(),
             ])
             ->filters([
                 //
