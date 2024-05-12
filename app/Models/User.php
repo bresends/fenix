@@ -7,6 +7,8 @@ use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -25,6 +27,7 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
+        'platoon',
         'rg',
     ];
 
@@ -37,6 +40,21 @@ class User extends Authenticatable implements FilamentUser
         'password',
         'remember_token',
     ];
+
+    public function military(): HasOne
+    {
+        return $this->hasOne(Military::class);
+    }
+
+    public function sickNotes(): HasMany
+    {
+        return $this->hasMany(SickNote::class);
+    }
+
+    public function fos(): HasMany
+    {
+        return $this->hasMany(Fo::class);
+    }
 
     public function canAccessPanel(Panel $panel): bool
     {

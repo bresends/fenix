@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Fo extends Model
 {
@@ -11,18 +12,23 @@ class Fo extends Model
 
     protected $fillable = [
         'type',
-        'military_id',
+        'user_id',
         'issuer',
         'reason',
         'excuse',
-        'final_judgment',
+        'status',
         'final_judgment_reason',
         'paid',
         'date_issued',
     ];
 
-    public function military()
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Military::class, 'military_id');
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function issuer(): BelongsTo
+    {
+        return $this->belongsTo(Military::class, 'issuer');
     }
 }

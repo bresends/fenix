@@ -20,49 +20,54 @@ class MilitaryResource extends Resource
 {
     protected static ?string $model = Military::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-shield-check';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?string $label = 'Militares';
+    protected static ?string $label = 'Militar';
 
-    protected static ?string $navigationGroup = 'Gestão';
+    protected static ?string $pluralModelLabel = 'Militares';
+
+    protected static ?string $navigationGroup = 'Perfis';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('name')->label(__('Nome'))->required(),
-                TextInput::make('rg')
+                TextInput::make('name')
+                    ->label('Nome')
+                    ->required(),
+                TextInput::make('id')
+                    ->label('Rg')
                     ->integer()
                     ->minValue(100)
                     ->maxValue(10000)
                     ->required()
                     ->live()
-                    ->unique(),
-                TextInput::make('email')->email()->required(),
+                    ->unique(ignoreRecord: true),
                 Select::make('rank')
                     ->options(RankEnum::class)
-                    ->label(__('Posto/Graduação'))
+                    ->label('Posto/Graduação')
                     ->searchable()
                     ->required()
+                    ->default('Al Sd')
                     ->native(false),
                 Select::make('division')
                     ->options(DivisionEnum::class)
-                    ->label(__('Quadro'))
+                    ->label('Quadro')
                     ->default('QP/Combatente')
                     ->required()
                     ->native(false),
-                Select::make('blood_type')
-                    ->options(BloodTypeEnum::class)
-                    ->label(__('Tipo sanguíneo'))
-                    ->default('A+')
-                    ->required()
-                    ->native(false),
                 TextInput::make('tel')
-                    ->label(__('Telefone'))
+                    ->label('Telefone')
                     ->mask(RawJs::make(<<<'JS'
         $input.length >= 14 ? '(99) 99999-9999' : '(99) 9999-9999'
     JS
                     )),
+                Select::make('blood_type')
+                    ->options(BloodTypeEnum::class)
+                    ->label('Tipo sanguíneo')
+                    ->default('A+')
+                    ->required()
+                    ->native(false),
             ]);
     }
 
@@ -70,11 +75,21 @@ class MilitaryResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('rank')->label('Posto/Graduação')->sortable(),
-                TextColumn::make('division')->label('Quadro'),
-                TextColumn::make('rg')->searchable()->label('RG')->sortable(),
-                TextColumn::make('name')->label('Nome')->searchable()->label('Nome')->sortable(),
-                TextColumn::make('tel')->label('Telefone'),
+                TextColumn::make('rank')
+                    ->label('Posto/Graduação')
+                    ->sortable(),
+                TextColumn::make('division')
+                    ->label('Quadro'),
+                TextColumn::make('id')
+                    ->searchable()
+                    ->label('Rg')
+                    ->sortable(),
+                TextColumn::make('name')
+                    ->label('Nome')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('tel')
+                    ->label('Telefone'),
             ])
             ->filters([
                 //

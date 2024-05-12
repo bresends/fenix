@@ -14,6 +14,8 @@ enum DivisionEnum: string implements HasLabel
     case QOS_DENTISTA = 'QOS/Dentista';
     case QOS_MEDICO = 'QOS/Médico';
 
+    case QP_ESPECIAL = 'QP/Especial';
+
     public function getLabel(): ?string
     {
         return match ($this) {
@@ -24,6 +26,7 @@ enum DivisionEnum: string implements HasLabel
             self::QOA_MUSICO => 'QOA/Músico',
             self::QOS_DENTISTA => 'QOS/Dentista',
             self::QOS_MEDICO => 'QOS/Médico',
+            self::QP_ESPECIAL => 'QP/Especial',
         };
     }
 }

@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('fos', function (Blueprint $table) {
             $table->id();
             $table->enum('type', ['Positivo', 'Negativo'])->default('Negativo');
-            $table->foreignId('military_id')->constrained('militaries')->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('issuer')->constrained('militaries')->cascadeOnDelete();
             $table->timestamp('date_issued')->default(now());
             $table->string('reason');
             $table->string('excuse')->nullable();
-            $table->boolean('final_judgment')->default(false)->nullable();
+            $table->string('status');
             $table->string('final_judgment_reason')->nullable();
             $table->boolean('paid')->default(false);
             $table->timestamps();
