@@ -159,7 +159,7 @@ class FoResource extends Resource
                     ->badge()
                     ->searchable()
                     ->color(fn (string $state): string => match ($state) {
-                        'Em andamento' => 'warning',
+                        default => 'warning',
                         'Justificativa Aceita' => 'success',
                         'Justificativa Negada' => 'danger',
                     })
