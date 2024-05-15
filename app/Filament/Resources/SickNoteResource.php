@@ -31,6 +31,8 @@ class SickNoteResource extends Resource
         return $form
             ->schema([
                 FileUpload::make('file')
+                    ->disk('public')
+                    ->visibility('public')
                     ->label('Arquivo')
                     ->columnSpan(2)
                     ->directory('sick-notes')
