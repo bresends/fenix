@@ -3,8 +3,10 @@
 namespace App\Enums;
 
 use Filament\Support\Contracts\HasLabel;
+use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasIcon;
 
-enum PlatoonEnum: string implements HasLabel
+enum PlatoonEnum: string implements HasLabel, HasColor, HasIcon
 {
     case ALPHA = 'Alpha';
     case BRAVO = 'Bravo';
@@ -19,6 +21,7 @@ enum PlatoonEnum: string implements HasLabel
     case CFO2 = 'CFO-2';
     case CFO3 = 'CFO-3';
     case CHOA = 'CHOA';
+    case ADMINISTRACAO = 'Administração';
 
     public function getLabel(): ?string
     {
@@ -36,6 +39,28 @@ enum PlatoonEnum: string implements HasLabel
             self::CFO2 => 'CFO-2',
             self::CFO3 => 'CFO-3',
             self::CHOA => 'CHOA',
+            self::ADMINISTRACAO => 'Administração',
         };
+    }
+
+    public function getColor(): string | array | null
+    {
+        return match ($this) {
+            self::ALPHA => 'warning',
+            self::BRAVO => 'warning',
+            self::CHARLIE => 'warning',
+            self::DELTA => 'warning',
+            self::ECHO => 'warning',
+            self::FOXTROT => 'warning',
+            self::GOLF => 'warning',
+            self::HOTEL => 'warning',
+            self::INDIA => 'warning',
+            self::CFO1 => 'success',
+            self::CFO2 => 'success',
+            self::CFO3 => 'success',
+            self::CHOA => 'success',
+            self::ADMINISTRACAO => 'warning',
+        };
+
     }
 }

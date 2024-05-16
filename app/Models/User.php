@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use App\Enums\PlatoonEnum;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -40,6 +41,13 @@ class User extends Authenticatable implements FilamentUser
         'password',
         'remember_token',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'platoon' => PlatoonEnum::class,
+        ];
+    }
 
     public function military(): HasOne
     {

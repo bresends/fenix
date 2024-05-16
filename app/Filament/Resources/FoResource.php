@@ -125,6 +125,7 @@ class FoResource extends Resource
                 
                     Tables\Columns\TextColumn::make('user.platoon')
                     ->label('Pelotão')
+                    ->badge()
                     ->searchable()
                     ->sortable(),
 
