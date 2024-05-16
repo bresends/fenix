@@ -34,9 +34,10 @@ enum FoStatusEnum: string implements HasLabel, HasColor, HasIcon
     public function getIcon(): ?string
     {
         return match ($this) {
-            self::EM_ANDAMENTO => 'heroicon-m-pencil',
-            self::DEFERIDO => 'heroicon-m-eye',
-            self::INDEFERIDO => 'heroicon-m-check',
+            self::EM_ANDAMENTO => 'heroicon-s-exclamation-triangle',
+            self::DEFERIDO => 'heroicon-s-x-circle',
+            self::INDEFERIDO => 'heroicon-s-check-badge',
         };
+
     }
 }
