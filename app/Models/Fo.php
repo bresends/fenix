@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Enums\FoEnum;
+use App\Enums\FoStatusEnum;
 
 class Fo extends Model
 {
@@ -26,7 +27,8 @@ class Fo extends Model
     protected function casts(): array
     {
         return [
-            'status' => FoEnum::class,
+            'type' => FoEnum::class,
+            'status' => FoStatusEnum::class,
         ];
     }
 
