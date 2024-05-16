@@ -128,10 +128,11 @@ class FoResource extends Resource
                 Tables\Columns\TextColumn::make('user.rg')
                     ->label('Rg')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('date_issued')
-                    ->dateTime($format = 'd-m-Y')
+                    
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime($format = 'd-m-Y H:i')
                     ->sortable()
-                    ->label('Data'),
+                    ->label('Emitido em'),
 
                 TextColumn::make('type')
                     ->badge()
