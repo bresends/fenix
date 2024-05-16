@@ -58,6 +58,7 @@ class UserResource extends Resource
                     ->label('Pelotão')
                     ->searchable()
                     ->options(PlatoonEnum::class)
+                    ->default('Alpha')
                     ->disabled(auth()->user()->hasRole('panel_user')),
 
                 Forms\Components\TextInput::make('password')
