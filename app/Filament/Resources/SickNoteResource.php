@@ -39,7 +39,7 @@ class SickNoteResource extends Resource
                     ->openable()
                     ->getUploadedFileNameForStorageUsing(
                         fn (TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
-                            ->prepend('atestado-'),
+                            ->prepend('atestado-medico-'),
                     ),
                 DatePicker::make('date_issued')
                     ->prefix('⏰️')
