@@ -11,9 +11,6 @@ enum FoEnum: string implements HasLabel
 
     public function getLabel(): ?string
     {
-        return match ($this) {
-            self::NEGATIVO => 'Negativo',
-            self::POSITIVO => 'Positivo',
-        };
+        return $this->name;
     }
 }
