@@ -84,7 +84,7 @@ class FoResource extends Resource
                 Section::make('Justificativa')
                     ->schema([
                         Forms\Components\RichEditor::make('excuse')
-                            ->label('Justificativa do militar'),
+                            ->label('Ciência ou justificativa'),
                     ]),
 
                 Section::make('Deliberar FO')
