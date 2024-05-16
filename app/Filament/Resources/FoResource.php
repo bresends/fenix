@@ -38,7 +38,7 @@ class FoResource extends Resource
                     ->schema([
                         Select::make('type')
                             ->options(FoEnum::class)
-                            ->label(__('Tipo'))
+                            ->label('Tipo')
                             ->prefix('🏷️')
                             ->native(false)
                             ->default('Negativo')
@@ -46,7 +46,7 @@ class FoResource extends Resource
 
                         DateTimePicker::make('date_issued')
                             ->prefix('⏰️')
-                            ->label(__('Horário da Anotação'))
+                            ->label('Horário da Anotação')
                             ->timezone('America/Sao_Paulo')
                             ->seconds(false)
                             ->displayFormat('d-m-Y H:i')

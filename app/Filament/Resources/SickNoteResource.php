@@ -43,7 +43,7 @@ class SickNoteResource extends Resource
                     ),
                 DatePicker::make('date_issued')
                     ->prefix('⏰️')
-                    ->label(__('Data do Atestado'))
+                    ->label('Data do Atestado')
                     ->timezone('America/Sao_Paulo')
                     ->displayFormat('d-m-Y')
                     ->native(false)
