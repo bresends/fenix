@@ -4,9 +4,8 @@ namespace App\Enums;
 
 use Filament\Support\Contracts\HasLabel;
 use Filament\Support\Contracts\HasColor;
-use Filament\Support\Contracts\HasIcon;
 
-enum PlatoonEnum: string implements HasLabel, HasColor, HasIcon
+enum PlatoonEnum: string implements HasLabel, HasColor
 {
     case ALPHA = 'Alpha';
     case BRAVO = 'Bravo';
