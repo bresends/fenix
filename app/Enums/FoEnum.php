@@ -23,12 +23,4 @@ enum FoEnum: string implements HasLabel, HasColor
         };
 
     }
-
-    public function getIcon(): ?string
-    {
-        return match ($this) {
-            self::Positivo => 'heroicon-m-pencil',
-            self::Negativo => 'heroicon-m-eye',
-        };
-    }
 }
