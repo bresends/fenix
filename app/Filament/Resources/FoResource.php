@@ -164,7 +164,8 @@ class FoResource extends Resource
 
                 Tables\Columns\IconColumn::make('paid')
                     ->label('Cumprido/Arquivado')
-                    ->boolean(),
+                    ->boolean()
+                    ->alignCenter(),
             ])
             ->filters([
                 //
