@@ -42,13 +42,6 @@ class User extends Authenticatable implements FilamentUser
         'remember_token',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'platoon' => PlatoonEnum::class,
-        ];
-    }
-
     public function military(): HasOne
     {
         return $this->hasOne(Military::class);
@@ -81,6 +74,7 @@ class User extends Authenticatable implements FilamentUser
     protected function casts(): array
     {
         return [
+            'platoon' => PlatoonEnum::class,
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
