@@ -7,8 +7,8 @@ use Filament\Support\Contracts\HasColor;
 
 enum FoEnum: string implements HasLabel, HasColor
 {
-    case Positivo = 'positivo';
-    case Negativo = 'negativo';
+    case Positivo = 'Positivo';
+    case Negativo = 'Negativo';
 
     public function getLabel(): ?string
     {
