@@ -7,8 +7,8 @@ use Filament\Support\Contracts\HasColor;
 
 enum FoEnum: string implements HasLabel, HasColor
 {
-    case NEGATIVO = 'Negativo';
-    case POSITIVO = 'Positivo';
+    case Positivo = 'positivo';
+    case Negativo = 'negativo';
 
     public function getLabel(): ?string
     {
@@ -18,8 +18,8 @@ enum FoEnum: string implements HasLabel, HasColor
     public function getColor(): string | array | null
     {
         return match ($this) {
-            self::POSITIVO => 'success',
-            self::NEGATIVO => 'danger',
+            self::Positivo => 'success',
+            self::Negativo => 'danger',
         };
 
     }
