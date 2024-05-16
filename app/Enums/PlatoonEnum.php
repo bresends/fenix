@@ -57,7 +57,7 @@ enum PlatoonEnum: string implements HasLabel, HasColor
             self::CFO1 => 'info',
             self::CFO2 => 'info',
             self::CFO3 => 'info',
-            self::CHOA => 'info',
+            self::CHOA => 'success',
             self::ADMINISTRACAO => 'gray',
         };
 
