@@ -3,8 +3,9 @@
 namespace App\Enums;
 
 use Filament\Support\Contracts\HasLabel;
+use Filament\Support\Contracts\HasColor;
 
-enum FoEnum: string implements HasLabel
+enum FoEnum: string implements HasLabel, HasColor
 {
     case NEGATIVO = 'Negativo';
     case POSITIVO = 'Positivo';
