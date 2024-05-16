@@ -13,7 +13,11 @@ enum FoStatusEnum: string implements HasLabel, HasColor
 
     public function getLabel(): ?string
     {
-        return $this->name;
+        return match ($this) {
+            self::EM_ANDAMENTO => 'Em andamento',
+            self::DEFERIDO => 'Deferido',
+            self::INDEFERIDO => 'Indeferido',
+        };
     }
 
     public function getColor(): string | array | null
