@@ -95,6 +95,7 @@ class UserResource extends Resource
             })
             ->columns([
                 TextColumn::make('platoon')
+                    ->icon('heroicon-o-users')
                     ->badge()
                     ->label('Pelotão')
                     ->searchable(),
