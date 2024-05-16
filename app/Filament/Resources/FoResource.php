@@ -152,6 +152,7 @@ class FoResource extends Resource
 
                 TextColumn::make('status')
                     ->badge()
+                    ->icons()
                     ->searchable()
                     ->label('Parecer'),
 
