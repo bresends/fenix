@@ -118,12 +118,19 @@ class FoResource extends Resource
             })
             ->columns([
 
-                Tables\Columns\TextColumn::make('user.name')
+                Tables\Columns\TextColumn::make('id')
+                    ->label('FO')
+                    ->searchable()
+                    ->sortable(),
+                
+                    Tables\Columns\TextColumn::make('user.name')
                     ->label('Nome')
+                    ->searchable()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('user.rg')
                     ->label('Rg')
+                    ->searchable()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
