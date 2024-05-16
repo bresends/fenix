@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Enums\FoEnum;
 
 class Fo extends Model
 {
@@ -21,6 +22,13 @@ class Fo extends Model
         'paid',
         'date_issued',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'status' => FoEnum::class,
+        ];
+    }
 
     public function user(): BelongsTo
     {
