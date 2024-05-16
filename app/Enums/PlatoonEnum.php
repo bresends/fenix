@@ -54,11 +54,11 @@ enum PlatoonEnum: string implements HasLabel, HasColor
             self::GOLF => 'warning',
             self::HOTEL => 'warning',
             self::INDIA => 'warning',
-            self::CFO1 => 'success',
-            self::CFO2 => 'success',
-            self::CFO3 => 'success',
-            self::CHOA => 'success',
-            self::ADMINISTRACAO => 'warning',
+            self::CFO1 => 'primary',
+            self::CFO2 => 'primary',
+            self::CFO3 => 'primary',
+            self::CHOA => 'info',
+            self::ADMINISTRACAO => 'gray',
         };
 
     }
