@@ -128,9 +128,9 @@ class FoResource extends Resource
                 Tables\Columns\TextColumn::make('user.rg')
                     ->label('Rg')
                     ->sortable(),
-                    
+
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime($format = 'd-m-Y H:i')
+                    ->dateTime($format = 'd-m-y H:i')
                     ->sortable()
                     ->label('Emitido em'),
 
