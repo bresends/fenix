@@ -123,6 +123,11 @@ class FoResource extends Resource
                     ->searchable()
                     ->sortable(),
                 
+                    Tables\Columns\TextColumn::make('user.platoon')
+                    ->label('Pelotão')
+                    ->searchable()
+                    ->sortable(),
+
                     Tables\Columns\TextColumn::make('user.name')
                     ->label('Nome')
                     ->searchable()
