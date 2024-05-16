@@ -136,6 +136,7 @@ class FoResource extends Resource
 
                 TextColumn::make('type')
                     ->badge()
+                    ->label('Tipo'),
                     ->color(fn (string $state): string => match ($state) {
                         'Positivo' => 'success',
                         'Negativo' => 'danger',
@@ -165,14 +166,14 @@ class FoResource extends Resource
                         'Justificativa Negada' => 'danger',
                     })
                     ->icons([
-                        'heroicon-s-exclamation-triangle' => 'Em andamento',
-                        'heroicon-s-x-circle' => 'Justificativa Negada',
-                        'heroicon-s-check-badge' => 'Justificativa Aceita',
+                        'heroicon-o-exclamation-triangle' => 'Em andamento',
+                        'heroicon-o-x-circle' => 'Justificativa Negada',
+                        'heroicon-o-check-badge' => 'Justificativa Aceita',
                     ])
-                    ->label('Status'),
+                    ->label('Parecer'),
 
                 Tables\Columns\IconColumn::make('paid')
-                    ->label('Cumprido?')
+                    ->label('Cumprido/Arquivado')
                     ->boolean(),
             ])
             ->filters([
