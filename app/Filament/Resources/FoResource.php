@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Enums\FoEnum;
+use App\Enums\FoStatusEnum;
 use App\Enums\InfractionEnum;
 use App\Filament\Resources\FoResource\Pages;
 use App\Models\Fo;
@@ -90,14 +91,10 @@ class FoResource extends Resource
                     ->description('Determine se o FO será justificado.')
                     ->schema([
                         Select::make('status')
-                            ->options([
-                                'Em andamento' => 'Em andamento',
-                                'Justificativa Aceita' => 'Justificativa Aceita',
-                                'Justificativa Negada' => 'Justificativa Negada',
-                            ])
-                            ->default('Aguardando Justificativa')
+                            ->options(FoStatusEnum::class)
+                            ->default('Em andamento')
                             ->native(false)
-                            ->label('Status'),
+                            ->label('Parecer'),
 
                         Forms\Components\RichEditor::make('final_judgment_reason')
                             ->label('Justificativa de deferimento/indeferimento'),
@@ -156,16 +153,6 @@ class FoResource extends Resource
                 TextColumn::make('status')
                     ->badge()
                     ->searchable()
-                    ->color(fn (string $state): string => match ($state) {
-                        default => 'warning',
-                        'Justificativa Aceita' => 'success',
-                        'Justificativa Negada' => 'danger',
-                    })
-                    ->icons([
-                        'heroicon-o-exclamation-triangle' => 'Em andamento',
-                        'heroicon-o-x-circle' => 'Justificativa Negada',
-                        'heroicon-o-check-badge' => 'Justificativa Aceita',
-                    ])
                     ->label('Parecer'),
 
                 Tables\Columns\IconColumn::make('paid')
