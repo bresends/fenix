@@ -136,7 +136,7 @@ class FoResource extends Resource
 
                 TextColumn::make('type')
                     ->badge()
-                    ->label('Tipo'),
+                    ->label('Tipo')
                     ->color(fn (string $state): string => match ($state) {
                         'Positivo' => 'success',
                         'Negativo' => 'danger',
