@@ -50,10 +50,6 @@ RUN rm -rf /home/$NON_ROOT_USER/.composer
 COPY --chown=$NON_ROOT_USER:$NON_ROOT_GROUP . $LARAVEL_PATH/
 COPY ./.deploy/config/php/local.ini /usr/local/etc/php/conf.d/local.ini
 
-# Do laravel configs on the server
-RUN php artisan cache:clear
-RUN php artisan storage:link
-
 # Install the `npm` package
 USER root
 RUN apk update && apk add --no-cache npm
