@@ -101,9 +101,6 @@ ARG PUSHER_APP_KEY=${PUSHER_APP_KEY}
 ARG PUSHER_APP_SECRET=${PUSHER_APP_SECRET}
 ARG PUSHER_APP_CLUSTER=${PUSHER_APP_CLUSTER}
 
-# Link storage directory
-RUN php artisan storage:link
-
 # Start app
 EXPOSE 80
 COPY ./.deploy/entrypoint.sh /
