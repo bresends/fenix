@@ -82,13 +82,13 @@ class FoResource extends Resource
                                 'Uniforme Sujo ou Mal Passado ou em Desalinho (sem gorro) (Ar. 133 VIII da NE01)',
                                 'Bota/sapato/coturno não Engraxado e não Polido (Art. 133 IX da NE01)',
                                 'Não Cumpriu o Horário para entrar em forma após 6 piques (Art. 133 I da NE01 (horários). Art. 30 da NE01)',
-                                'Uso de óculos escuros ou Telefone Celular durante o expediente sem a devida autorização. Art. 133 XIV da NE01'
+                                'Uso de óculos escuros ou Telefone Celular durante o expediente sem a devida autorização. Art. 133 XIV da NE01',
                             ])
                             ->required(),
 
-                            // Forms\Components\RichEditor::make('observation')
-                            // ->label('Observações')
-                            // ->columnSpan(2),
+                        Forms\Components\RichEditor::make('observation')
+                            ->label('Observações')
+                            ->columnSpan(2),
                     ])
                     ->disabled((auth()->user()->hasRole('panel_user'))),
 
@@ -135,14 +135,14 @@ class FoResource extends Resource
                     ->label('FO')
                     ->searchable()
                     ->sortable(),
-                
-                    Tables\Columns\TextColumn::make('user.platoon')
+
+                Tables\Columns\TextColumn::make('user.platoon')
                     ->label('Pelotão')
                     ->badge()
                     ->searchable()
                     ->sortable(),
 
-                    Tables\Columns\TextColumn::make('user.name')
+                Tables\Columns\TextColumn::make('user.name')
                     ->label('Nome')
                     ->searchable()
                     ->sortable(),
@@ -172,7 +172,7 @@ class FoResource extends Resource
                     ->searchable(),
 
                 Tables\Columns\IconColumn::make('excuse')
-                    ->label('Justificado?')
+                    ->label('Ciência/Justificativa')
                     ->boolean()
                     ->searchable(),
 
