@@ -85,6 +85,9 @@ class FoResource extends Resource
                                 'Uso de óculos escuros ou Telefone Celular durante o expediente sem a devida autorização. Art. 133 XIV da NE01'
                             ])
                             ->required(),
+
+                            Forms\Components\RichEditor::make('observation')
+                            ->label('Observações'),
                     ])
                     ->disabled((auth()->user()->hasRole('panel_user'))),
 
