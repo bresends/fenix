@@ -60,9 +60,6 @@ RUN rm -rf node_modules
 
 USER $NON_ROOT_USER
 
-# Do Laravel configs on the server
-RUN php artisan storage:link
-
 # Set any ENVs
 ARG APP_KEY=${APP_KEY}
 ARG APP_NAME=${APP_NAME}
@@ -103,6 +100,9 @@ ARG PUSHER_APP_ID=${PUSHER_APP_ID}
 ARG PUSHER_APP_KEY=${PUSHER_APP_KEY}
 ARG PUSHER_APP_SECRET=${PUSHER_APP_SECRET}
 ARG PUSHER_APP_CLUSTER=${PUSHER_APP_CLUSTER}
+
+# Link storage directory
+RUN php artisan storage:link
 
 # Start app
 EXPOSE 80
