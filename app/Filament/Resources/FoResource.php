@@ -97,7 +97,8 @@ class FoResource extends Resource
                             ->label('Parecer'),
 
                         Forms\Components\RichEditor::make('final_judgment_reason')
-                            ->label('Justificativa de deferimento/indeferimento'),
+                            ->helperText('Campo para anotações sobre parecer do FO, ordem de serviço, etc.')
+                            ->label('Observações da coordenação'),
 
                         Forms\Components\Toggle::make('paid')
                             ->label('Cumprido?'),
