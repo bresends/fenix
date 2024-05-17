@@ -37,7 +37,7 @@ RUN chmod 777 /usr/sbin/crond
 RUN chown -R $NON_ROOT_USER:$NON_ROOT_GROUP /etc/crontabs/$NON_ROOT_USER && setcap cap_setgid=ep /usr/sbin/crond
 
 # Ensure the storage directory has the correct ownership to show user uploaded data
-RUN mkdir -p /srv/app/public && chown -R $NON_ROOT_USER:$NON_ROOT_GROUP /srv/app/public
+RUN mkdir -p /srv/app/public/storage && chown -R $NON_ROOT_USER:$NON_ROOT_GROUP /srv/app/public/storage
 
 # Switch to non-root 'app' user & install app dependencies
 COPY composer.json composer.lock ./
