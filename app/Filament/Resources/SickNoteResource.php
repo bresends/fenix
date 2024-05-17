@@ -37,6 +37,7 @@ class SickNoteResource extends Resource
                     ->columnSpan(2)
                     ->directory('sick-notes')
                     ->openable()
+                    ->downloadable()
                     ->getUploadedFileNameForStorageUsing(
                         fn (TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
                             ->prepend('atestado-medico-'),
