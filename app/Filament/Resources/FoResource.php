@@ -81,10 +81,10 @@ class FoResource extends Resource
                     ])
                     ->disabled((auth()->user()->hasRole('panel_user'))),
 
-                Section::make('Justificativa')
+                Section::make('Ciência/Justificativa do aluno')
                     ->schema([
                         Forms\Components\RichEditor::make('excuse')
-                            ->label('Ciência ou justificativa'),
+                            ->label('Dê ciência ou justifique o FO recebido'),
                     ]),
 
                 Section::make('Deliberar FO')
