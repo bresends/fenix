@@ -64,6 +64,9 @@ RUN rm -rf node_modules
 
 USER $NON_ROOT_USER
 
+# Do laravel configs on the server
+RUN php artisan storage:link
+
 # Set any ENVs
 ARG APP_KEY=${APP_KEY}
 ARG APP_NAME=${APP_NAME}
