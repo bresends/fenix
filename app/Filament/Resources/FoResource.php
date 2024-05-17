@@ -86,9 +86,9 @@ class FoResource extends Resource
                             ])
                             ->required(),
 
-                            Forms\Components\RichEditor::make('observation')
-                            ->label('Observações')
-                            ->columnSpan(2),
+                            // Forms\Components\RichEditor::make('observation')
+                            // ->label('Observações')
+                            // ->columnSpan(2),
                     ])
                     ->disabled((auth()->user()->hasRole('panel_user'))),
 
