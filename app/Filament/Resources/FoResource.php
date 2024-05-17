@@ -106,6 +106,7 @@ class FoResource extends Resource
                             ->options(FoStatusEnum::class)
                             ->default('Em andamento')
                             ->native(false)
+                            ->dehydrated()
                             ->label('Parecer'),
 
                         Forms\Components\RichEditor::make('final_judgment_reason')
