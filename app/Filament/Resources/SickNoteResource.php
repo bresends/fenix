@@ -38,10 +38,13 @@ class SickNoteResource extends Resource
                     ->directory('sick-notes')
                     ->openable()
                     ->downloadable()
+                    ->maxSize(5000)
+                    ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                     ->getUploadedFileNameForStorageUsing(
                         fn (TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
                             ->prepend('atestado-medico-'),
                     ),
+
                 DatePicker::make('date_issued')
                     ->prefix('⏰️')
                     ->label('Data do Atestado')
@@ -50,6 +53,7 @@ class SickNoteResource extends Resource
                     ->native(false)
                     ->required()
                     ->default(now()),
+
                 TextInput::make('days_absent')
                     ->prefix('🔢')
                     ->label('Dias ausente')
@@ -78,9 +82,9 @@ class SickNoteResource extends Resource
                     ->label('Data do Atestado'),
                 Tables\Columns\TextColumn::make('days_absent')
                     ->label('Dias Afastado'),
-//                Tables\Columns\IconColumn::make('file')
-//                    ->label('Contém arquivo?')
-//                    ->boolean(),
+                //                Tables\Columns\IconColumn::make('file')
+                //                    ->label('Contém arquivo?')
+                //                    ->boolean(),
             ])
             ->filters([
                 //
