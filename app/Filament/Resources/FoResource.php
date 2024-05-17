@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Enums\FoEnum;
 use App\Enums\FoStatusEnum;
-use App\Enums\InfractionEnum;
 use App\Filament\Resources\FoResource\Pages;
 use App\Models\Fo;
 use App\Models\Military;
@@ -72,10 +71,19 @@ class FoResource extends Resource
                             ->label('Observador')
                             ->searchable(),
 
-                        Forms\Components\Select::make('reason')
+                        Forms\Components\TextInput::make('reason')
                             ->label('Descrição do fato')
                             ->prefix('📝️')
-                            ->options(InfractionEnum::class)
+                            ->datalist([
+                                'Atrasar ou Faltar Serviço/Escala (Art. 142 da NE01, RDBM 4681/96 Anexo 01 Item 27)',
+                                'Sem Luva e Identidade (Art. 142 da NE01, RDBM 4681/96 Anexo 01 Item 85)',
+                                'Cabelo fora do Padrão (Art. 133 II da NE01)',
+                                'Pé de Cabelo e Barba Fora do Padrão (Art. 133 V da NE01)',
+                                'Uniforme Sujo ou Mal Passado ou em Desalinho (sem gorro) (Ar. 133 VIII da NE01)',
+                                'Bota/sapato/coturno não Engraxado e não Polido (Art. 133 IX da NE01)',
+                                'Não Cumpriu o Horário para entrar em forma após 6 piques (Art. 133 I da NE01 (horários). Art. 30 da NE01)',
+                                'Uso de óculos escuros ou Telefone Celular durante o expediente sem a devida autorização. Art. 133 XIV da NE01'
+                            ])
                             ->required()
                             ->searchable(),
                     ])
