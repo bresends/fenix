@@ -84,8 +84,7 @@ class FoResource extends Resource
                                 'Não Cumpriu o Horário para entrar em forma após 6 piques (Art. 133 I da NE01 (horários). Art. 30 da NE01)',
                                 'Uso de óculos escuros ou Telefone Celular durante o expediente sem a devida autorização. Art. 133 XIV da NE01'
                             ])
-                            ->required()
-                            ->searchable(),
+                            ->required(),
                     ])
                     ->disabled((auth()->user()->hasRole('panel_user'))),
 
