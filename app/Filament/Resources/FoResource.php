@@ -106,7 +106,6 @@ class FoResource extends Resource
                             ->options(FoStatusEnum::class)
                             ->default('Em andamento')
                             ->native(false)
-                            ->dehydrated()
                             ->label('Parecer'),
 
                         Forms\Components\RichEditor::make('final_judgment_reason')
@@ -116,8 +115,7 @@ class FoResource extends Resource
                         Forms\Components\Toggle::make('paid')
                             ->label('Cumprido/Arquivado'),
                     ])
-                    ->disabled((auth()->user()->hasRole('panel_user')))
-                    ->hiddenOn('create'),
+                    ->disabled((auth()->user()->hasRole('panel_user'))),
             ]);
     }
 
