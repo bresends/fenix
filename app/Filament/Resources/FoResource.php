@@ -109,7 +109,7 @@ class FoResource extends Resource
                             ->label('Observações da coordenação'),
 
                         Forms\Components\Toggle::make('paid')
-                            ->label('Cumprido?'),
+                            ->label('Cumprido/Arquivado'),
                     ])
                     ->disabled((auth()->user()->hasRole('panel_user'))),
             ]);
