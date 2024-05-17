@@ -92,7 +92,8 @@ class FoResource extends Resource
                     ->schema([
                         Forms\Components\RichEditor::make('excuse')
                             ->label('Dê ciência ou justifique o FO recebido'),
-                    ]),
+                    ])
+                    ->hiddenOn('create'),
 
                 Section::make('Deliberar FO')
                     ->description('Determine se o FO será justificado.')
@@ -110,7 +111,8 @@ class FoResource extends Resource
                         Forms\Components\Toggle::make('paid')
                             ->label('Cumprido/Arquivado'),
                     ])
-                    ->disabled((auth()->user()->hasRole('panel_user'))),
+                    ->disabled((auth()->user()->hasRole('panel_user')))
+                    ->hiddenOn('create'),
             ]);
     }
 
