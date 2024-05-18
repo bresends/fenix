@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('militaries', function (Blueprint $table) {
             $table->id();
+            $table->integer('rg')->nullable()->unique();
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->string('name');
             $table->string('rank')->default('Al Sd');

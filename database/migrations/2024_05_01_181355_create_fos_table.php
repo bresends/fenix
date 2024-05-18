@@ -19,6 +19,7 @@ return new class extends Migration
             $table->timestamp('date_issued')->default(now());
             $table->string('reason');
             $table->string('excuse')->nullable();
+            $table->string('observation')->nullable();
             $table->string('status');
             $table->string('final_judgment_reason')->nullable();
             $table->boolean('paid')->default(false);
