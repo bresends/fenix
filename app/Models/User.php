@@ -57,15 +57,6 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Fo::class);
     }
 
-    public function canAccessPanel(Panel $panel): bool
-    {
-        if ($panel->getId() === 'admin') {
-            return str_ends_with($this->email, '@gmail.com');
-        }
-
-        return true;
-    }
-
     /**
      * Get the attributes that should be cast.
      *
