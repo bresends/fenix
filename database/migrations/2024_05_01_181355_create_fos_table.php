@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreignId('issuer')->constrained('militaries')->cascadeOnDelete();
             $table->timestamp('date_issued')->default(now());
             $table->string('reason');
-            $table->string('observation')->nullable();
             $table->string('excuse')->nullable();
             $table->string('status');
             $table->string('final_judgment_reason')->nullable();

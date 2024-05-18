@@ -19,6 +19,7 @@ class Fo extends Model
         'reason',
         'excuse',
         'status',
+        'observation',
         'final_judgment_reason',
         'paid',
         'date_issued',

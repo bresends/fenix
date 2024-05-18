@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('file');
             $table->timestamp('date_issued')->default(now());
             $table->integer('days_absent');
+            $table->string('motive');
+            $table->string('restrictions');
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
         });
