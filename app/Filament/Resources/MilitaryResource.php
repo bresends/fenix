@@ -34,6 +34,10 @@ class MilitaryResource extends Resource
             ->schema([
                 TextInput::make('name')
                     ->label('Nome')
+                    ->regex('/^(?:[^A-Z]*[A-Z]){2}[A-Z]+.*$/')
+                    ->validationMessages([
+                        'regex' => 'Insira o nome de guerra do militar em caixa alta. Ex. João BATISTA Silveira',
+                    ])
                     ->required(),
 
                 TextInput::make('rg')
