@@ -6,11 +6,11 @@ use App\Filament\Resources\SickNoteResource\Pages;
 use App\Models\SickNote;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -37,11 +37,12 @@ class SickNoteResource extends Resource
                     ->columnSpan(2)
                     ->directory('sick-notes')
                     ->openable()
+                    ->required()
                     ->downloadable()
                     ->maxSize(5000)
                     ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                     ->getUploadedFileNameForStorageUsing(
-                        fn (TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
+                        fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
                             ->prepend('atestado-medico-'),
                     ),
 
@@ -58,8 +59,21 @@ class SickNoteResource extends Resource
                     ->prefix('🔢')
                     ->label('Dias ausente')
                     ->default(1)
+                    ->required()
                     ->minValue(1)
                     ->numeric(),
+
+                Textarea::make('motive')
+                    ->required()
+                    ->rows(5)
+                    ->helperText('Especificar motivo do atestado médico.')
+                    ->label('Motivo do atestado médico'),
+
+                Textarea::make('restrictions')
+                    ->required()
+                    ->rows(5)
+                    ->helperText('Especificar restrições médicas com detalhes. Ex. Impedido de praticar corrida.')
+                    ->label('Restrições'),
             ]);
     }
 
@@ -72,19 +86,37 @@ class SickNoteResource extends Resource
                 }
             })
             ->columns([
-                ImageColumn::make('file')
-                    ->label('Arquivo'),
-                TextColumn::make('user.rg')->label('Rg'),
-                TextColumn::make('user.name')->label('Nome'),
+
+                TextColumn::make('user.platoon')
+                    ->badge()
+                    ->label('Pelotão'),
+
+                TextColumn::make('userRank')
+                    ->label('Posto/Grad'),
+
+                TextColumn::make('user.rg')
+                    ->label('Rg'),
+
+                TextColumn::make('user.name')
+                    ->label('Nome'),
+
                 Tables\Columns\TextColumn::make('date_issued')
                     ->dateTime($format = 'd-m-Y')
                     ->sortable()
-                    ->label('Data do Atestado'),
+                    ->label('Data do atestado'),
+
+
                 Tables\Columns\TextColumn::make('days_absent')
-                    ->label('Dias Afastado'),
-                //                Tables\Columns\IconColumn::make('file')
-                //                    ->label('Contém arquivo?')
-                //                    ->boolean(),
+                    ->label('Dias afastado'),
+
+                Tables\Columns\TextColumn::make('dayBack')
+                    ->dateTime($format = 'd-m-Y')
+                    ->sortable()
+                    ->label('Data de retorno'),
+
+                Tables\Columns\TextColumn::make('motive')
+                    ->limit(40)
+                    ->label('Motivo'),
             ])
             ->filters([
                 //

@@ -34,7 +34,7 @@ class UserResource extends Resource
             ->schema([
                 Forms\Components\Select::make('rg')
                     ->options(Military::all()->pluck('id', 'id'))
-                    ->disabled((auth()->user()->hasRole('panel_user')))
+                    ->disabled(auth()->user()->hasRole('panel_user'))
                     ->preload()
                     ->searchable()
                     ->live()
