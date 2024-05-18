@@ -100,6 +100,11 @@ class SickNoteResource extends Resource
                 TextColumn::make('user.name')
                     ->label('Nome'),
 
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime($format = 'd-m-Y')
+                    ->sortable()
+                    ->label('Data de envio'),
+
                 Tables\Columns\TextColumn::make('date_issued')
                     ->dateTime($format = 'd-m-Y')
                     ->sortable()
