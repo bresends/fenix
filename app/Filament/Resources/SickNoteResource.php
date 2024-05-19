@@ -6,9 +6,11 @@ use App\Filament\Resources\SickNoteResource\Pages;
 use App\Models\SickNote;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -30,50 +32,56 @@ class SickNoteResource extends Resource
     {
         return $form
             ->schema([
-                FileUpload::make('file')
-                    ->disk('public')
-                    ->visibility('public')
-                    ->label('Arquivo')
-                    ->columnSpan(2)
-                    ->directory('sick-notes')
-                    ->openable()
-                    ->required()
-                    ->downloadable()
-                    ->maxSize(5000)
-                    ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
-                    ->getUploadedFileNameForStorageUsing(
-                        fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
-                            ->prepend('atestado-medico-'),
-                    ),
 
-                DatePicker::make('date_issued')
-                    ->prefix('⏰️')
-                    ->label('Data do Atestado')
-                    ->timezone('America/Sao_Paulo')
-                    ->displayFormat('d-m-Y')
-                    ->native(false)
-                    ->required()
-                    ->default(now()),
+                Section::make('Enviar atestado médico')
+                    ->schema([
+                        FileUpload::make('file')
+                            ->disk('public')
+                            ->visibility('public')
+                            ->label('Arquivo')
+                            ->columnSpan(2)
+                            ->directory('sick-notes')
+                            ->openable()
+                            ->required()
+                            ->downloadable()
+                            ->maxSize(5000)
+                            ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                            ->getUploadedFileNameForStorageUsing(
+                                fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
+                                    ->prepend('atestado-medico-'),
+                            ),
 
-                TextInput::make('days_absent')
-                    ->prefix('🔢')
-                    ->label('Dias ausente')
-                    ->default(1)
-                    ->required()
-                    ->minValue(1)
-                    ->numeric(),
+                        DatePicker::make('date_issued')
+                            ->prefix('⏰️')
+                            ->label('Data do Atestado')
+                            ->timezone('America/Sao_Paulo')
+                            ->displayFormat('d-m-Y')
+                            ->native(false)
+                            ->required()
+                            ->default(now()),
 
-                Textarea::make('motive')
-                    ->required()
-                    ->rows(5)
-                    ->helperText('Especificar motivo do atestado médico.')
-                    ->label('Motivo do atestado médico'),
+                        TextInput::make('days_absent')
+                            ->prefix('🔢')
+                            ->label('Dias ausente')
+                            ->default(1)
+                            ->required()
+                            ->minValue(1)
+                            ->numeric(),
 
-                Textarea::make('restrictions')
-                    ->required()
-                    ->rows(5)
-                    ->helperText('Especificar restrições médicas com detalhes. Ex. Impedido de praticar corrida.')
-                    ->label('Restrições'),
+                        Textarea::make('motive')
+                            ->required()
+                            ->rows(5)
+                            ->helperText('Especificar motivo do atestado médico.')
+                            ->label('Motivo do atestado médico'),
+
+                        Textarea::make('restrictions')
+                            ->required()
+                            ->rows(5)
+                            ->helperText('Especificar restrições médicas com detalhes. Ex. Impedido de praticar corrida.')
+                            ->label('Restrições'),
+                    ])
+                    ->disabled(fn(string $operation, Get $get): bool => $operation === 'edit' && $get('user_id') !== auth()->user()->id)
+                    ->columns(2),
             ]);
     }
 
