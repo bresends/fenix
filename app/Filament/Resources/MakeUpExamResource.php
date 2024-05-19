@@ -93,7 +93,7 @@ class MakeUpExamResource extends Resource
                     ->maxSize(5000)
                     ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                     ->getUploadedFileNameForStorageUsing(
-                        fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
+                        fn (TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
                             ->prepend('segunda-chamada-'),
                     ),
 
@@ -104,18 +104,16 @@ class MakeUpExamResource extends Resource
                         Radio::make('status')
                             ->options(FoStatusEnum::class)
                             ->default('Em andamento')
-                            ->label('Parecer')
-                            ->disabled((auth()->user()->hasRole('panel_user'))),
+                            ->label('Parecer'),
 
                         RichEditor::make('final_judgment_reason')
                             ->columnSpan(2)
                             ->helperText('Campo para anotações sobre parecer.')
-                            ->label('Observações da coordenação')
-                            ->disabled((auth()->user()->hasRole('panel_user'))),
+                            ->label('Observações da coordenação'),
 
                     ])
-                    ->disabled((auth()->user()->hasRole('panel_user')))
-                    ->hiddenOn('create'),
+                    ->hiddenOn('create')
+                    ->disabled(! auth()->user()->hasRole('super_admin')),
             ]);
     }
 
@@ -123,7 +121,7 @@ class MakeUpExamResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                if (auth()->user()->hasRole('panel_user')) {
+                if (auth()->user()->hasExactRoles('panel_user')) {
                     $query->where('user_id', auth()->user()->id);
                 }
             })

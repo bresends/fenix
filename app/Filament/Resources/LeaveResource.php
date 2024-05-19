@@ -33,7 +33,6 @@ class LeaveResource extends Resource
             ->schema([
                 Section::make('Solicitar dispensa')
                     ->schema([
-
                         DateTimePicker::make('date_leave')
                             ->prefix('➡️️')
                             ->label('Data e horário de saída:')
@@ -127,10 +126,9 @@ class LeaveResource extends Resource
                             ->columnSpan(2)
                             ->helperText('O aluno gozou a dispensa e anexou documento comprobatório.')
                             ->label('Cumprida/Arquivada'),
-
                     ])
-                    ->disabled((auth()->user()->hasRole('panel_user')))
-                    ->hiddenOn('create'),
+                    ->hiddenOn('create')
+                    ->disabled(! auth()->user()->hasRole('super_admin')),
             ]);
     }
 
@@ -138,7 +136,7 @@ class LeaveResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                if (auth()->user()->hasRole('panel_user')) {
+                if (auth()->user()->hasExactRoles('panel_user')) {
                     $query->where('user_id', auth()->user()->id);
                 }
             })
