@@ -14,6 +14,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -37,65 +38,72 @@ class MakeUpExamResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('discipline_name')
-                    ->label('Nome da disciplina (conforme consta no Plano de Curso)')
-                    ->placeholder('Salvamento Terrestre')
-                    ->required(),
 
-                DatePicker::make('exam_date')
-                    ->prefix('⏰️')
-                    ->label('Data da avaliação não realizada')
-                    ->timezone('America/Sao_Paulo')
-                    ->displayFormat('d-m-Y')
-                    ->native(false)
-                    ->required()
-                    ->default(now()),
+                Section::make('Solicitar segunda chamada')
+                    ->schema([
+                        TextInput::make('discipline_name')
+                            ->label('Nome da disciplina (conforme consta no Plano de Curso)')
+                            ->placeholder('Salvamento Terrestre')
+                            ->required(),
 
-                Select::make('type')
-                    ->options(MakeUpExamStatusEnum::class)
-                    ->label('Tipo')
-                    ->prefix('🏷️')
-                    ->native(false)
-                    ->default('Teórica')
-                    ->required(),
+                        DatePicker::make('exam_date')
+                            ->prefix('⏰️')
+                            ->label('Data da avaliação não realizada')
+                            ->timezone('America/Sao_Paulo')
+                            ->displayFormat('d-m-Y')
+                            ->native(false)
+                            ->required()
+                            ->default(now()),
 
-                DatePicker::make('date_back')
-                    ->prefix('⬅️')
-                    ->label('Data do retorno (do afastamento ou término de restrição física.')
-                    ->timezone('America/Sao_Paulo')
-                    ->seconds(false)
-                    ->displayFormat('d-m-Y')
-                    ->native(false)
-                    ->required()
-                    ->default(now()),
+                        Select::make('type')
+                            ->options(MakeUpExamStatusEnum::class)
+                            ->label('Tipo')
+                            ->prefix('🏷️')
+                            ->native(false)
+                            ->default('Teórica')
+                            ->required(),
 
-                RichEditor::make('motive')
-                    ->required()
-                    ->disableToolbarButtons([
-                        'attachFiles',
+                        DatePicker::make('date_back')
+                            ->prefix('⬅️')
+                            ->label('Data do retorno (do afastamento ou término de restrição física.')
+                            ->timezone('America/Sao_Paulo')
+                            ->seconds(false)
+                            ->displayFormat('d-m-Y')
+                            ->native(false)
+                            ->required()
+                            ->default(now()),
+
+                        RichEditor::make('motive')
+                            ->required()
+                            ->disableToolbarButtons([
+                                'attachFiles',
+                            ])
+                            ->hint('Atenção!')
+                            ->hintIcon('heroicon-m-exclamation-triangle', tooltip: 'Liste detalhadamente o motivo')
+                            ->hintColor('primary')
+                            ->columnSpan(2)
+                            ->placeholder('Solicito segunda chamada de prova devido a minha baixa médica conforme atestado médico nº 22 (anexado no sistema). Fui orientado(a) a permanecer em repouso e seguir um tratamento imediato, o que impedira a realização da prova.')
+                            ->label('Motivo da não realização da avaliação (com detalhes)'),
+
+                        FileUpload::make('file')
+                            ->disk('public')
+                            ->visibility('public')
+                            ->label('Arquivo')
+                            ->columnSpan(2)
+                            ->directory('makeup-exams')
+                            ->openable()
+                            ->downloadable()
+                            ->helperText('Anexo (Imagem ou PDF) que justifique ausência. Ex: atestados médicos, convocações judiciais ou outros arquivos (se houver)')
+                            ->maxSize(5000)
+                            ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                            ->getUploadedFileNameForStorageUsing(
+                                fn (TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
+                                    ->prepend('segunda-chamada-'),
+                            ),
+
                     ])
-                    ->hint('Atenção!')
-                    ->hintIcon('heroicon-m-exclamation-triangle', tooltip: 'Liste detalhadamente o motivo')
-                    ->hintColor('primary')
-                    ->columnSpan(2)
-                    ->placeholder('Solicito segunda chamada de prova devido a minha baixa médica conforme atestado médico nº 22 (anexado no sistema). Fui orientado(a) a permanecer em repouso e seguir um tratamento imediato, o que impedira a realização da prova.')
-                    ->label('Motivo da não realização da avaliação (com detalhes)'),
-
-                FileUpload::make('file')
-                    ->disk('public')
-                    ->visibility('public')
-                    ->label('Arquivo')
-                    ->columnSpan(2)
-                    ->directory('makeup-exams')
-                    ->openable()
-                    ->downloadable()
-                    ->helperText('Anexo (Imagem ou PDF) que justifique ausência. Ex: atestados médicos, convocações judiciais ou outros arquivos (se houver)')
-                    ->maxSize(5000)
-                    ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
-                    ->getUploadedFileNameForStorageUsing(
-                        fn (TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
-                            ->prepend('segunda-chamada-'),
-                    ),
+                    ->disabled(fn (string $operation, Get $get): bool => $operation === 'edit' && $get('user_id') !== auth()->user()->id)
+                    ->columns(2),
 
                 Section::make('Deliberar 2ª Chamada (coordenação)')
                     ->description('Determine se a dispensa será autorizada.')
