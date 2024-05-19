@@ -18,10 +18,10 @@ return new class extends Migration
             $table->foreignId('issuer')->constrained('militaries')->cascadeOnDelete();
             $table->timestamp('date_issued')->default(now());
             $table->string('reason');
-            $table->string('excuse')->nullable();
-            $table->string('observation')->nullable();
+            $table->text('excuse')->nullable();
+            $table->text('observation')->nullable();
             $table->string('status')->default('Em andamento');
-            $table->string('final_judgment_reason')->nullable();
+            $table->text('final_judgment_reason')->nullable();
             $table->boolean('paid')->default(false);
             $table->timestamps();
         });

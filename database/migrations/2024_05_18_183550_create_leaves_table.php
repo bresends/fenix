@@ -15,13 +15,13 @@ return new class extends Migration
             $table->id();
             $table->timestamp('date_leave')->default(now());
             $table->timestamp('date_back')->default(now());
-            $table->string('motive');
-            $table->string('missed_classes');
+            $table->text('motive');
+            $table->text('missed_classes');
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->boolean('accept_terms')->default(false);
             $table->string('file')->nullable();
             $table->string('status')->default('Em andamento');
-            $table->string('final_judgment_reason')->nullable();
+            $table->text('final_judgment_reason')->nullable();
             $table->boolean('paid')->default(false);
             $table->timestamps();
         });
