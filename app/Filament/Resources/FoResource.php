@@ -9,6 +9,7 @@ use App\Models\Fo;
 use App\Models\Military;
 use Filament\Forms;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
@@ -88,6 +89,9 @@ class FoResource extends Resource
 
                         Forms\Components\RichEditor::make('observation')
                             ->label('Observações')
+                            ->disableToolbarButtons([
+                                'attachFiles',
+                            ])
                             ->columnSpan(2),
                     ])
                     ->disabled((auth()->user()->hasRole('panel_user'))),
@@ -95,17 +99,19 @@ class FoResource extends Resource
                 Section::make('Ciência/Justificativa do aluno')
                     ->schema([
                         Forms\Components\RichEditor::make('excuse')
+                            ->disableToolbarButtons([
+                                'attachFiles',
+                            ])
                             ->label('Dê ciência ou justifique o FO recebido'),
                     ])
                     ->hiddenOn('create'),
 
-                Section::make('Deliberar FO')
-                    ->description('Determine se o FO será justificado.')
+                Section::make('Deliberação do FO (coordenação)')
+                    ->description('Campo preenchido pela coordenação.')
                     ->schema([
-                        Select::make('status')
+                        Radio::make('status')
                             ->options(FoStatusEnum::class)
                             ->default('Em andamento')
-                            ->native(false)
                             ->label('Parecer'),
 
                         Forms\Components\RichEditor::make('final_judgment_reason')
@@ -115,6 +121,7 @@ class FoResource extends Resource
                         Forms\Components\Toggle::make('paid')
                             ->label('Cumprido/Arquivado'),
                     ])
+                    ->hiddenOn('create')
                     ->disabled((auth()->user()->hasRole('panel_user'))),
             ]);
     }
@@ -171,15 +178,15 @@ class FoResource extends Resource
                     })
                     ->searchable(),
 
-                Tables\Columns\IconColumn::make('excuse')
-                    ->label('Ciência/Justificativa')
-                    ->boolean()
-                    ->searchable(),
-
                 TextColumn::make('status')
                     ->badge()
                     ->searchable()
                     ->label('Parecer'),
+
+                Tables\Columns\IconColumn::make('excuse')
+                    ->label('Ciência/Justificativa')
+                    ->boolean()
+                    ->searchable(),
 
                 Tables\Columns\IconColumn::make('paid')
                     ->label('Cumprido/Arquivado')

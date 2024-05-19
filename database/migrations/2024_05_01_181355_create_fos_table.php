@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('reason');
             $table->string('excuse')->nullable();
             $table->string('observation')->nullable();
-            $table->string('status');
+            $table->string('status')->default('Em andamento');
             $table->string('final_judgment_reason')->nullable();
             $table->boolean('paid')->default(false);
             $table->timestamps();
