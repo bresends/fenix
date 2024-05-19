@@ -13,6 +13,7 @@ use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -57,7 +58,7 @@ class FoResource extends Resource
 
                         Forms\Components\Select::make('user_id')
                             ->relationship('user', 'name')
-                            ->searchable(['name', 'id'])
+                            ->searchable(['name', 'rg'])
                             ->label('Observado')
                             ->prefix('🔍')
                             ->preload()
@@ -95,7 +96,8 @@ class FoResource extends Resource
                             ])
                             ->columnSpan(2),
                     ])
-                    ->disabled((auth()->user()->hasRole('panel_user'))),
+                    ->disabled(auth()->user()->hasExactRoles('panel_user'))
+                    ->disabledOn('edit'),
 
                 Section::make('Ciência/Justificativa do aluno')
                     ->schema([
@@ -104,8 +106,10 @@ class FoResource extends Resource
                                 'attachFiles',
                             ])
                             ->label('Dê ciência ou justifique o FO recebido'),
+
                     ])
-                    ->hiddenOn('create'),
+                    ->hiddenOn('create')
+                    ->disabled(fn (string $operation, Get $get): bool => $operation === 'edit' && $get('user_id') !== auth()->user()->id),
 
                 Section::make('Deliberação do FO (coordenação)')
                     ->description('Campo preenchido pela coordenação.')
@@ -123,7 +127,7 @@ class FoResource extends Resource
                             ->label('Cumprido/Arquivado'),
                     ])
                     ->hiddenOn('create')
-                    ->disabled((auth()->user()->hasRole('panel_user'))),
+                    ->disabled(! auth()->user()->hasRole('super_admin')),
             ]);
     }
 
@@ -131,7 +135,7 @@ class FoResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                if (auth()->user()->hasRole('panel_user')) {
+                if (auth()->user()->hasExactRoles('panel_user')) {
                     $query->whereHas('user', function ($query) {
                         $query->where('id', auth()->user()->id);
                     });
@@ -174,7 +178,7 @@ class FoResource extends Resource
                     ->label('Descrição do fato')
                     ->limit(45)
                     ->toggleable()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         default => 'gray',
                     })
                     ->searchable(),
@@ -196,8 +200,8 @@ class FoResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options(FoEnum::class)
-                    ->label('FOs à deliberar')
+                    ->options(FoStatusEnum::class)
+                    ->label('Parecer'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
