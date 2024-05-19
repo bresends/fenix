@@ -7,6 +7,7 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Models\Military;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
@@ -33,7 +34,17 @@ class UserResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('rg')
-                    ->options(Military::all()->pluck('rg', 'rg'))
+                    ->label('Militar')
+                    ->options(
+                        Military::all()->pluck('rg', 'rg')->mapWithKeys(function ($rg) {
+                            $military = Military::firstWhere('rg', $rg);
+
+                            return [$rg => "{$rg} - {$military->name}"];
+                        })
+                    )
+                    ->validationMessages([
+                        'unique' => 'Esse registro já existe na base de dados',
+                    ])
                     ->disabled(auth()->user()->hasRole('panel_user'))
                     ->preload()
                     ->searchable()
@@ -44,15 +55,26 @@ class UserResource extends Resource
                         $set('name', Military::firstWhere('rg', $state)->name);
                     }),
 
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->disabled()
-                    ->dehydrated()
-                    ->label('Nome'),
+                Hidden::make('name'),
 
                 Forms\Components\TextInput::make('email')
                     ->required()
                     ->unique(ignoreRecord: true),
+
+                Forms\Components\TextInput::make('password')
+                    ->label('Senha')
+                    ->confirmed()
+                    ->password()
+                    ->revealable()
+                    ->dehydrateStateUsing(fn(string $state): string => bcrypt($state))
+                    ->dehydrated(fn(?string $state): bool => filled($state))
+                    ->required(fn(string $operation): bool => $operation === 'create'),
+
+                Forms\Components\TextInput::make('password_confirmation')
+                    ->label('Confirmação de senha')
+                    ->password()
+                    ->revealable()
+                    ->required(fn(string $operation): bool => $operation === 'create'),
 
                 Select::make('platoon')
                     ->label('Pelotão')
@@ -60,21 +82,6 @@ class UserResource extends Resource
                     ->options(PlatoonEnum::class)
                     ->default('Alpha')
                     ->disabled(auth()->user()->hasRole('panel_user')),
-
-                Forms\Components\TextInput::make('password')
-                    ->label('Senha')
-                    ->confirmed()
-                    ->password()
-                    ->revealable()
-                    ->dehydrateStateUsing(fn (string $state): string => bcrypt($state))
-                    ->dehydrated(fn (?string $state): bool => filled($state))
-                    ->required(fn (string $operation): bool => $operation === 'create'),
-
-                Forms\Components\TextInput::make('password_confirmation')
-                    ->label('Confirmação de senha')
-                    ->password()
-                    ->revealable()
-                    ->required(fn (string $operation): bool => $operation === 'create'),
 
                 Select::make('roles')
                     ->label('Perfis')
@@ -90,7 +97,7 @@ class UserResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                if (! auth()->user()->hasRole('super_admin')) {
+                if (!auth()->user()->hasRole('super_admin')) {
                     $query->where('id', auth()->user()->id);
                 }
             })
@@ -105,6 +112,11 @@ class UserResource extends Resource
                 TextColumn::make('name')
                     ->label('Nome'),
                 TextColumn::make('email'),
+                TextColumn::make('roles.name')
+                    ->label('Perfis')
+                    ->listWithLineBreaks()
+                    ->badge()
+                    ->hidden(!auth()->user()->hasRole('super_admin')),
             ])
             ->filters([
                 //

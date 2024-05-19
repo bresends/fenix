@@ -23,7 +23,7 @@ class LeaveResource extends Resource
 {
     protected static ?string $model = Leave::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-right-start-on-rectangle';
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-right-end-on-rectangle';
 
     protected static ?string $label = 'Dispensa';
 
@@ -64,7 +64,7 @@ class LeaveResource extends Resource
                             ->hintColor('primary')
                             ->columnSpan(2)
                             ->helperText('Caso a solicitação seja para horários com atividades previstas em QTS, especificar o motivo de não conseguir resolver a demanda em horário sem atividades em QTS.')
-                            ->placeholder("Preciso solicitar dispensa para o horário das devido à consulta médica marcada nesse período.\n A consulta médica foi agendada com antecedência e é no único horário disponível com o médico especialista. Não há possibilidade de reagendar para outro horário semelhante dentro do período de tratamento recomendado.")
+                            ->placeholder('Solicito dispensa devido à consulta médica agendada com antecedência e este é o único horário disponível com o médico especialista. Não há possibilidade de reagendar para outro horário semelhante dentro do período de tratamento recomendado.')
                             ->label('Motivo (com detalhamento)'),
 
                         RichEditor::make('missed_classes')
@@ -93,7 +93,7 @@ class LeaveResource extends Resource
                             ->disk('public')
                             ->visibility('public')
                             ->label('Arquivo comprobatório')
-                            ->directory('sick-notes')
+                            ->directory('leave')
                             ->openable()
                             ->columnSpan(2)
                             ->downloadable()
@@ -143,6 +143,10 @@ class LeaveResource extends Resource
                 }
             })
             ->columns([
+                TextColumn::make('id')
+                    ->numeric()
+                    ->label('Nº'),
+
                 Tables\Columns\TextColumn::make('user.platoon')
                     ->label('Pelotão')
                     ->badge()

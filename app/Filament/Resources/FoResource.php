@@ -16,6 +16,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -173,7 +174,7 @@ class FoResource extends Resource
                     ->label('Descrição do fato')
                     ->limit(45)
                     ->toggleable()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         default => 'gray',
                     })
                     ->searchable(),
@@ -194,7 +195,9 @@ class FoResource extends Resource
                     ->alignCenter(),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->options(FoEnum::class)
+                    ->label('FOs à deliberar')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

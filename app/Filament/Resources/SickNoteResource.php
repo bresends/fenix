@@ -20,7 +20,7 @@ class SickNoteResource extends Resource
 {
     protected static ?string $model = SickNote::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-battery-50';
+    protected static ?string $navigationIcon = 'heroicon-o-folder-arrow-down';
 
     protected static ?string $label = 'Atestado Médico';
 
@@ -42,7 +42,7 @@ class SickNoteResource extends Resource
                     ->maxSize(5000)
                     ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                     ->getUploadedFileNameForStorageUsing(
-                        fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
+                        fn (TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
                             ->prepend('atestado-medico-'),
                     ),
 
@@ -87,6 +87,10 @@ class SickNoteResource extends Resource
             })
             ->columns([
 
+                TextColumn::make('id')
+                    ->numeric()
+                    ->label('Nº'),
+
                 TextColumn::make('user.platoon')
                     ->badge()
                     ->label('Pelotão'),
@@ -109,7 +113,6 @@ class SickNoteResource extends Resource
                     ->dateTime($format = 'd-m-Y')
                     ->sortable()
                     ->label('Data do atestado'),
-
 
                 Tables\Columns\TextColumn::make('days_absent')
                     ->label('Dias afastado'),
