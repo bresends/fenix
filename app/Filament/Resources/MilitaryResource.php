@@ -34,8 +34,13 @@ class MilitaryResource extends Resource
             ->schema([
                 TextInput::make('name')
                     ->label('Nome')
+                    ->regex('/^(?:[^A-ZÁÉÍÓÚÀÂÊÔÃÕ]*[A-ZÁÉÍÓÚÀÂÊÔÃÕ]){2}[A-ZÁÉÍÓÚÀÂÊÔÃÕ]+.*$/')
+                    ->validationMessages([
+                        'regex' => 'Insira o nome de guerra do militar em caixa alta. Ex. João BATISTA Silveira',
+                    ])
                     ->required(),
-                TextInput::make('id')
+
+                TextInput::make('rg')
                     ->label('Rg')
                     ->integer()
                     ->minValue(100)
@@ -43,6 +48,7 @@ class MilitaryResource extends Resource
                     ->required()
                     ->live()
                     ->unique(ignoreRecord: true),
+
                 Select::make('rank')
                     ->options(RankEnum::class)
                     ->label('Posto/Graduação')
@@ -50,12 +56,14 @@ class MilitaryResource extends Resource
                     ->required()
                     ->default('Al Sd')
                     ->native(false),
+
                 Select::make('division')
                     ->options(DivisionEnum::class)
                     ->label('Quadro')
                     ->default('QP/Combatente')
                     ->required()
                     ->native(false),
+
                 TextInput::make('tel')
                     ->label('Telefone')
                     ->mask(RawJs::make(<<<'JS'
@@ -76,21 +84,37 @@ class MilitaryResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('rank')
-                    ->label('Posto/Graduação')
+                    ->label('Posto/Grad')
+                    ->alignCenter()
+                    ->width('1%')
                     ->sortable(),
+
                 TextColumn::make('division')
                     ->label('Quadro'),
-                TextColumn::make('id')
+
+                TextColumn::make('rg')
                     ->searchable()
                     ->label('Rg')
                     ->sortable(),
+
                 TextColumn::make('name')
                     ->label('Nome')
                     ->searchable()
+                    ->toggleable()
                     ->sortable(),
+
+                TextColumn::make('sei')
+                    ->label('Nome SEI')
+                    ->copyable()
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->copyMessage('Copiado para área de trasferência')
+                    ->copyMessageDuration(1000),
+
                 TextColumn::make('tel')
                     ->label('Telefone'),
             ])
+            ->defaultSort('rg', 'asc')
+            ->persistSearchInSession()
             ->filters([
                 //
             ])

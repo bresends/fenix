@@ -33,7 +33,7 @@ class UserResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('rg')
-                    ->options(Military::all()->pluck('id', 'id'))
+                    ->options(Military::all()->pluck('rg', 'rg'))
                     ->disabled(auth()->user()->hasRole('panel_user'))
                     ->preload()
                     ->searchable()
@@ -41,7 +41,7 @@ class UserResource extends Resource
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->afterStateUpdated(function (Set $set, ?string $state) {
-                        $set('name', Military::firstWhere('id', $state)->name);
+                        $set('name', Military::firstWhere('rg', $state)->name);
                     }),
 
                 Forms\Components\TextInput::make('name')

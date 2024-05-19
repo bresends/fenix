@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('fos', function (Blueprint $table) {
+        Schema::create('leaves', function (Blueprint $table) {
             $table->id();
-            $table->enum('type', ['Positivo', 'Negativo'])->default('Negativo');
+            $table->timestamp('date_leave')->default(now());
+            $table->timestamp('date_back')->default(now());
+            $table->string('motive');
+            $table->string('missed_classes');
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('issuer')->constrained('militaries')->cascadeOnDelete();
-            $table->timestamp('date_issued')->default(now());
-            $table->string('reason');
-            $table->string('excuse')->nullable();
-            $table->string('observation')->nullable();
+            $table->boolean('accept_terms')->default(false);
+            $table->string('file')->nullable();
             $table->string('status')->default('Em andamento');
             $table->string('final_judgment_reason')->nullable();
             $table->boolean('paid')->default(false);
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('fos');
+        Schema::dropIfExists('leaves');
     }
 };
