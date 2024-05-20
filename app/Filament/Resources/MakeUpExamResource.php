@@ -149,35 +149,28 @@ class MakeUpExamResource extends Resource
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('discipline_name')
-                    ->label('Disciplina')
-                    ->sortable(),
-
-                TextColumn::make('exam_date')
-                    ->dateTime($format = 'd-m-y')
-                    ->sortable()
-                    ->label('Data da avaliação não realizada'),
-
-                Tables\Columns\TextColumn::make('type'),
-                Tables\Columns\TextColumn::make('motive')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('file')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('date_back')
-                    ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('final_judgment_reason')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime($format = 'd-m-y H:i')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->label('Criado em'),
+                    
+                TextColumn::make('discipline_name')
+                    ->label('Disciplina'),
+
+                TextColumn::make('type')
+                    ->badge()
+                    ->label('Tipo'),
+
+                TextColumn::make('status')
+                    ->badge()
+                    ->searchable()
+                    ->label('Parecer'),
+
+                TextColumn::make('motive')
+                    ->limit(45)
+                    ->toggleable()
+                    ->html()
+                    ->label('Motivo'),
             ])
             ->filters([
                 //

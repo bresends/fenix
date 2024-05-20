@@ -163,15 +163,20 @@ class LeaveResource extends Resource
                     ->searchable()
                     ->sortable(),
 
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime($format = 'd-m-y H:i')
+                    ->sortable()
+                    ->label('Criado em'),
+
                 Tables\Columns\TextColumn::make('date_leave')
                     ->dateTime($format = 'd-m-y H:i')
                     ->sortable()
-                    ->label('Saída em'),
+                    ->label('Saída'),
 
                 Tables\Columns\TextColumn::make('date_back')
                     ->dateTime($format = 'd-m-y H:i')
                     ->sortable()
-                    ->label('Retorno em'),
+                    ->label('Retorno'),
 
                 TextColumn::make('status')
                     ->badge()
