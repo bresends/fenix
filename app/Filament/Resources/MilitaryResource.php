@@ -42,6 +42,7 @@ class MilitaryResource extends Resource
 
                 TextInput::make('rg')
                     ->label('Rg')
+                    ->placeholder('4140')
                     ->integer()
                     ->minValue(100)
                     ->maxValue(10000)
