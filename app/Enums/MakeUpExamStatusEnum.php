@@ -6,7 +6,7 @@ use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 
-enum MakeUpExamStatusEnum: string implements HasLabel, HasColor
+enum MakeUpExamStatusEnum: string implements HasLabel, HasColor, HasIcon
 {
     case TEORICA = 'Teórica';
     case PRATICA = 'Prática';
@@ -19,11 +19,20 @@ enum MakeUpExamStatusEnum: string implements HasLabel, HasColor
         };
     }
 
-    public function getColor(): string | array | null
+    public function getColor(): string|array|null
     {
         return match ($this) {
             self::TEORICA => 'info',
-            self::PRATICA => 'success',
+            self::PRATICA => 'primary',
+        };
+
+    }
+
+    public function getIcon(): ?string
+    {
+        return match ($this) {
+            self::TEORICA => 'heroicon-s-academic-cap',
+            self::PRATICA => 'heroicon-s-fire',
         };
 
     }

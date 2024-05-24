@@ -10,18 +10,23 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('make_up_exams', function (Blueprint $table) {
+        Schema::create('switch_shifts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->string('discipline_name');
-            $table->timestamp('exam_date')->default(now());
-            $table->enum('type', ['Teórica', 'Prática'])->default('Teórica');
+            $table->string('type');
+            $table->timestamp('first_shift_date')->default(now());
+            $table->string('first_shift_place');
+            $table->string('first_shift_paying_military');
+            $table->string('first_shift_receiving_military');
+            $table->timestamp('second_shift_date')->default(now());
+            $table->string('second_shift_place');
+            $table->string('second_shift_paying_military');
+            $table->string('second_shift_receiving_military');
             $table->text('motive');
             $table->string('file')->nullable();
             $table->string('status')->default('Em andamento');
-            $table->timestamp('date_back')->default(now());
             $table->text('final_judgment_reason')->nullable();
-            $table->boolean('archived')->default(false);
+            $table->boolean('paid')->default(false);
             $table->timestamps();
         });
     }
@@ -31,6 +36,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('make_up_exams');
+        Schema::dropIfExists('switch_shifts');
     }
 };

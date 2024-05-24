@@ -3,24 +3,26 @@
 namespace App\Models;
 
 use App\Enums\FoStatusEnum;
-use App\Enums\MakeUpExamStatusEnum;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class MakeUpExam extends Model
+class ExamAppeal extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'discipline_name',
-        'exam_date',
+        'exam',
+        'question',
+        'discipline',
         'type',
         'motive',
+        'bibliography',
+        'accept_terms',
         'file',
         'status',
-        'date_back',
         'final_judgment_reason',
         'archived',
     ];
@@ -29,7 +31,6 @@ class MakeUpExam extends Model
     {
         return [
             'status' => FoStatusEnum::class,
-            'type' => MakeUpExamStatusEnum::class,
         ];
     }
 

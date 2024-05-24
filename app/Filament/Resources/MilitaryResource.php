@@ -11,7 +11,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -64,19 +63,6 @@ class MilitaryResource extends Resource
                     ->default('QP/Combatente')
                     ->required()
                     ->native(false),
-
-                TextInput::make('tel')
-                    ->label('Telefone')
-                    ->mask(RawJs::make(<<<'JS'
-        $input.length >= 14 ? '(99) 99999-9999' : '(99) 9999-9999'
-    JS
-                    )),
-                Select::make('blood_type')
-                    ->options(BloodTypeEnum::class)
-                    ->label('Tipo sanguíneo')
-                    ->default('A+')
-                    ->required()
-                    ->native(false),
             ]);
     }
 
@@ -105,14 +91,11 @@ class MilitaryResource extends Resource
                     ->sortable(),
 
                 TextColumn::make('sei')
-                    ->label('Nome SEI')
+                    ->label('SEI')
                     ->copyable()
-                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->toggleable()
                     ->copyMessage('Copiado para área de trasferência')
                     ->copyMessageDuration(1000),
-
-                TextColumn::make('tel')
-                    ->label('Telefone'),
             ])
             ->defaultSort('rg', 'asc')
             ->persistSearchInSession()

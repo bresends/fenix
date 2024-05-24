@@ -10,7 +10,6 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -28,12 +27,15 @@ class SickNoteResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Atestados Médicos';
 
+    protected static ?string $navigationGroup = 'Documentos';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-
                 Section::make('Enviar atestado médico')
+                    ->disabledOn('edit')
+                    ->columns(2)
                     ->schema([
                         FileUpload::make('file')
                             ->disk('public')
@@ -43,6 +45,9 @@ class SickNoteResource extends Resource
                             ->directory('sick-notes')
                             ->openable()
                             ->required()
+                            ->validationMessages([
+                                'required' => 'Favor inserir arquivo.',
+                            ])
                             ->downloadable()
                             ->maxSize(5000)
                             ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
@@ -55,7 +60,7 @@ class SickNoteResource extends Resource
                             ->prefix('⏰️')
                             ->label('Data do Atestado')
                             ->timezone('America/Sao_Paulo')
-                            ->displayFormat('d-m-Y')
+                            ->displayFormat('d/m/y')
                             ->native(false)
                             ->required()
                             ->default(now()),
@@ -79,9 +84,7 @@ class SickNoteResource extends Resource
                             ->rows(5)
                             ->helperText('Especificar restrições médicas com detalhes. Ex. Impedido de praticar corrida.')
                             ->label('Restrições'),
-                    ])
-                    ->disabled(fn(string $operation, Get $get): bool => $operation === 'edit' && $get('user_id') !== auth()->user()->id)
-                    ->columns(2),
+                    ]),
             ]);
     }
 
@@ -103,9 +106,6 @@ class SickNoteResource extends Resource
                     ->badge()
                     ->label('Pelotão'),
 
-                TextColumn::make('userRank')
-                    ->label('Posto/Grad'),
-
                 TextColumn::make('user.rg')
                     ->label('Rg'),
 
@@ -113,12 +113,12 @@ class SickNoteResource extends Resource
                     ->label('Nome'),
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime($format = 'd-m-Y')
+                    ->dateTime($format = 'd/m/y')
                     ->sortable()
                     ->label('Data de envio'),
 
                 Tables\Columns\TextColumn::make('date_issued')
-                    ->dateTime($format = 'd-m-Y')
+                    ->dateTime($format = 'd/m/y')
                     ->sortable()
                     ->label('Data do atestado'),
 
@@ -126,7 +126,7 @@ class SickNoteResource extends Resource
                     ->label('Dias afastado'),
 
                 Tables\Columns\TextColumn::make('dayBack')
-                    ->dateTime($format = 'd-m-Y')
+                    ->dateTime($format = 'd/m/y')
                     ->sortable()
                     ->label('Data de retorno'),
 

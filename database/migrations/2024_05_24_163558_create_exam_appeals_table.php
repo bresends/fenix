@@ -10,16 +10,18 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('make_up_exams', function (Blueprint $table) {
+        Schema::create('exam_appeals', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->string('discipline_name');
-            $table->timestamp('exam_date')->default(now());
+            $table->string('exam');
+            $table->integer('question');
+            $table->string('discipline');
             $table->enum('type', ['Teórica', 'Prática'])->default('Teórica');
             $table->text('motive');
+            $table->text('bibliography');
+            $table->boolean('accept_terms')->default(false);
             $table->string('file')->nullable();
             $table->string('status')->default('Em andamento');
-            $table->timestamp('date_back')->default(now());
             $table->text('final_judgment_reason')->nullable();
             $table->boolean('archived')->default(false);
             $table->timestamps();
@@ -31,6 +33,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('make_up_exams');
+        Schema::dropIfExists('exam_appeals');
     }
 };
