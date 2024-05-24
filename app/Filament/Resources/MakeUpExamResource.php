@@ -6,6 +6,7 @@ use App\Enums\FoStatusEnum;
 use App\Enums\MakeUpExamStatusEnum;
 use App\Filament\Resources\MakeUpExamResource\Pages;
 use App\Models\MakeUpExam;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Radio;
@@ -40,8 +41,9 @@ class MakeUpExamResource extends Resource
     {
         return $form
             ->schema([
-
                 Section::make('Solicitar segunda chamada')
+                    ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
+                    ->columns(2)
                     ->schema([
                         TextInput::make('discipline_name')
                             ->label('Nome da disciplina (conforme consta no Plano de Curso)')
@@ -52,7 +54,7 @@ class MakeUpExamResource extends Resource
                             ->prefix('⏰️')
                             ->label('Data da avaliação não realizada')
                             ->timezone('America/Sao_Paulo')
-                            ->displayFormat('d-m-Y')
+                            ->displayFormat('d/m/y')
                             ->native(false)
                             ->required()
                             ->default(now()),
@@ -70,7 +72,7 @@ class MakeUpExamResource extends Resource
                             ->label('Data do retorno (do afastamento ou término de restrição física.')
                             ->timezone('America/Sao_Paulo')
                             ->seconds(false)
-                            ->displayFormat('d-m-Y')
+                            ->displayFormat('d/m/y')
                             ->native(false)
                             ->required()
                             ->default(now()),
@@ -99,18 +101,17 @@ class MakeUpExamResource extends Resource
                             ->maxSize(5000)
                             ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                             ->getUploadedFileNameForStorageUsing(
-                                fn (TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
+                                fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
                                     ->prepend('segunda-chamada-'),
                             ),
 
-                    ])
-                    ->disabled(fn (string $operation, Get $get): bool => $operation === 'edit' && $get('user_id') !== auth()->user()->id)
-                    ->columns(2),
+                    ]),
 
                 Section::make('Deliberar 2ª Chamada (coordenação)')
                     ->description('Determine se a dispensa será autorizada.')
+                    ->hiddenOn('create')
+                    ->disabled(!auth()->user()->hasRole('super_admin'))
                     ->schema([
-
                         Radio::make('status')
                             ->options(FoStatusEnum::class)
                             ->default('Em andamento')
@@ -121,9 +122,12 @@ class MakeUpExamResource extends Resource
                             ->helperText('Campo para anotações sobre parecer.')
                             ->label('Observações da coordenação'),
 
-                    ])
-                    ->hiddenOn('create')
-                    ->disabled(! auth()->user()->hasRole('super_admin')),
+                        Checkbox::make('archived')
+                            ->columnSpan(2)
+                            ->helperText('Segunda chamada concluída')
+                            ->label('Cumprida/Arquivada'),
+
+                    ]),
             ]);
     }
 
@@ -152,9 +156,9 @@ class MakeUpExamResource extends Resource
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime($format = 'd-m-y H:i')
+                    ->dateTime($format = 'd/m/y H:i')
                     ->sortable()
-                    ->label('Criado em'),
+                    ->label('Solicitado em'),
 
                 TextColumn::make('discipline_name')
                     ->label('Disciplina'),
