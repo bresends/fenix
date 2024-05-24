@@ -28,6 +28,8 @@ class SickNoteResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Atestados Médicos';
 
+    protected static ?string $navigationGroup = 'Documentos';
+
     public static function form(Form $form): Form
     {
         return $form

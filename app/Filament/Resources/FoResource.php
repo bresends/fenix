@@ -31,6 +31,9 @@ class FoResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Fatos Observados';
 
+    protected static ?string $navigationGroup = 'Documentos';
+
+
     public static function form(Form $form): Form
     {
         return $form
@@ -109,7 +112,7 @@ class FoResource extends Resource
 
                     ])
                     ->hiddenOn('create')
-                    ->disabled(fn (string $operation, Get $get): bool => $operation === 'edit' && $get('user_id') !== auth()->user()->id),
+                    ->disabled(fn(string $operation, Get $get): bool => $operation === 'edit' && $get('user_id') !== auth()->user()->id),
 
                 Section::make('Deliberação do FO (coordenação)')
                     ->description('Campo preenchido pela coordenação.')
@@ -127,7 +130,7 @@ class FoResource extends Resource
                             ->label('Cumprido/Arquivado'),
                     ])
                     ->hiddenOn('create')
-                    ->disabled(! auth()->user()->hasRole('super_admin')),
+                    ->disabled(!auth()->user()->hasRole('super_admin')),
             ]);
     }
 
@@ -178,7 +181,7 @@ class FoResource extends Resource
                     ->label('Descrição do fato')
                     ->limit(45)
                     ->toggleable()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         default => 'gray',
                     })
                     ->searchable(),

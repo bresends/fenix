@@ -34,6 +34,8 @@ class MakeUpExamResource extends Resource
 
     protected static bool $hasTitleCaseModelLabel = false;
 
+    protected static ?string $navigationGroup = 'Documentos';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -97,12 +99,12 @@ class MakeUpExamResource extends Resource
                             ->maxSize(5000)
                             ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                             ->getUploadedFileNameForStorageUsing(
-                                fn (TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
+                                fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
                                     ->prepend('segunda-chamada-'),
                             ),
 
                     ])
-                    ->disabled(fn (string $operation, Get $get): bool => $operation === 'edit' && $get('user_id') !== auth()->user()->id)
+                    ->disabled(fn(string $operation, Get $get): bool => $operation === 'edit' && $get('user_id') !== auth()->user()->id)
                     ->columns(2),
 
                 Section::make('Deliberar 2ª Chamada (coordenação)')
@@ -121,7 +123,7 @@ class MakeUpExamResource extends Resource
 
                     ])
                     ->hiddenOn('create')
-                    ->disabled(! auth()->user()->hasRole('super_admin')),
+                    ->disabled(!auth()->user()->hasRole('super_admin')),
             ]);
     }
 
@@ -153,7 +155,7 @@ class MakeUpExamResource extends Resource
                     ->dateTime($format = 'd-m-y H:i')
                     ->sortable()
                     ->label('Criado em'),
-                    
+
                 TextColumn::make('discipline_name')
                     ->label('Disciplina'),
 
