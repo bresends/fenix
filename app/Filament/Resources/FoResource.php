@@ -7,11 +7,13 @@ use App\Enums\FoStatusEnum;
 use App\Filament\Resources\FoResource\Pages;
 use App\Models\Fo;
 use App\Models\Military;
-use Filament\Forms;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
@@ -38,6 +40,9 @@ class FoResource extends Resource
         return $form
             ->schema([
                 Section::make('Emitir FO')
+                    ->hiddenOn('create')
+                    ->disabled(auth()->user()->hasExactRoles('panel_user'))
+                    ->disabledOn('edit')
                     ->columns(2)
                     ->schema([
                         Select::make('type')
@@ -53,12 +58,12 @@ class FoResource extends Resource
                             ->label('Horário da Anotação')
                             ->timezone('America/Sao_Paulo')
                             ->seconds(false)
-                            ->displayFormat('d-m-Y H:i')
+                            ->displayFormat('d/m/y H:i')
                             ->native(false)
                             ->required()
                             ->default(now()),
 
-                        Forms\Components\Select::make('user_id')
+                        Select::make('user_id')
                             ->relationship('user', 'name')
                             ->searchable(['name', 'rg'])
                             ->label('Observado')
@@ -76,7 +81,7 @@ class FoResource extends Resource
                             ->label('Observador')
                             ->searchable(),
 
-                        Forms\Components\TextInput::make('reason')
+                        TextInput::make('reason')
                             ->label('Descrição do fato')
                             ->prefix('📝️')
                             ->datalist([
@@ -91,29 +96,28 @@ class FoResource extends Resource
                             ])
                             ->required(),
 
-                        Forms\Components\RichEditor::make('observation')
+                        RichEditor::make('observation')
                             ->label('Observações')
                             ->disableToolbarButtons([
                                 'attachFiles',
                             ])
                             ->columnSpan(2),
-                    ])
-                    ->disabled(auth()->user()->hasExactRoles('panel_user'))
-                    ->disabledOn('edit'),
+                    ]),
 
                 Section::make('Ciência/Justificativa do aluno')
+                    ->disabled(fn (string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
                     ->schema([
-                        Forms\Components\RichEditor::make('excuse')
+                        RichEditor::make('excuse')
                             ->disableToolbarButtons([
                                 'attachFiles',
                             ])
                             ->label('Dê ciência ou justifique o FO recebido'),
 
-                    ])
-                    ->hiddenOn('create')
-                    ->disabled(fn (string $operation, Get $get): bool => $operation === 'edit' && $get('user_id') !== auth()->user()->id),
+                    ]),
 
                 Section::make('Deliberação do FO (coordenação)')
+                    ->hiddenOn('create')
+                    ->disabled(! auth()->user()->hasRole('super_admin'))
                     ->description('Campo preenchido pela coordenação.')
                     ->schema([
                         Radio::make('status')
@@ -121,15 +125,13 @@ class FoResource extends Resource
                             ->default('Em andamento')
                             ->label('Parecer'),
 
-                        Forms\Components\RichEditor::make('final_judgment_reason')
+                        RichEditor::make('final_judgment_reason')
                             ->helperText('Campo para anotações sobre parecer do FO, ordem de serviço, etc.')
                             ->label('Observações da coordenação'),
 
-                        Forms\Components\Toggle::make('paid')
+                        Toggle::make('paid')
                             ->label('Cumprido/Arquivado'),
-                    ])
-                    ->hiddenOn('create')
-                    ->disabled(! auth()->user()->hasRole('super_admin')),
+                    ]),
             ]);
     }
 
@@ -167,7 +169,7 @@ class FoResource extends Resource
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime($format = 'd-m-y H:i')
+                    ->dateTime($format = 'd/m/y H:i')
                     ->sortable()
                     ->label('Emitido em'),
 

@@ -35,13 +35,15 @@ class LeaveResource extends Resource
         return $form
             ->schema([
                 Section::make('Solicitar dispensa')
+                    ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
+                    ->columns(2)
                     ->schema([
                         DateTimePicker::make('date_leave')
                             ->prefix('➡️️')
                             ->label('Data e horário de saída:')
                             ->timezone('America/Sao_Paulo')
                             ->seconds(false)
-                            ->displayFormat('d-m-Y H:i')
+                            ->displayFormat('d/m/y H:i')
                             ->native(false)
                             ->required()
                             ->default(now()),
@@ -51,7 +53,7 @@ class LeaveResource extends Resource
                             ->label('Data e horário de retorno:')
                             ->timezone('America/Sao_Paulo')
                             ->seconds(false)
-                            ->displayFormat('d-m-Y H:i')
+                            ->displayFormat('d/m/y H:i')
                             ->native(false)
                             ->required()
                             ->default(now()),
@@ -102,13 +104,11 @@ class LeaveResource extends Resource
                             ->maxSize(5000)
                             ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                             ->getUploadedFileNameForStorageUsing(
-                                fn (TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
+                                fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
                                     ->prepend('dispensa-'),
                             ),
 
-                    ])
-                    ->disabled(fn (string $operation, Get $get): bool => $operation === 'edit' && $get('user_id') !== auth()->user()->id)
-                    ->columns(2),
+                    ]),
 
                 Section::make('Deliberar dispensa (coordenação)')
                     ->description('Determine se a dispensa será autorizada.')
@@ -132,7 +132,7 @@ class LeaveResource extends Resource
                             ->label('Cumprida/Arquivada'),
                     ])
                     ->hiddenOn('create')
-                    ->disabled(! auth()->user()->hasRole('super_admin')),
+                    ->disabled(!auth()->user()->hasRole('super_admin')),
             ]);
     }
 
@@ -166,17 +166,17 @@ class LeaveResource extends Resource
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime($format = 'd-m-y H:i')
+                    ->dateTime($format = 'd/m/y H:i')
                     ->sortable()
-                    ->label('Criado em'),
+                    ->label('Solicitado em'),
 
                 Tables\Columns\TextColumn::make('date_leave')
-                    ->dateTime($format = 'd-m-y H:i')
+                    ->dateTime($format = 'd/m/y H:i')
                     ->sortable()
                     ->label('Saída'),
 
                 Tables\Columns\TextColumn::make('date_back')
-                    ->dateTime($format = 'd-m-y H:i')
+                    ->dateTime($format = 'd/m/y H:i')
                     ->sortable()
                     ->label('Retorno'),
 

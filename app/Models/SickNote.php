@@ -32,18 +32,4 @@ class SickNote extends Model
             get: fn () => Carbon::parse($this->date_issued)->addDays($this->days_absent)->toDateString(),
         );
     }
-
-    public function userRank(): Attribute
-    {
-        return Attribute::make(
-            get: function () {
-                $user = $this->user;
-                if ($user && $user->rg) {
-                    return Military::where('id', $user->rg)->first()?->rank;
-                }
-
-                return null;
-            },
-        );
-    }
 }

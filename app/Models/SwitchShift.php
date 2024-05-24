@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\FoEnum;
 use App\Enums\FoStatusEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

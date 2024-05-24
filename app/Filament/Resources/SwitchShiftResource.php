@@ -42,6 +42,8 @@ class SwitchShiftResource extends Resource
         return $form
             ->schema([
                 Section::make('Solicitar troca de serviço')
+                    ->disabled(fn (string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
+                    ->columns(2)
                     ->schema([
 
                         Fieldset::make('1️⃣Primeiro Serviço')
@@ -51,7 +53,7 @@ class SwitchShiftResource extends Resource
                                     ->label('Data e hora (Serviço 1)')
                                     ->timezone('America/Sao_Paulo')
                                     ->seconds(false)
-                                    ->displayFormat('d-m-Y H:i')
+                                    ->displayFormat('d/m/y H:i')
                                     ->native(false)
                                     ->required()
                                     ->default(now()),
@@ -97,7 +99,7 @@ class SwitchShiftResource extends Resource
                                     ->label('Data e hora (Serviço 2)')
                                     ->timezone('America/Sao_Paulo')
                                     ->seconds(false)
-                                    ->displayFormat('d-m-Y H:i')
+                                    ->displayFormat('d/m/y H:i')
                                     ->native(false)
                                     ->required()
                                     ->default(now()),
@@ -106,6 +108,7 @@ class SwitchShiftResource extends Resource
                                     ->label('Local (Serviço 2)')
                                     ->prefix('📌')
                                     ->datalist([
+                                        'CAEBM',
                                         '1º BBM',
                                         '2º BBM',
                                         '8º BBM',
@@ -139,13 +142,10 @@ class SwitchShiftResource extends Resource
                             ])
                             ->required(),
 
-                    ])
-                    ->disabled(fn (string $operation, Get $get): bool => $operation === 'edit' && $get('user_id') !== auth()->user()->id)
-                    ->columns(2),
+                    ]),
 
                 Section::make('Motivo da troca de serviço')
                     ->schema([
-
                         RichEditor::make('motive')
                             ->required()
                             ->disableToolbarButtons([
@@ -171,10 +171,11 @@ class SwitchShiftResource extends Resource
                                 fn (TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
                                     ->prepend('troca-serviço-'),
                             ),
-                    ])
-                    ->columns(1),
+                    ]),
 
                 Section::make('Deliberar troca de serviço (coordenação)')
+                    ->hiddenOn('create')
+                    ->disabled(! auth()->user()->hasRole('super_admin'))
                     ->description('Determine se a troca de serviço será autorizada.')
                     ->schema([
                         Radio::make('status')
@@ -191,9 +192,7 @@ class SwitchShiftResource extends Resource
                             ->columnSpan(2)
                             ->helperText('O aluno gozou a dispensa e anexou documento comprobatório.')
                             ->label('Cumprida/Arquivada'),
-                    ])
-                    ->hiddenOn('create')
-                    ->disabled(! auth()->user()->hasRole('super_admin')),
+                    ]),
             ]);
     }
 
@@ -210,11 +209,15 @@ class SwitchShiftResource extends Resource
                     ->numeric()
                     ->label('Nº'),
 
-                TextColumn::make('requester')
-                    ->label('Solicitante'),
+                TextColumn::make('user.platoon')
+                    ->badge()
+                    ->label('Pelotão'),
 
-                TextColumn::make('requester')
-                    ->label('Solicitante'),
+                TextColumn::make('user.rg')
+                    ->label('Rg'),
+
+                TextColumn::make('user.name')
+                    ->label('Nome'),
 
                 Tables\Columns\TextColumn::make('type')
                     ->badge()
