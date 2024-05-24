@@ -15,11 +15,8 @@ class Military extends Model
     protected $fillable = [
         'rg',
         'name',
-        'email',
         'rank',
         'division',
-        'blood_type',
-        'tel',
     ];
 
     public function user(): BelongsTo

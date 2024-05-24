@@ -30,6 +30,18 @@ class User extends Authenticatable implements FilamentUser
         'password',
         'platoon',
         'rg',
+        'blood_type',
+        'phone_number',
+        'address',
+        'vehicle_type',
+        'vehicle_model',
+        'vehicle_brand',
+        'vehicle_color',
+        'vehicle_licence_plate',
+        'emergency_contact_name',
+        'emergency_contact_relationship',
+        'emergency_contact_phone_number',
+        'emergency_contact_address',
     ];
 
     /**
