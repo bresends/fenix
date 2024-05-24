@@ -111,7 +111,7 @@ class FoResource extends Resource
 
                     ])
                     ->hiddenOn('create')
-                    ->disabled(fn(string $operation, Get $get): bool => $operation === 'edit' && $get('user_id') !== auth()->user()->id),
+                    ->disabled(fn (string $operation, Get $get): bool => $operation === 'edit' && $get('user_id') !== auth()->user()->id),
 
                 Section::make('Deliberação do FO (coordenação)')
                     ->description('Campo preenchido pela coordenação.')
@@ -129,7 +129,7 @@ class FoResource extends Resource
                             ->label('Cumprido/Arquivado'),
                     ])
                     ->hiddenOn('create')
-                    ->disabled(!auth()->user()->hasRole('super_admin')),
+                    ->disabled(! auth()->user()->hasRole('super_admin')),
             ]);
     }
 
@@ -180,7 +180,7 @@ class FoResource extends Resource
                     ->label('Descrição do fato')
                     ->limit(45)
                     ->toggleable()
-                    ->color(fn(string $state): string => 'gray')
+                    ->color(fn (string $state): string => 'gray')
                     ->searchable(),
 
                 TextColumn::make('status')
@@ -191,6 +191,7 @@ class FoResource extends Resource
                 Tables\Columns\IconColumn::make('excuse')
                     ->label('Ciência/Justificativa')
                     ->boolean()
+                    ->alignCenter()
                     ->searchable(),
 
                 Tables\Columns\IconColumn::make('paid')
