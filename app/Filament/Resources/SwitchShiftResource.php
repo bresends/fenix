@@ -140,7 +140,7 @@ class SwitchShiftResource extends Resource
                             ->required(),
 
                     ])
-                    ->disabled(fn(string $operation, Get $get): bool => $operation === 'edit' && $get('user_id') !== auth()->user()->id)
+                    ->disabled(fn (string $operation, Get $get): bool => $operation === 'edit' && $get('user_id') !== auth()->user()->id)
                     ->columns(2),
 
                 Section::make('Motivo da troca de serviço')
@@ -168,7 +168,7 @@ class SwitchShiftResource extends Resource
                             ->maxSize(5000)
                             ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                             ->getUploadedFileNameForStorageUsing(
-                                fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
+                                fn (TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
                                     ->prepend('troca-serviço-'),
                             ),
                     ])
@@ -193,7 +193,7 @@ class SwitchShiftResource extends Resource
                             ->label('Cumprida/Arquivada'),
                     ])
                     ->hiddenOn('create')
-                    ->disabled(!auth()->user()->hasRole('super_admin')),
+                    ->disabled(! auth()->user()->hasRole('super_admin')),
             ]);
     }
 
@@ -221,9 +221,7 @@ class SwitchShiftResource extends Resource
                     ->label('Tipo')
                     ->limit(45)
                     ->toggleable()
-                    ->color(fn(string $state): string => match ($state) {
-                        default => 'gray',
-                    })
+                    ->color(fn (string $state): string => 'gray')
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('created_at')

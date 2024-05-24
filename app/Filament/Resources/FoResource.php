@@ -33,7 +33,6 @@ class FoResource extends Resource
 
     protected static ?string $navigationGroup = 'Documentos';
 
-
     public static function form(Form $form): Form
     {
         return $form
@@ -181,9 +180,7 @@ class FoResource extends Resource
                     ->label('Descrição do fato')
                     ->limit(45)
                     ->toggleable()
-                    ->color(fn(string $state): string => match ($state) {
-                        default => 'gray',
-                    })
+                    ->color(fn(string $state): string => 'gray')
                     ->searchable(),
 
                 TextColumn::make('status')

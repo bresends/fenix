@@ -102,12 +102,12 @@ class LeaveResource extends Resource
                             ->maxSize(5000)
                             ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                             ->getUploadedFileNameForStorageUsing(
-                                fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
+                                fn (TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
                                     ->prepend('dispensa-'),
                             ),
 
                     ])
-                    ->disabled(fn(string $operation, Get $get): bool => $operation === 'edit' && $get('user_id') !== auth()->user()->id)
+                    ->disabled(fn (string $operation, Get $get): bool => $operation === 'edit' && $get('user_id') !== auth()->user()->id)
                     ->columns(2),
 
                 Section::make('Deliberar dispensa (coordenação)')
@@ -132,7 +132,7 @@ class LeaveResource extends Resource
                             ->label('Cumprida/Arquivada'),
                     ])
                     ->hiddenOn('create')
-                    ->disabled(!auth()->user()->hasRole('super_admin')),
+                    ->disabled(! auth()->user()->hasRole('super_admin')),
             ]);
     }
 
