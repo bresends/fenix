@@ -2,9 +2,10 @@
 
 namespace App\Enums;
 
+use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum DivisionEnum: string implements HasLabel
+enum DivisionEnum: string implements HasColor, HasLabel
 {
     case QP_COMBATENTE = 'QP/Combatente';
     case QOC = 'QOC';
@@ -20,13 +21,24 @@ enum DivisionEnum: string implements HasLabel
     {
         return match ($this) {
             self::QP_COMBATENTE => 'QP/Combatente',
-            self::QOC => 'QOC',
+            self::QP_ESPECIAL => 'QP/Especial',
             self::QP_MUSICO => 'QP/Músico',
+            self::QOC => 'QOC',
+            self::QOS_MEDICO => 'QOS/Médico',
+            self::QOS_DENTISTA => 'QOS/Dentista',
             self::QOA_ADMINISTRATIVO => 'QOA/Administrativo',
             self::QOA_MUSICO => 'QOA/Músico',
-            self::QOS_DENTISTA => 'QOS/Dentista',
-            self::QOS_MEDICO => 'QOS/Médico',
-            self::QP_ESPECIAL => 'QP/Especial',
         };
+    }
+
+    public function getColor(): string|array|null
+    {
+        return match ($this) {
+            self::QP_ESPECIAL, self::QP_COMBATENTE, self::QP_MUSICO => 'success',
+            self::QOS_DENTISTA, self::QOS_MEDICO => 'gray',
+            self::QOA_MUSICO, self::QOA_ADMINISTRATIVO => 'warning',
+            self::QOC => 'danger',
+        };
+
     }
 }

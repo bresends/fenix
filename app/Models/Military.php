@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\DivisionEnum;
+use App\Enums\RankEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,6 +21,14 @@ class Military extends Model
         'division',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'rank' => RankEnum::class,
+            'division' => DivisionEnum::class,
+        ];
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -34,7 +44,7 @@ class Military extends Model
         $formatted_string = '0'.substr((string) $this->rg, 0, 1).'.'.substr((string) $this->rg, 1);
 
         return Attribute::make(
-            get: fn () => $this->rank.' '.$this->division.' '.$formatted_string.' '.$this->name
+            get: fn () => $this->rank->value.' '.$this->division->value.' '.$formatted_string.' '.$this->name
         );
     }
 }
