@@ -219,21 +219,31 @@ class UserResource extends Resource
                     $query->where('id', auth()->user()->id);
                 }
             })
+            ->defaultSort('platoon', 'asc')
             ->columns([
                 TextColumn::make('platoon')
                     ->icon('heroicon-o-users')
                     ->badge()
-                    ->label('Pelotão')
-                    ->searchable(),
+                    ->sortable()
+                    ->label('Pelotão'),
+
                 TextColumn::make('rg')
+                    ->sortable()
+                    ->searchable()
                     ->label('Rg'),
+
                 TextColumn::make('name')
+                    ->sortable()
+                    ->searchable()
                     ->label('Nome'),
+
                 TextColumn::make('email'),
+
                 TextColumn::make('roles.name')
                     ->label('Perfis')
                     ->listWithLineBreaks()
                     ->badge()
+                    ->sortable()
                     ->hidden(! auth()->user()->hasRole('super_admin')),
             ])
             ->filters([
