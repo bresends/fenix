@@ -12,6 +12,7 @@ enum RankEnum: string implements HasLabel
     case CB = 'Cb';
     case PRIMEIRO_SGT = '1º Sgt';
     case SEGUNDO_SGT = '2º Sgt';
+    case TERCEIRO_SGT = '3º Sgt';
     case ST = 'ST';
     case AL_OF_ADM = 'Al Of Adm';
     case CAD = 'Cad';
@@ -32,6 +33,7 @@ enum RankEnum: string implements HasLabel
             self::CB => 'Cb',
             self::PRIMEIRO_SGT => '1º Sgt',
             self::SEGUNDO_SGT => '2º Sgt',
+            self::TERCEIRO_SGT => '3º Sgt',
             self::ST => 'ST',
             self::AL_OF_ADM => 'Al Of Adm',
             self::CAD => 'Cad',
