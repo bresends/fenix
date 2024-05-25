@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\BloodTypeEnum;
 use App\Enums\DivisionEnum;
 use App\Enums\RankEnum;
 use App\Filament\Resources\MilitaryResource\Pages;
@@ -69,14 +68,17 @@ class MilitaryResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('division', 'asc')
+            ->persistSearchInSession()
             ->columns([
                 TextColumn::make('rank')
-                    ->label('Posto/Grad')
-                    ->alignCenter()
-                    ->width('1%')
+                    ->label('Posto/Grad.')
+                    ->badge()
                     ->sortable(),
 
                 TextColumn::make('division')
+                    ->badge()
+                    ->sortable()
                     ->label('Quadro'),
 
                 TextColumn::make('rg')
@@ -97,8 +99,6 @@ class MilitaryResource extends Resource
                     ->copyMessage('Copiado para área de trasferência')
                     ->copyMessageDuration(1000),
             ])
-            ->defaultSort('rg', 'asc')
-            ->persistSearchInSession()
             ->filters([
                 //
             ])
