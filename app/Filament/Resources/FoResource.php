@@ -40,7 +40,6 @@ class FoResource extends Resource
         return $form
             ->schema([
                 Section::make('Emitir FO')
-                    ->hiddenOn('create')
                     ->disabled(auth()->user()->hasExactRoles('panel_user'))
                     ->disabledOn('edit')
                     ->columns(2)
