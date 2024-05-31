@@ -21,7 +21,7 @@ class ListMakeUpExams extends ListRecords
                 ->icon('heroicon-o-clock')
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('status', StatusFoEnum::EM_ANDAMENTO->value)),
             'Falta encaminhamento' => Tab::make()
-                ->icon('heroicon-o-question-mark-circle')
+                ->icon('heroicon-o-arrow-right-circle')
                 ->modifyQueryUsing(fn(Builder $query) => $query
                     ->where('status', "!=", StatusFoEnum::EM_ANDAMENTO->value)
                     ->where('archived', false)),
