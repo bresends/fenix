@@ -15,6 +15,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -195,7 +196,7 @@ class LeaveResource extends Resource
                     ->html()
                     ->label('Motivo'),
 
-                Tables\Columns\IconColumn::make('paid')
+                IconColumn::make('paid')
                     ->label('Arquivada')
                     ->boolean()
                     ->alignCenter(),
