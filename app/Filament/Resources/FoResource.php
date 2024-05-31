@@ -84,14 +84,14 @@ class FoResource extends Resource
                             ->label('Descrição do fato')
                             ->prefix('📝️')
                             ->datalist([
-                                'Atrasar ou Faltar Serviço/Escala (Art. 142 da NE01, RDBM 4681/96 Anexo 01 Item 27)',
-                                'Sem Luva e Identidade (Art. 142 da NE01, RDBM 4681/96 Anexo 01 Item 85)',
-                                'Cabelo fora do Padrão (Art. 133 II da NE01)',
-                                'Pé de Cabelo e Barba Fora do Padrão (Art. 133 V da NE01)',
-                                'Uniforme Sujo ou Mal Passado ou em Desalinho (sem gorro) (Ar. 133 VIII da NE01)',
-                                'Bota/sapato/coturno não Engraxado e não Polido (Art. 133 IX da NE01)',
-                                'Não Cumpriu o Horário para entrar em forma após 6 piques (Art. 133 I da NE01 (horários). Art. 30 da NE01)',
-                                'Uso de óculos escuros ou Telefone Celular durante o expediente sem a devida autorização. Art. 133 XIV da NE01',
+                                'Atrasar ou Faltar Serviço/Escala',
+                                'Sem Luva e Identidade ',
+                                'Cabelo fora do Padrão ',
+                                'Pé de Cabelo e Barba Fora do Padrão ',
+                                'Uniforme Sujo ou Mal Passado ou em Desalinho (sem gorro) ',
+                                'Bota/sapato/coturno não Engraxado e não Polido',
+                                'Não Cumpriu o Horário para entrar em forma após 6 piques ',
+                                'Uso de óculos escuros ou Telefone Celular durante o expediente sem a devida autorização.',
                             ])
                             ->required(),
 
@@ -116,7 +116,7 @@ class FoResource extends Resource
 
                 Section::make('Deliberação do FO (coordenação)')
                     ->hiddenOn('create')
-                    ->disabled(! auth()->user()->hasRole('super_admin'))
+                    ->disabled(!auth()->user()->hasRole('super_admin'))
                     ->description('Campo preenchido pela coordenação.')
                     ->schema([
                         Radio::make('status')
