@@ -83,7 +83,7 @@ class SickNoteResource extends Resource
                             ->required()
                             ->rows(5)
                             ->helperText('Especificar restrições médicas com detalhes. Ex. Impedido de praticar corrida.')
-                            ->label('Restrições'),
+                            ->label('Restrições/Recomendações Médicas'),
                     ]),
             ]);
     }
