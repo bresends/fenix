@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Enums\FoEnum;
-use App\Enums\FoStatusEnum;
+use App\Enums\StatusFoEnum;
 use App\Filament\Resources\FoResource\Pages;
 use App\Models\Fo;
 use App\Models\Military;
@@ -19,6 +19,7 @@ use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -104,7 +105,8 @@ class FoResource extends Resource
                     ]),
 
                 Section::make('Ciência/Justificativa do aluno')
-                    ->disabled(fn (string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
+                    ->hiddenOn('create')
+                    ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
                     ->schema([
                         RichEditor::make('excuse')
                             ->disableToolbarButtons([
@@ -120,7 +122,7 @@ class FoResource extends Resource
                     ->description('Campo preenchido pela coordenação.')
                     ->schema([
                         Radio::make('status')
-                            ->options(FoStatusEnum::class)
+                            ->options(StatusFoEnum::class)
                             ->default('Em andamento')
                             ->label('Parecer'),
 
@@ -145,7 +147,6 @@ class FoResource extends Resource
                 }
             })
             ->columns([
-
                 Tables\Columns\TextColumn::make('id')
                     ->label('FO')
                     ->searchable()
@@ -181,7 +182,7 @@ class FoResource extends Resource
                     ->label('Descrição do fato')
                     ->limit(45)
                     ->toggleable()
-                    ->color(fn (string $state): string => 'gray')
+                    ->color(fn(string $state): string => 'gray')
                     ->searchable(),
 
                 TextColumn::make('status')
@@ -202,8 +203,11 @@ class FoResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options(FoStatusEnum::class)
+                    ->options(StatusFoEnum::class)
                     ->label('Parecer'),
+                Filter::make('paid')
+                    ->label("Cumprido/Arquivado")
+                    ->toggle()
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
