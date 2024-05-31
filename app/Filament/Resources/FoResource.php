@@ -104,6 +104,7 @@ class FoResource extends Resource
                     ]),
 
                 Section::make('Ciência/Justificativa do aluno')
+                    ->hiddenOn('create')
                     ->disabled(fn (string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
                     ->schema([
                         RichEditor::make('excuse')
