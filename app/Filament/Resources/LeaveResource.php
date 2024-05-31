@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\FoStatusEnum;
+use App\Enums\StatusEnum;
 use App\Filament\Resources\LeaveResource\Pages;
 use App\Models\Leave;
 use Filament\Forms\Components\Checkbox;
@@ -115,7 +115,7 @@ class LeaveResource extends Resource
                     ->schema([
 
                         Radio::make('status')
-                            ->options(FoStatusEnum::class)
+                            ->options(StatusEnum::class)
                             ->default('Em andamento')
                             ->label('Parecer')
                             ->disabled((auth()->user()->hasRole('panel_user'))),

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\FoStatusEnum;
+use App\Enums\StatusEnum;
 use App\Filament\Resources\SwitchShiftResource\Pages;
 use App\Models\Military;
 use App\Models\SwitchShift;
@@ -179,7 +179,7 @@ class SwitchShiftResource extends Resource
                     ->description('Determine se a troca de serviço será autorizada.')
                     ->schema([
                         Radio::make('status')
-                            ->options(FoStatusEnum::class)
+                            ->options(StatusEnum::class)
                             ->default('Em andamento')
                             ->label('Parecer'),
 

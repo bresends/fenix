@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Enums\FoEnum;
-use App\Enums\FoStatusEnum;
+use App\Enums\StatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,7 +28,7 @@ class Leave extends Model
     protected function casts(): array
     {
         return [
-            'status' => FoStatusEnum::class,
+            'status' => StatusEnum::class,
         ];
     }
 

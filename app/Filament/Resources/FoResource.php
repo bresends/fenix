@@ -3,7 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Enums\FoEnum;
-use App\Enums\FoStatusEnum;
+use App\Enums\StatusEnum;
+use App\Enums\StatusFoEnum;
 use App\Filament\Resources\FoResource\Pages;
 use App\Models\Fo;
 use App\Models\Military;
@@ -121,7 +122,7 @@ class FoResource extends Resource
                     ->description('Campo preenchido pela coordenação.')
                     ->schema([
                         Radio::make('status')
-                            ->options(FoStatusEnum::class)
+                            ->options(StatusFoEnum::class)
                             ->default('Em andamento')
                             ->label('Parecer'),
 
@@ -203,7 +204,7 @@ class FoResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options(FoStatusEnum::class)
+                    ->options(StatusEnum::class)
                     ->label('Parecer'),
             ])
             ->actions([

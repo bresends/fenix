@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\FoStatusEnum;
+use App\Enums\StatusEnum;
 use App\Enums\MakeUpExamStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -28,7 +28,7 @@ class MakeUpExam extends Model
     protected function casts(): array
     {
         return [
-            'status' => FoStatusEnum::class,
+            'status' => StatusEnum::class,
             'type' => MakeUpExamStatusEnum::class,
         ];
     }

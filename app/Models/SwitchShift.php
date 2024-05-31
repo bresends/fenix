@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\FoStatusEnum;
+use App\Enums\StatusEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -33,7 +33,7 @@ class SwitchShift extends Model
     protected function casts(): array
     {
         return [
-            'status' => FoStatusEnum::class,
+            'status' => StatusEnum::class,
         ];
     }
 

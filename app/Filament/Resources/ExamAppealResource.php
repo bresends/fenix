@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\FoStatusEnum;
+use App\Enums\StatusEnum;
 use App\Enums\MakeUpExamStatusEnum;
 use App\Filament\Resources\ExamAppealResource\Pages;
 use App\Models\ExamAppeal;
@@ -119,7 +119,7 @@ class ExamAppealResource extends Resource
                     ->schema([
 
                         Radio::make('status')
-                            ->options(FoStatusEnum::class)
+                            ->options(StatusEnum::class)
                             ->default('Em andamento')
                             ->label('Parecer')
                             ->disabled((auth()->user()->hasRole('panel_user'))),

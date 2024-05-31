@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use App\Enums\StatusFoEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Enums\FoEnum;
-use App\Enums\FoStatusEnum;
+use App\Enums\StatusEnum;
 
 class Fo extends Model
 {
@@ -29,7 +30,7 @@ class Fo extends Model
     {
         return [
             'type' => FoEnum::class,
-            'status' => FoStatusEnum::class,
+            'status' => StatusFoEnum::class,
         ];
     }
 
