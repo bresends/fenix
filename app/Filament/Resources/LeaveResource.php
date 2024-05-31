@@ -16,6 +16,8 @@ use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -93,22 +95,24 @@ class LeaveResource extends Resource
                             ->helperText('Conforme previsto na NE-01, existe um limite de faltas em cada disciplina. Caso exceda esse número, o discente poderá ser desligado do curso.')
                             ->label('Ciência de possibilidade de desligamento'),
 
-                        FileUpload::make('file')
-                            ->disk('public')
-                            ->visibility('public')
-                            ->label('Arquivo comprobatório')
-                            ->directory('leave')
-                            ->openable()
-                            ->columnSpan(2)
-                            ->downloadable()
-                            ->maxSize(5000)
-                            ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
-                            ->getUploadedFileNameForStorageUsing(
-                                fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
-                                    ->prepend('dispensa-'),
-                            ),
 
                     ]),
+                FileUpload::make('file')
+                    ->disk('public')
+                    ->visibility('public')
+                    ->label('Arquivo comprobatório')
+                    ->directory('leave')
+                    ->openable()
+                    ->columnSpan(2)
+                    ->downloadable()
+                    ->maxSize(5000)
+                    ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                    ->getUploadedFileNameForStorageUsing(
+                        fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
+                            ->prepend('dispensa-'),
+                    )
+                    ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' &&
+                            $get('user_id') !== auth()->user()->id) || $get('paid') === true),
 
                 Section::make('Deliberar dispensa (coordenação)')
                     ->description('Determine se a dispensa será autorizada.')
@@ -129,7 +133,7 @@ class LeaveResource extends Resource
                         Checkbox::make('paid')
                             ->columnSpan(2)
                             ->helperText('O aluno gozou a dispensa e anexou documento comprobatório.')
-                            ->label('Cumprida/Arquivada'),
+                            ->label('Arquivada'),
                     ])
                     ->hiddenOn('create')
                     ->disabled(!auth()->user()->hasRole('super_admin')),
@@ -192,12 +196,17 @@ class LeaveResource extends Resource
                     ->label('Motivo'),
 
                 Tables\Columns\IconColumn::make('paid')
-                    ->label('Cumprida/Arquivada')
+                    ->label('Arquivada')
                     ->boolean()
                     ->alignCenter(),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->options(StatusEnum::class)
+                    ->label('Parecer'),
+                Filter::make('paid')
+                    ->label("Arquivada")
+                    ->toggle()
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
