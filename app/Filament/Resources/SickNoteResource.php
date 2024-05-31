@@ -52,7 +52,7 @@ class SickNoteResource extends Resource
                             ->maxSize(5000)
                             ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                             ->getUploadedFileNameForStorageUsing(
-                                fn (TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
+                                fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
                                     ->prepend('atestado-medico-'),
                             ),
 
