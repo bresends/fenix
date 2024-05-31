@@ -18,7 +18,10 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -69,7 +72,7 @@ class MakeUpExamResource extends Resource
 
                         DatePicker::make('date_back')
                             ->prefix('⬅️')
-                            ->label('Data do retorno (do afastamento ou término de restrição física.')
+                            ->label('Data em que ficou apto para realizar a avaliação')
                             ->timezone('America/Sao_Paulo')
                             ->seconds(false)
                             ->displayFormat('d/m/y')
@@ -108,7 +111,7 @@ class MakeUpExamResource extends Resource
                     ]),
 
                 Section::make('Deliberar 2ª Chamada (coordenação)')
-                    ->description('Determine se a dispensa será autorizada.')
+                    ->description('Determine se a 2ª chamada será autorizada.')
                     ->hiddenOn('create')
                     ->disabled(!auth()->user()->hasRole('super_admin'))
                     ->schema([
@@ -125,7 +128,7 @@ class MakeUpExamResource extends Resource
                         Checkbox::make('archived')
                             ->columnSpan(2)
                             ->helperText('Segunda chamada concluída')
-                            ->label('Cumprida/Arquivada'),
+                            ->label('Encaminhada para a SETEB/Arquivada'),
 
                     ]),
             ]);
@@ -177,9 +180,19 @@ class MakeUpExamResource extends Resource
                     ->toggleable()
                     ->html()
                     ->label('Motivo'),
+
+                IconColumn::make('archived')
+                    ->label('Encaminhada para a SETEB/Arquivada')
+                    ->boolean()
+                    ->alignCenter(),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->options(StatusEnum::class)
+                    ->label('Parecer'),
+                Filter::make('archived')
+                    ->label("Arquivada")
+                    ->toggle()
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

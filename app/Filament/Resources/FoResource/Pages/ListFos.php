@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\FoResource\Pages;
 
+use App\Enums\FoEnum;
 use App\Enums\StatusFoEnum;
 use App\Filament\Resources\FoResource;
 use Filament\Actions;
@@ -23,7 +24,9 @@ class ListFos extends ListRecords
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('status', StatusFoEnum::EM_ANDAMENTO->value)),
             'Não cumpridos' => Tab::make()
                 ->icon('heroicon-o-document-minus')
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('paid', false)),
+                ->modifyQueryUsing(fn(Builder $query) => $query
+                    ->where('type', FoEnum::Negativo->value)
+                    ->where('paid', false)),
         ];
     }
 
