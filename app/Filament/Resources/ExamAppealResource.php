@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\StatusEnum;
 use App\Enums\MakeUpExamStatusEnum;
+use App\Enums\StatusExamEnum;
 use App\Filament\Resources\ExamAppealResource\Pages;
 use App\Models\ExamAppeal;
 use Filament\Forms\Components\Checkbox;
@@ -18,6 +18,8 @@ use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -44,7 +46,7 @@ class ExamAppealResource extends Resource
             ->schema([
                 Section::make('Solicitar recurso')
                     ->columns(2)
-                    ->disabled(fn (string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
+                    ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
                     ->schema([
                         TextInput::make('discipline')
                             ->label('Nome da disciplina (conforme consta no Plano de Curso)')
@@ -65,10 +67,9 @@ class ExamAppealResource extends Resource
                             ->required(),
 
                         TextInput::make('question')
-                            ->label('Questão')
+                            ->label('Questão/Item avaliado')
                             ->placeholder('12')
-                            ->required()
-                            ->numeric(),
+                            ->required(),
 
                         RichEditor::make('motive')
                             ->required()
@@ -106,20 +107,20 @@ class ExamAppealResource extends Resource
                             ->maxSize(5000)
                             ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                             ->getUploadedFileNameForStorageUsing(
-                                fn (TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
+                                fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
                                     ->prepend('recurso-'),
                             ),
 
                     ]),
 
                 Section::make('Deliberar recurso (coordenação)')
-                    ->description('Determine se o recurso será autorizada.')
+                    ->description('Determine se o encaminhamento do recurso será autorizado.')
                     ->hiddenOn('create')
-                    ->disabled(! auth()->user()->hasRole('super_admin'))
+                    ->disabled(!auth()->user()->hasRole('super_admin'))
                     ->schema([
 
                         Radio::make('status')
-                            ->options(StatusEnum::class)
+                            ->options(StatusExamEnum::class)
                             ->default('Em andamento')
                             ->label('Parecer')
                             ->disabled((auth()->user()->hasRole('panel_user'))),
@@ -132,7 +133,7 @@ class ExamAppealResource extends Resource
 
                         Checkbox::make('archived')
                             ->columnSpan(2)
-                            ->label('Arquivado'),
+                            ->label('Encaminhado para a SETEB/Arquivado'),
                     ]),
             ]);
     }
@@ -178,10 +179,15 @@ class ExamAppealResource extends Resource
                 TextColumn::make('status')
                     ->badge()
                     ->searchable()
-                    ->label('Parecer'),
+                    ->label('Parecer do encaminhamento'),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->options(StatusExamEnum::class)
+                    ->label('Parecer'),
+                Filter::make('archived')
+                    ->label('Encaminhado para a SETEB/Arquivado')
+                    ->toggle()
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

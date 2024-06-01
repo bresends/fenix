@@ -7,6 +7,7 @@ use App\Enums\StatusFoEnum;
 use App\Filament\Resources\FoResource\Pages;
 use App\Models\Fo;
 use App\Models\Military;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\RichEditor;
@@ -130,7 +131,8 @@ class FoResource extends Resource
                             ->helperText('Campo para anotações sobre parecer do FO, ordem de serviço, etc.')
                             ->label('Observações da coordenação'),
 
-                        Toggle::make('paid')
+                        Checkbox::make('paid')
+                            ->helperText('FO cumprido em Ordem de Serviço e/ou arquivado.')
                             ->label('Cumprido/Arquivado'),
                     ]),
             ]);
