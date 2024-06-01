@@ -26,6 +26,7 @@ class ListFos extends ListRecords
                 ->icon('heroicon-o-document-minus')
                 ->modifyQueryUsing(fn(Builder $query) => $query
                     ->where('type', FoEnum::Negativo->value)
+                    ->where('status', "!=", StatusFoEnum::EM_ANDAMENTO->value)
                     ->where('paid', false)),
         ];
     }
