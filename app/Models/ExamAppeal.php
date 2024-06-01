@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\StatusEnum;
+use App\Enums\StatusExamEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -30,7 +31,7 @@ class ExamAppeal extends Model
     protected function casts(): array
     {
         return [
-            'status' => StatusEnum::class,
+            'status' => StatusExamEnum::class,
         ];
     }
 
