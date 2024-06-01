@@ -176,14 +176,14 @@ class SwitchShiftResource extends Resource
                             ),
                     ]),
 
-                Section::make('Aceitar troca de serviço')
+                Section::make('Ciência do 2º aluno envolvido')
                     ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('first_shift_paying_military'
                             ) !== auth()->user()->name) || $get('status') !== 'Em andamento')
                     ->hiddenOn('create')
                     ->columns(2)
                     ->schema([
                         Checkbox::make('accepted')
-                            ->label('Aceito a solicitação de troca de serviço')
+                            ->label('Aceito a solicitação de troca de serviço.')
                             ->required(),
                     ]),
 
