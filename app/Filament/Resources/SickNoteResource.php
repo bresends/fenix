@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\StatusEnum;
 use App\Filament\Resources\SickNoteResource\Pages;
 use App\Models\SickNote;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Section;
@@ -12,7 +14,10 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -58,7 +63,7 @@ class SickNoteResource extends Resource
 
                         DatePicker::make('date_issued')
                             ->prefix('⏰️')
-                            ->label('Data do Atestado')
+                            ->label('Data do atestado')
                             ->timezone('America/Sao_Paulo')
                             ->displayFormat('d/m/y')
                             ->native(false)
@@ -67,7 +72,7 @@ class SickNoteResource extends Resource
 
                         TextInput::make('days_absent')
                             ->prefix('🔢')
-                            ->label('Dias ausente')
+                            ->label('Quantidade de dias')
                             ->default(1)
                             ->required()
                             ->minValue(1)
@@ -84,7 +89,23 @@ class SickNoteResource extends Resource
                             ->rows(5)
                             ->helperText('Especificar restrições médicas com detalhes. Ex. Impedido de praticar corrida.')
                             ->label('Restrições/Recomendações Médicas'),
+
+
                     ]),
+                Section::make('Controle de dispensa médica')
+                    ->schema([
+                        Checkbox::make('received')
+                            ->columnSpan(2)
+                            ->helperText('Marque se o atestado médico foi recebido pelo DABM.')
+                            ->label('Recebido/Ciente do DABM'),
+
+                        Checkbox::make('archived')
+                            ->columnSpan(2)
+                            ->helperText('Marque se o atestado médico foi anexado no SEI e pode ser arquivado.')
+                            ->label('Anexado no SEI/Arquivado'),
+                    ])
+                    ->hiddenOn('create')
+                    ->disabled(!auth()->user()->hasRole('super_admin')),
             ]);
     }
 
@@ -97,7 +118,6 @@ class SickNoteResource extends Resource
                 }
             })
             ->columns([
-
                 TextColumn::make('id')
                     ->numeric()
                     ->label('Nº'),
@@ -112,30 +132,48 @@ class SickNoteResource extends Resource
                 TextColumn::make('user.name')
                     ->label('Nome'),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime($format = 'd/m/y')
                     ->sortable()
                     ->label('Data de envio'),
 
-                Tables\Columns\TextColumn::make('date_issued')
+                TextColumn::make('date_issued')
                     ->dateTime($format = 'd/m/y')
                     ->sortable()
                     ->label('Data do atestado'),
 
-                Tables\Columns\TextColumn::make('days_absent')
+                TextColumn::make('days_absent')
                     ->label('Dias afastado'),
 
-                Tables\Columns\TextColumn::make('dayBack')
+                TextColumn::make('dayBack')
                     ->dateTime($format = 'd/m/y')
                     ->sortable()
                     ->label('Data de retorno'),
 
-                Tables\Columns\TextColumn::make('motive')
+                TextColumn::make('motive')
                     ->limit(40)
                     ->label('Motivo'),
+
+                IconColumn::make('received')
+                    ->label('Recebido/Ciente do DABM')
+                    ->boolean()
+                    ->alignCenter(),
+
+                IconColumn::make('archived')
+                    ->label('Anexado no SEI/Arquivado')
+                    ->boolean()
+                    ->alignCenter(),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->options(StatusEnum::class)
+                    ->label('Parecer'),
+                Filter::make('received')
+                    ->label("Recebido/Ciente do DABM")
+                    ->toggle(),
+                Filter::make('archived')
+                    ->label("Anexado no SEI/Arquivado")
+                    ->toggle()
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

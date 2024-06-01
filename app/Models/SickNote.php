@@ -18,6 +18,8 @@ class SickNote extends Model
         'days_absent',
         'motive',
         'restrictions',
+        'archived',
+        'received',
         'user_id',
     ];
 
