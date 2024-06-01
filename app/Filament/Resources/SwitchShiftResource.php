@@ -20,7 +20,10 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -42,11 +45,11 @@ class SwitchShiftResource extends Resource
         return $form
             ->schema([
                 Section::make('Solicitar troca de serviço')
-                    ->disabled(fn (string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
+                    ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
                     ->columns(2)
                     ->schema([
 
-                        Fieldset::make('1️⃣Primeiro Serviço')
+                        Fieldset::make('Serviço em que será substituído')
                             ->schema([
                                 DateTimePicker::make('first_shift_date')
                                     ->prefix('📆️')
@@ -92,7 +95,7 @@ class SwitchShiftResource extends Resource
                                     }),
                             ]),
 
-                        Fieldset::make('2️⃣Segundo Serviço')
+                        Fieldset::make('Serviço em que será substituto')
                             ->schema([
                                 DateTimePicker::make('second_shift_date')
                                     ->prefix('📆️️')
@@ -137,14 +140,14 @@ class SwitchShiftResource extends Resource
                             ->datalist([
                                 'Aluno Adjunto',
                                 'Cadete de Dia',
-                                'Plantão / Ronda no CAEBM',
+                                'Plantão/Ronda no CAEBM',
                                 'Estágio Operacional (ABT/ABTS/ASA/UR)',
                             ])
                             ->required(),
 
                     ]),
-
                 Section::make('Motivo da troca de serviço')
+                    ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
                     ->schema([
                         RichEditor::make('motive')
                             ->required()
@@ -168,14 +171,25 @@ class SwitchShiftResource extends Resource
                             ->maxSize(5000)
                             ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                             ->getUploadedFileNameForStorageUsing(
-                                fn (TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
+                                fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
                                     ->prepend('troca-serviço-'),
                             ),
                     ]),
 
+                Section::make('Aceitar troca de serviço')
+                    ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('first_shift_paying_military'
+                            ) !== auth()->user()->name) || $get('status') !== 'Em andamento')
+                    ->hiddenOn('create')
+                    ->columns(2)
+                    ->schema([
+                        Checkbox::make('accepted')
+                            ->label('Aceitar troca de serviço')
+                            ->required(),
+                    ]),
+
                 Section::make('Deliberar troca de serviço (coordenação)')
                     ->hiddenOn('create')
-                    ->disabled(! auth()->user()->hasRole('super_admin'))
+                    ->disabled(!auth()->user()->hasRole('super_admin'))
                     ->description('Determine se a troca de serviço será autorizada.')
                     ->schema([
                         Radio::make('status')
@@ -190,8 +204,7 @@ class SwitchShiftResource extends Resource
 
                         Checkbox::make('paid')
                             ->columnSpan(2)
-                            ->helperText('O aluno gozou a dispensa e anexou documento comprobatório.')
-                            ->label('Cumprida/Arquivada'),
+                            ->label('Informado às OBMs/Arquivado'),
                     ]),
             ]);
     }
@@ -201,7 +214,8 @@ class SwitchShiftResource extends Resource
         return $table
             ->modifyQueryUsing(function (Builder $query) {
                 if (auth()->user()->hasExactRoles('panel_user')) {
-                    $query->where('user_id', auth()->user()->id);
+                    $query->where('user_id', auth()->user()->id)
+                    ->orWhere('first_shift_paying_military', auth()->user()->name);
                 }
             })
             ->columns([
@@ -217,29 +231,34 @@ class SwitchShiftResource extends Resource
                     ->label('Rg'),
 
                 TextColumn::make('user.name')
-                    ->label('Nome'),
+                    ->label('Solicitante'),
 
-                Tables\Columns\TextColumn::make('type')
+                TextColumn::make('type')
                     ->badge()
                     ->label('Tipo')
                     ->limit(45)
                     ->toggleable()
-                    ->color(fn (string $state): string => 'gray')
+                    ->color(fn(string $state): string => 'gray')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime($format = 'd/m/y H:i')
                     ->sortable()
                     ->label('Solicitado em'),
 
-                Tables\Columns\TextColumn::make('first_shift_date')
+                TextColumn::make('first_shift_date')
                     ->dateTime($format = 'd/m/y H:i')
                     ->sortable()
                     ->label('Data da troca'),
 
+                IconColumn::make('accepted')
+                    ->label('Aceita pelo substituto')
+                    ->boolean()
+                    ->alignCenter(),
+
                 TextColumn::make('status')
                     ->badge()
-                    ->searchable()
+                    ->sortable()
                     ->label('Parecer'),
 
                 TextColumn::make('motive')
@@ -247,9 +266,20 @@ class SwitchShiftResource extends Resource
                     ->toggleable()
                     ->html()
                     ->label('Motivo'),
+
+                IconColumn::make('paid')
+                    ->label('Informado às OBMs/Arquivado')
+                    ->boolean()
+                    ->alignCenter(),
+
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->options(StatusEnum::class)
+                    ->label('Parecer'),
+                Filter::make('paid')
+                    ->label("Anexado no SEI/Arquivado")
+                    ->toggle()
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
