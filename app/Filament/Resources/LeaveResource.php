@@ -99,7 +99,7 @@ class LeaveResource extends Resource
 
                     ]),
                 FileUpload::make('file')
-                    ->disk('public')
+                    ->disk('r2')
                     ->visibility('public')
                     ->label('Arquivo comprobatório')
                     ->directory('leave')
@@ -118,7 +118,6 @@ class LeaveResource extends Resource
                 Section::make('Deliberar dispensa (coordenação)')
                     ->description('Determine se a dispensa será autorizada.')
                     ->schema([
-
                         Radio::make('status')
                             ->options(StatusEnum::class)
                             ->default('Em andamento')
@@ -154,33 +153,33 @@ class LeaveResource extends Resource
                     ->numeric()
                     ->label('Nº'),
 
-                Tables\Columns\TextColumn::make('user.platoon')
+                TextColumn::make('user.platoon')
                     ->label('Pelotão')
                     ->badge()
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('user.name')
+                TextColumn::make('user.name')
                     ->label('Nome')
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('user.rg')
+                TextColumn::make('user.rg')
                     ->label('Rg')
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime($format = 'd/m/y H:i')
                     ->sortable()
                     ->label('Solicitado em'),
 
-                Tables\Columns\TextColumn::make('date_leave')
+                TextColumn::make('date_leave')
                     ->dateTime($format = 'd/m/y H:i')
                     ->sortable()
                     ->label('Saída'),
 
-                Tables\Columns\TextColumn::make('date_back')
+                TextColumn::make('date_back')
                     ->dateTime($format = 'd/m/y H:i')
                     ->sortable()
                     ->label('Retorno'),
