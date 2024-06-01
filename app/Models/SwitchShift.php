@@ -25,6 +25,7 @@ class SwitchShift extends Model
         'second_shift_receiving_military',
         'motive',
         'file',
+        'accepted',
         'status',
         'final_judgment_reason',
         'paid',
