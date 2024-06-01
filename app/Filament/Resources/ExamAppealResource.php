@@ -159,6 +159,7 @@ class ExamAppealResource extends Resource
                     ->label('Rg'),
 
                 TextColumn::make('user.name')
+                    ->searchable()
                     ->label('Nome'),
 
                 TextColumn::make('discipline')
@@ -166,10 +167,8 @@ class ExamAppealResource extends Resource
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('question')
-                    ->label('Questão')
-                    ->numeric()
-                    ->alignCenter()
-                    ->sortable(),
+                    ->label('Questão/Item Avalidado')
+                    ->limit(40),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime($format = 'd/m/y H:i')

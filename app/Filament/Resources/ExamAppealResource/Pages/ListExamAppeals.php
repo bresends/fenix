@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\ExamAppealResource\Pages;
 
 use App\Enums\StatusExamEnum;
-use App\Enums\StatusFoEnum;
 use App\Filament\Resources\ExamAppealResource;
 use Filament\Actions;
 use Filament\Resources\Components\Tab;
