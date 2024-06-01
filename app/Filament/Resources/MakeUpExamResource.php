@@ -93,7 +93,7 @@ class MakeUpExamResource extends Resource
                             ->label('Motivo da não realização da avaliação (com detalhes)'),
 
                         FileUpload::make('file')
-                            ->disk('public')
+                            ->disk('r2')
                             ->visibility('public')
                             ->label('Arquivo')
                             ->columnSpan(2)
@@ -158,7 +158,7 @@ class MakeUpExamResource extends Resource
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime($format = 'd/m/y H:i')
                     ->sortable()
                     ->label('Solicitado em'),

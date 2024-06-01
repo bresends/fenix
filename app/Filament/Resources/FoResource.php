@@ -14,11 +14,11 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -149,28 +149,28 @@ class FoResource extends Resource
                 }
             })
             ->columns([
-                Tables\Columns\TextColumn::make('id')
+                TextColumn::make('id')
                     ->label('FO')
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('user.platoon')
+                TextColumn::make('user.platoon')
                     ->label('Pelotão')
                     ->badge()
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('user.name')
+                TextColumn::make('user.name')
                     ->label('Nome')
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('user.rg')
+                TextColumn::make('user.rg')
                     ->label('Rg')
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime($format = 'd/m/y H:i')
                     ->sortable()
                     ->label('Emitido em'),
@@ -179,7 +179,7 @@ class FoResource extends Resource
                     ->badge()
                     ->label('Tipo'),
 
-                Tables\Columns\TextColumn::make('reason')
+                TextColumn::make('reason')
                     ->badge()
                     ->label('Descrição do fato')
                     ->limit(45)
@@ -192,13 +192,13 @@ class FoResource extends Resource
                     ->searchable()
                     ->label('Parecer'),
 
-                Tables\Columns\IconColumn::make('excuse')
+                IconColumn::make('excuse')
                     ->label('Ciência/Justificativa')
                     ->boolean()
                     ->alignCenter()
                     ->searchable(),
 
-                Tables\Columns\IconColumn::make('paid')
+                IconColumn::make('paid')
                     ->label('Cumprido/Arquivado')
                     ->boolean()
                     ->alignCenter(),
