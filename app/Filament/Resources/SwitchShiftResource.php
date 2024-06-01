@@ -183,7 +183,7 @@ class SwitchShiftResource extends Resource
                     ->columns(2)
                     ->schema([
                         Checkbox::make('accepted')
-                            ->label('Aceito a solicitação de troca de serviço.')
+                            ->label('Aceito a presente solicitação de troca de serviço.')
                             ->required(),
                     ]),
 
