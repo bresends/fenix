@@ -33,6 +33,7 @@ class CreateFo extends CreateRecord
                         $this->form->fill([
                             'type' => $latestFo->type,
                             'issuer' => $latestFo->issuer,
+                            'date_issued' => now(),
                             'reason' => $latestFo->reason,
                             'observation' => $latestFo->observation,
                         ]);
