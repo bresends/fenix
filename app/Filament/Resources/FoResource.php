@@ -73,14 +73,16 @@ class FoResource extends Resource
                             ->required(),
 
                         Select::make('issuer')
-                            ->label('Author')
                             ->prefix('🕵️')
                             ->options(Military::all()->pluck('name', 'id'))
+                            ->default(function () {
+                                $military = Military::firstWhere('name', auth()->user()->name);
+                                return $military ? $military->id : null;
+                            })
                             ->required()
-                            ->preload()
-                            ->searchable(['name', 'id'])
-                            ->label('Observador')
-                            ->searchable(),
+                            ->disabled()
+                            ->dehydrated()
+                            ->label('Observador'),
 
                         TextInput::make('reason')
                             ->label('Descrição do fato')
