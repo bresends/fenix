@@ -85,6 +85,7 @@ class FoResource extends Resource
                             ->label('Observador'),
 
                         TextInput::make('reason')
+                            ->default(fn() => session()->has('dataFill') ? session()->get('dataFill')['reason'] : null)
                             ->label('Descrição do fato')
                             ->prefix('📝️')
                             ->datalist([
@@ -100,6 +101,7 @@ class FoResource extends Resource
                             ->required(),
 
                         RichEditor::make('observation')
+                            ->default(fn() => session()->has('dataFill') ? session()->get('dataFill')['observation'] : null)
                             ->label('Observações')
                             ->disableToolbarButtons([
                                 'attachFiles',
