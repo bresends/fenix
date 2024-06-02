@@ -242,13 +242,13 @@ class SwitchShiftResource extends Resource
                     ->searchable(),
 
                 TextColumn::make('created_at')
-                    ->dateTime($format = 'd/m/y H:i')
+                    ->dateTime('d/m/y H:i')
                     ->timezone('America/Sao_Paulo')
                     ->sortable()
                     ->label('Solicitado em'),
 
                 TextColumn::make('first_shift_date')
-                    ->dateTime($format = 'd/m/y')
+                    ->dateTime('d/m/y')
                     ->sortable()
                     ->label('Data da troca'),
 
