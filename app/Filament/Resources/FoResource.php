@@ -51,7 +51,7 @@ class FoResource extends Resource
                             ->label('Tipo')
                             ->prefix('🏷️')
                             ->native(false)
-                            ->default('Negativo')
+                            ->default(FoEnum::Negativo->value)
                             ->required(),
 
                         DateTimePicker::make('date_issued')
@@ -128,7 +128,7 @@ class FoResource extends Resource
                     ->schema([
                         Radio::make('status')
                             ->options(StatusFoEnum::class)
-                            ->default('Em andamento')
+                            ->default(StatusFoEnum::EM_ANDAMENTO->value)
                             ->label('Parecer'),
 
                         RichEditor::make('final_judgment_reason')
@@ -175,7 +175,8 @@ class FoResource extends Resource
                     ->sortable(),
 
                 TextColumn::make('created_at')
-                    ->dateTime($format = 'd/m/y H:i')
+                    ->dateTime('d/m/y H:i')
+                    ->timezone('America/Sao_Paulo')
                     ->sortable()
                     ->label('Emitido em'),
 
@@ -188,7 +189,7 @@ class FoResource extends Resource
                     ->label('Descrição do fato')
                     ->limit(45)
                     ->toggleable()
-                    ->color(fn(string $state): string => 'gray')
+                    ->color('gray')
                     ->searchable(),
 
                 TextColumn::make('status')
@@ -199,8 +200,7 @@ class FoResource extends Resource
                 IconColumn::make('excuse')
                     ->label('Ciência/Justificativa')
                     ->boolean()
-                    ->alignCenter()
-                    ->searchable(),
+                    ->alignCenter(),
 
                 IconColumn::make('paid')
                     ->label('Cumprido/Arquivado')

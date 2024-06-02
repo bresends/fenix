@@ -117,7 +117,7 @@ class MakeUpExamResource extends Resource
                     ->schema([
                         Radio::make('status')
                             ->options(StatusEnum::class)
-                            ->default('Em andamento')
+                            ->default(StatusEnum::EM_ANDAMENTO->value)
                             ->label('Parecer'),
 
                         RichEditor::make('final_judgment_reason')
@@ -159,7 +159,8 @@ class MakeUpExamResource extends Resource
                     ->sortable(),
 
                 TextColumn::make('created_at')
-                    ->dateTime($format = 'd/m/y H:i')
+                    ->dateTime('d/m/y H:i')
+                    ->timezone('America/Sao_Paulo')
                     ->sortable()
                     ->label('Solicitado em'),
 

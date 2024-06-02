@@ -53,13 +53,13 @@ class MilitaryResource extends Resource
                     ->label('Posto/Graduação')
                     ->searchable()
                     ->required()
-                    ->default('Al Sd')
+                    ->default(RankEnum::AL_SD->value)
                     ->native(false),
 
                 Select::make('division')
                     ->options(DivisionEnum::class)
                     ->label('Quadro')
-                    ->default('QP/Combatente')
+                    ->default(DivisionEnum::QP_COMBATENTE->value)
                     ->required()
                     ->native(false),
             ]);

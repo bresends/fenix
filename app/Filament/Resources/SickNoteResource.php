@@ -58,7 +58,7 @@ class SickNoteResource extends Resource
                             ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                             ->getUploadedFileNameForStorageUsing(
                                 fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
-                                    ->prepend('atestado-medico-'),
+                                    ->prepend('atestado-medico-' . now()->format('Y-m-d') . '-' . auth()->user()->name),
                             ),
 
                         DatePicker::make('date_issued')
@@ -133,12 +133,14 @@ class SickNoteResource extends Resource
                     ->label('Nome'),
 
                 TextColumn::make('created_at')
-                    ->dateTime($format = 'd/m/y')
+                    ->dateTime('d/m/y H:i')
+                    ->timezone('America/Sao_Paulo')
                     ->sortable()
                     ->label('Data de envio'),
 
                 TextColumn::make('date_issued')
-                    ->dateTime($format = 'd/m/y')
+                    ->dateTime('d/m/y')
+                    ->timezone('America/Sao_Paulo')
                     ->sortable()
                     ->label('Data do atestado'),
 
@@ -146,7 +148,8 @@ class SickNoteResource extends Resource
                     ->label('Dias afastado'),
 
                 TextColumn::make('dayBack')
-                    ->dateTime($format = 'd/m/y')
+                    ->dateTime('d/m/y')
+                    ->timezone('America/Sao_Paulo')
                     ->sortable()
                     ->label('Data de retorno'),
 
