@@ -98,7 +98,7 @@ class ExamAppealResource extends Resource
 
                         FileUpload::make('file')
                             ->disk('r2')
-                            ->visibility('public')
+                            ->visibility('private')
                             ->label('Anexos (se houver)')
                             ->directory('exam-appeal')
                             ->openable()

@@ -162,7 +162,7 @@ class SwitchShiftResource extends Resource
 
                         FileUpload::make('file')
                             ->disk('r2')
-                            ->visibility('public')
+                            ->visibility('private')
                             ->label('Anexar arquivo (se houver)')
                             ->columnSpan(2)
                             ->directory('switch-shift')
