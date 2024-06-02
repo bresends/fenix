@@ -58,7 +58,7 @@ class ExamAppealResource extends Resource
                             ->label('Tipo')
                             ->prefix('🏷️')
                             ->native(false)
-                            ->default('Teórica')
+                            ->default(MakeUpExamStatusEnum::TEORICA->value)
                             ->required(),
 
                         TextInput::make('exam')
@@ -118,10 +118,9 @@ class ExamAppealResource extends Resource
                     ->hiddenOn('create')
                     ->disabled(!auth()->user()->hasRole('super_admin'))
                     ->schema([
-
                         Radio::make('status')
                             ->options(StatusExamEnum::class)
-                            ->default('Em andamento')
+                            ->default(StatusExamEnum::EM_ANDAMENTO->value)
                             ->label('Parecer')
                             ->disabled((auth()->user()->hasRole('panel_user'))),
 
@@ -166,12 +165,13 @@ class ExamAppealResource extends Resource
                     ->label('Disciplina')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('question')
+                TextColumn::make('question')
                     ->label('Questão/Item Avalidado')
                     ->limit(40),
 
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime($format = 'd/m/y H:i')
+                TextColumn::make('created_at')
+                    ->dateTime('d/m/y H:i')
+                    ->timezone('America/Sao_Paulo')
                     ->sortable()
                     ->label('Solicitado em'),
 

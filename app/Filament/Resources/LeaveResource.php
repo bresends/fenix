@@ -120,7 +120,7 @@ class LeaveResource extends Resource
                     ->schema([
                         Radio::make('status')
                             ->options(StatusEnum::class)
-                            ->default('Em andamento')
+                            ->default(StatusEnum::EM_ANDAMENTO->value)
                             ->label('Parecer')
                             ->disabled((auth()->user()->hasRole('panel_user'))),
 
@@ -161,8 +161,7 @@ class LeaveResource extends Resource
 
                 TextColumn::make('user.name')
                     ->label('Nome')
-                    ->searchable()
-                    ->sortable(),
+                    ->searchable(),
 
                 TextColumn::make('user.rg')
                     ->label('Rg')
@@ -170,17 +169,20 @@ class LeaveResource extends Resource
                     ->sortable(),
 
                 TextColumn::make('created_at')
-                    ->dateTime($format = 'd/m/y H:i')
+                    ->dateTime('d/m/y H:i')
+                    ->timezone('America/Sao_Paulo')
                     ->sortable()
                     ->label('Solicitado em'),
 
                 TextColumn::make('date_leave')
-                    ->dateTime($format = 'd/m/y H:i')
+                    ->dateTime('d/m/y H:i')
+                    ->timezone('America/Sao_Paulo')
                     ->sortable()
                     ->label('Saída'),
 
                 TextColumn::make('date_back')
-                    ->dateTime($format = 'd/m/y H:i')
+                    ->dateTime('d/m/y H:i')
+                    ->timezone('America/Sao_Paulo')
                     ->sortable()
                     ->label('Retorno'),
 
