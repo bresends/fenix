@@ -99,8 +99,8 @@ class LeaveResource extends Resource
 
                     ]),
                 FileUpload::make('file')
-                    ->disk('r2')
-                    ->visibility('public')
+                    ->disk('s3')
+                    ->visibility('private')
                     ->label('Arquivo comprobatório')
                     ->directory('leave')
                     ->openable()
