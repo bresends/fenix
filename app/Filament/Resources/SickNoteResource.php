@@ -43,7 +43,7 @@ class SickNoteResource extends Resource
                     ->columns(2)
                     ->schema([
                         FileUpload::make('file')
-                            ->disk('r2')
+                            ->disk('s3')
                             ->visibility('public')
                             ->label('Arquivo')
                             ->columnSpan(2)
