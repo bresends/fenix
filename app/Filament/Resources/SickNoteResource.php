@@ -44,7 +44,7 @@ class SickNoteResource extends Resource
                     ->schema([
                         FileUpload::make('file')
                             ->disk('s3')
-                            ->visibility('public')
+                            ->visibility('private')
                             ->label('Arquivo')
                             ->columnSpan(2)
                             ->directory('sick-notes')
