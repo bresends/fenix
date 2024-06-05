@@ -29,11 +29,10 @@ class CreateFo extends CreateRecord
                 ->action(function () {
                     $latestFo = Fo::latest()->first();
                     if ($latestFo) {
-
                         $this->form->fill([
                             'type' => $latestFo->type,
                             'issuer' => $latestFo->issuer,
-                            'date_issued' => now(),
+                            'date_issued' => $latestFo->date_issued,
                             'reason' => $latestFo->reason,
                             'observation' => $latestFo->observation,
                         ]);
@@ -44,7 +43,7 @@ class CreateFo extends CreateRecord
                             ->send();
                     }
                 })
-                ->color('gray')
+                ->color('gray'),
         ];
     }
 
