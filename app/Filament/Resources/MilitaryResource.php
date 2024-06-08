@@ -6,6 +6,7 @@ use App\Enums\DivisionEnum;
 use App\Enums\RankEnum;
 use App\Filament\Resources\MilitaryResource\Pages;
 use App\Models\Military;
+use Closure;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -32,9 +33,13 @@ class MilitaryResource extends Resource
             ->schema([
                 TextInput::make('name')
                     ->label('Nome')
-                    ->regex('/^(?:[^A-ZÁÉÍÓÚÀÂÊÔÃÕ]*[A-ZÁÉÍÓÚÀÂÊÔÃÕ]){2}[A-ZÁÉÍÓÚÀÂÊÔÃÕ]+.*$/')
-                    ->validationMessages([
-                        'regex' => 'Insira o nome de guerra do militar em caixa alta. Ex. João BATISTA Silveira',
+                    ->rules([
+                        fn(): Closure => function (string $attribute, $name, Closure $fail) {
+                            $contains_upper = array_filter(explode(' ', $name), fn($word) => ctype_upper($word));
+                            if (empty($contains_upper)) {
+                                $fail('Insira o nome de guerra do militar em caixa alta. Ex. João BATISTA Silveira.');
+                            }
+                        },
                     ])
                     ->required(),
 
