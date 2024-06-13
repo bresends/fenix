@@ -6,6 +6,7 @@ use App\Enums\MakeUpExamStatusEnum;
 use App\Enums\StatusExamEnum;
 use App\Filament\Resources\ExamAppealResource\Pages;
 use App\Models\ExamAppeal;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Radio;
@@ -17,11 +18,14 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Blade;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ExamAppealResource extends Resource
@@ -186,10 +190,26 @@ class ExamAppealResource extends Resource
                     ->label('Parecer'),
                 Filter::make('archived')
                     ->label('Encaminhado para a SETEB/Arquivado')
-                    ->toggle()
+                    ->toggle(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                EditAction::make(),
+                Tables\Actions\Action::make('pdf')
+                    ->label('PDF')
+                    ->color('success')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->url(fn(ExamAppeal $record) => route('pdf', $record))
+                    ->openUrlInNewTab(),
+                Action::make('Baixar')
+                    ->color('success')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->action(function (ExamAppeal $record) {
+                        return response()->streamDownload(function () use ($record) {
+                            echo Pdf::loadHtml(
+                                Blade::render('exampdf', ['record' => $record])
+                            )->stream();
+                        }, $record->created_at . '-' . $record->user->name . '-' . $record->discipline . '.pdf');
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
