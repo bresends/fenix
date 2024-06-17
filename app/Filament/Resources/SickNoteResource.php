@@ -64,7 +64,6 @@ class SickNoteResource extends Resource
                         DatePicker::make('date_issued')
                             ->prefix('⏰️')
                             ->label('Data do atestado')
-                            ->timezone('America/Sao_Paulo')
                             ->displayFormat('d/m/y')
                             ->native(false)
                             ->required()
@@ -140,7 +139,6 @@ class SickNoteResource extends Resource
 
                 TextColumn::make('date_issued')
                     ->dateTime('d/m/y')
-                    ->timezone('America/Sao_Paulo')
                     ->sortable()
                     ->label('Data do atestado'),
 
@@ -149,7 +147,6 @@ class SickNoteResource extends Resource
 
                 TextColumn::make('dayBack')
                     ->dateTime('d/m/y')
-                    ->timezone('America/Sao_Paulo')
                     ->sortable()
                     ->label('Data de retorno'),
 
