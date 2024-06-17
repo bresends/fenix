@@ -12,6 +12,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
@@ -40,6 +41,7 @@ class SickNoteResource extends Resource
             ->schema([
                 Section::make('Enviar atestado médico')
                     ->disabledOn('edit')
+                    ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('received') === true)
                     ->columns(2)
                     ->schema([
                         FileUpload::make('file')
