@@ -200,16 +200,6 @@ class ExamAppealResource extends Resource
                     ->icon('heroicon-o-arrow-down-tray')
                     ->url(fn(ExamAppeal $record) => route('pdf', $record))
                     ->openUrlInNewTab(),
-                Action::make('Baixar')
-                    ->color('success')
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->action(function (ExamAppeal $record) {
-                        return response()->streamDownload(function () use ($record) {
-                            echo Pdf::loadHtml(
-                                Blade::render('exampdf', ['record' => $record])
-                            )->stream();
-                        }, $record->created_at . '-' . $record->user->name . '-' . $record->discipline . '.pdf');
-                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

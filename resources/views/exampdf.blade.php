@@ -44,7 +44,8 @@
     <h2>Fontes Bibliográficas que embasam a argumentação:</h2>
     <p class="p-5 indent-14">{!! $record->bibliography !!}</p>
 
-    <p class="font-bold p-5 text-right">Goiânia, {{$record->created_at->format('l, d F Y, H:i')}}</p>
+    <p class="text-right">
+        Goiânia, {{ \Carbon\Carbon::parse($record->created_at)->translatedFormat('d \d\e F \d\e Y')}}</p>
 
     <p class="py-2 text-center">{{$military->name}}</p>
     <p class="text-center">Aluno de Curso de Formação de Oficiais</p>
