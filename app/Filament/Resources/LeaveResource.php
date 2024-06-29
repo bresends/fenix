@@ -44,7 +44,6 @@ class LeaveResource extends Resource
                         DateTimePicker::make('date_leave')
                             ->prefix('➡️️')
                             ->label('Data e horário de saída:')
-                            ->timezone('America/Sao_Paulo')
                             ->seconds(false)
                             ->displayFormat('d/m/y H:i')
                             ->native(false)
@@ -54,7 +53,6 @@ class LeaveResource extends Resource
                         DateTimePicker::make('date_back')
                             ->prefix('⬅️')
                             ->label('Data e horário de retorno:')
-                            ->timezone('America/Sao_Paulo')
                             ->seconds(false)
                             ->displayFormat('d/m/y H:i')
                             ->native(false)
@@ -170,19 +168,16 @@ class LeaveResource extends Resource
 
                 TextColumn::make('created_at')
                     ->dateTime('d/m/y H:i')
-                    ->timezone('America/Sao_Paulo')
                     ->sortable()
                     ->label('Solicitado em'),
 
                 TextColumn::make('date_leave')
                     ->dateTime('d/m/y H:i')
-                    ->timezone('America/Sao_Paulo')
                     ->sortable()
                     ->label('Saída'),
 
                 TextColumn::make('date_back')
                     ->dateTime('d/m/y H:i')
-                    ->timezone('America/Sao_Paulo')
                     ->sortable()
                     ->label('Retorno'),
 
