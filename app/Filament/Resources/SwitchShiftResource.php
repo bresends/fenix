@@ -54,7 +54,6 @@ class SwitchShiftResource extends Resource
                                 DateTimePicker::make('first_shift_date')
                                     ->prefix('📆️')
                                     ->label('Data e hora (Serviço 1)')
-                                    ->timezone('America/Sao_Paulo')
                                     ->seconds(false)
                                     ->displayFormat('d/m/y H:i')
                                     ->native(false)
@@ -100,7 +99,6 @@ class SwitchShiftResource extends Resource
                                 DateTimePicker::make('second_shift_date')
                                     ->prefix('📆️️')
                                     ->label('Data e hora (Serviço 2)')
-                                    ->timezone('America/Sao_Paulo')
                                     ->seconds(false)
                                     ->displayFormat('d/m/y H:i')
                                     ->native(false)
@@ -244,7 +242,6 @@ class SwitchShiftResource extends Resource
 
                 TextColumn::make('created_at')
                     ->dateTime('d/m/y H:i')
-                    ->timezone('America/Sao_Paulo')
                     ->sortable()
                     ->label('Solicitado em'),
 

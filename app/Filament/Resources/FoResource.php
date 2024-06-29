@@ -58,7 +58,6 @@ class FoResource extends Resource
                         DateTimePicker::make('date_issued')
                             ->prefix('⏰️')
                             ->label('Horário da Anotação')
-                            ->timezone('America/Sao_Paulo')
                             ->seconds(false)
                             ->displayFormat('d/m/y H:i')
                             ->native(false)

@@ -172,7 +172,6 @@ class ExamAppealResource extends Resource
 
                 TextColumn::make('created_at')
                     ->dateTime('d/m/y H:i')
-                    ->timezone('America/Sao_Paulo')
                     ->sortable()
                     ->label('Solicitado em'),
 
