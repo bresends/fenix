@@ -142,6 +142,7 @@ class MakeUpExamResource extends Resource
                     $query->where('user_id', auth()->user()->id);
                 }
             })
+            ->defaultSort('id', 'desc')
             ->columns([
                 TextColumn::make('id')
                     ->numeric()

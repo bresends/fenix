@@ -38,7 +38,7 @@ class LeaveResource extends Resource
         return $form
             ->schema([
                 Section::make('Solicitar dispensa')
-                    ->disabled(fn (string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
+                    ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
                     ->columns(2)
                     ->schema([
                         DateTimePicker::make('date_leave')
@@ -108,10 +108,10 @@ class LeaveResource extends Resource
                     ->maxSize(5000)
                     ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                     ->getUploadedFileNameForStorageUsing(
-                        fn (TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
+                        fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
                             ->prepend('dispensa-'),
                     )
-                    ->disabled(fn (string $operation, Get $get): bool => ($operation === 'edit' &&
+                    ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' &&
                             $get('user_id') !== auth()->user()->id) || $get('paid') === true),
 
                 Section::make('Deliberar dispensa (coordenação)')
@@ -121,19 +121,19 @@ class LeaveResource extends Resource
                             ->options(StatusEnum::class)
                             ->default(StatusEnum::EM_ANDAMENTO->value)
                             ->label('Parecer')
-                            ->disabled(! auth()->user()->hasRole('super_admin')),
+                            ->disabled(!auth()->user()->hasRole('super_admin')),
 
                         RichEditor::make('final_judgment_reason')
                             ->columnSpan(2)
                             ->helperText('Campo para anotações sobre parecer.')
                             ->label('Observações da coordenação')
-                            ->disabled(fn (Get $get): bool => (auth()->user()->hasExactRoles('panel_user') || $get('status') !== 'Em andamento')),
+                            ->disabled(fn(Get $get): bool => (auth()->user()->hasExactRoles('panel_user') || $get('status') !== 'Em andamento')),
 
                         Checkbox::make('paid')
                             ->columnSpan(2)
                             ->helperText('O aluno gozou a dispensa e anexou documento comprobatório.')
                             ->label('Arquivada')
-                            ->disabled(! auth()->user()->hasRole('super_admin')),
+                            ->disabled(!auth()->user()->hasRole('super_admin')),
                     ])
                     ->hiddenOn('create'),
             ]);
@@ -147,6 +147,7 @@ class LeaveResource extends Resource
                     $query->where('user_id', auth()->user()->id);
                 }
             })
+            ->defaultSort('id', 'desc')
             ->columns([
                 TextColumn::make('id')
                     ->numeric()
