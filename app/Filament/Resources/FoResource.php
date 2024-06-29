@@ -63,7 +63,7 @@ class FoResource extends Resource
                             ->displayFormat('d/m/y H:i')
                             ->native(false)
                             ->required()
-                            ->default(fn () => session()->has('dataFill') ? Carbon::parse(session()->get('dataFill')['date_issued'])->addHours(3) : now()),
+                            ->default(fn() => session()->has('dataFill') ? Carbon::parse(session()->get('dataFill')['date_issued'])->addHours(3) : now()),
 
                         Select::make('user_id')
                             ->relationship('user', 'name')
@@ -87,7 +87,7 @@ class FoResource extends Resource
                             ->label('Observador'),
 
                         TextInput::make('reason')
-                            ->default(fn () => session()->has('dataFill') ? session()->get('dataFill')['reason'] : null)
+                            ->default(fn() => session()->has('dataFill') ? session()->get('dataFill')['reason'] : null)
                             ->label('Descrição do fato')
                             ->prefix('📝️')
                             ->datalist([
@@ -103,7 +103,7 @@ class FoResource extends Resource
                             ->required(),
 
                         RichEditor::make('observation')
-                            ->default(fn () => session()->has('dataFill') ? session()->get('dataFill')['observation'] : null)
+                            ->default(fn() => session()->has('dataFill') ? session()->get('dataFill')['observation'] : null)
                             ->label('Observações')
                             ->disableToolbarButtons([
                                 'attachFiles',
@@ -113,7 +113,7 @@ class FoResource extends Resource
 
                 Section::make('Ciência/Justificativa do aluno')
                     ->hiddenOn('create')
-                    ->disabled(fn (string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
+                    ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
                     ->schema([
                         RichEditor::make('excuse')
                             ->disableToolbarButtons([
@@ -125,7 +125,7 @@ class FoResource extends Resource
 
                 Section::make('Deliberação do FO (coordenação)')
                     ->hiddenOn('create')
-                    ->disabled(! auth()->user()->hasRole('super_admin'))
+                    ->disabled(!auth()->user()->hasRole('super_admin'))
                     ->description('Campo preenchido pela coordenação.')
                     ->schema([
                         Radio::make('status')
@@ -154,6 +154,7 @@ class FoResource extends Resource
                     });
                 }
             })
+            ->defaultSort('id', 'desc')
             ->columns([
                 TextColumn::make('id')
                     ->label('FO')

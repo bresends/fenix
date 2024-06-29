@@ -215,9 +215,10 @@ class SwitchShiftResource extends Resource
             ->modifyQueryUsing(function (Builder $query) {
                 if (auth()->user()->hasExactRoles('panel_user')) {
                     $query->where('user_id', auth()->user()->id)
-                    ->orWhere('first_shift_paying_military', auth()->user()->name);
+                        ->orWhere('first_shift_paying_military', auth()->user()->name);
                 }
             })
+            ->defaultSort('id', 'desc')
             ->columns([
                 TextColumn::make('id')
                     ->numeric()
