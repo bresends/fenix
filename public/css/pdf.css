@@ -96,6 +96,7 @@ p {
 
 .text-right {
     text-align: right;
+    padding-top: 1rem;
 }
 
 .text-center {
@@ -104,5 +105,9 @@ p {
 
 .name {
     padding-top: 2rem;
+}
+
+hr {
+    margin: 3rem 0;
 }
 

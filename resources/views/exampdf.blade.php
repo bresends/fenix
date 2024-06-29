@@ -55,6 +55,13 @@
         <p class="text-center">Aluno de Curso de Formação de Praças</p>
     @endif
 
+    <hr>
+
+    <h1>Deliberação do Recurso contra Gabarito Preliminar</h1>
+
+    <h3>Parecer: <span>{{$record->status->value}}</span>.</h3>
+
+
 </main>
 
 </body>
