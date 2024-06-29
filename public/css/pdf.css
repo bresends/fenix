@@ -98,3 +98,11 @@ p {
     text-align: right;
 }
 
+.text-center {
+    text-align: center;
+}
+
+.name {
+    padding-top: 2rem;
+}
+

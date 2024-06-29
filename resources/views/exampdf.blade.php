@@ -47,8 +47,13 @@
     <p class="text-right">
         Goiânia, {{ \Carbon\Carbon::parse($record->created_at)->translatedFormat('d \d\e F \d\e Y')}}</p>
 
-    <p class="py-2 text-center">{{$military->name}}</p>
-    <p class="text-center">Aluno de Curso de Formação de Oficiais</p>
+    <p class="text-center name">{{$military->name}} - {{$military->rank}} {{$military->division}}</p>
+
+    @if (str_contains($record->user->platoon->value, 'CFO'))
+        <p class="text-center">Aluno de Curso de Formação de Oficiais</p>
+    @else
+        <p class="text-center">Aluno de Curso de Formação de Praças</p>
+    @endif
 
 </main>
 
