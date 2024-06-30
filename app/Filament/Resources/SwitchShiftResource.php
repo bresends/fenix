@@ -51,6 +51,7 @@ class SwitchShiftResource extends Resource
             ->schema([
                 Section::make('Solicitar troca de serviço')
                     ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
+                    ->icon('heroicon-o-pencil-square')
                     ->columns(2)
                     ->schema([
 
@@ -151,6 +152,7 @@ class SwitchShiftResource extends Resource
                     ]),
                 Section::make('Motivo da troca de serviço')
                     ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
+                    ->icon('heroicon-o-pencil-square')
                     ->schema([
                         RichEditor::make('motive')
                             ->required()
@@ -183,6 +185,7 @@ class SwitchShiftResource extends Resource
                     ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('first_shift_paying_military'
                             ) !== auth()->user()->name) || $get('status') !== 'Em andamento')
                     ->hiddenOn('create')
+                    ->icon('heroicon-o-check')
                     ->columns(2)
                     ->schema([
                         Checkbox::make('accepted')
@@ -193,7 +196,7 @@ class SwitchShiftResource extends Resource
                 Section::make('Deliberar troca de serviço (coordenação)')
                     ->hiddenOn('create')
                     ->disabled(!auth()->user()->hasRole('super_admin'))
-                    ->description('Determine se a troca de serviço será autorizada.')
+                    ->icon('heroicon-o-chat-bubble-left-ellipsis')
                     ->schema([
                         Radio::make('status')
                             ->options(StatusEnum::class)
@@ -201,12 +204,10 @@ class SwitchShiftResource extends Resource
                             ->label('Parecer'),
 
                         RichEditor::make('final_judgment_reason')
-                            ->columnSpan(2)
                             ->helperText('Campo para anotações sobre parecer.')
                             ->label('Observações da coordenação'),
 
                         Checkbox::make('paid')
-                            ->columnSpan(2)
                             ->label('Informado às OBMs/Arquivado'),
                     ]),
             ]);

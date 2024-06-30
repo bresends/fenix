@@ -47,13 +47,14 @@ class SickNoteResource extends Resource
                 Section::make('Enviar atestado médico')
                     ->disabledOn('edit')
                     ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('received') === true)
+                    ->icon('heroicon-o-pencil-square')
                     ->columns(2)
                     ->schema([
                         FileUpload::make('file')
                             ->disk('s3')
                             ->visibility('private')
                             ->label('Arquivo')
-                            ->columnSpan(2)
+                            ->columnSpanFull()
                             ->directory('sick-notes')
                             ->openable()
                             ->required()
@@ -98,15 +99,15 @@ class SickNoteResource extends Resource
 
 
                     ]),
+
                 Section::make('Controle de dispensa médica')
+                    ->icon('heroicon-o-chat-bubble-left-ellipsis')
                     ->schema([
                         Checkbox::make('received')
-                            ->columnSpan(2)
                             ->helperText('Marque se o atestado médico foi recebido pelo DABM.')
                             ->label('Recebido/Ciente do DABM'),
 
                         Checkbox::make('archived')
-                            ->columnSpan(2)
                             ->helperText('Marque se o atestado médico foi anexado no SEI e pode ser arquivado.')
                             ->label('Anexado no SEI/Arquivado'),
                     ])

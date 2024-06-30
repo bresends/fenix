@@ -44,6 +44,7 @@ class LeaveResource extends Resource
         return $form
             ->schema([
                 Section::make('Solicitar dispensa')
+                    ->icon('heroicon-o-pencil-square')
                     ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
                     ->columns(2)
                     ->schema([
@@ -73,7 +74,7 @@ class LeaveResource extends Resource
                             ->hint('Atenção!')
                             ->hintIcon('heroicon-m-exclamation-triangle', tooltip: 'Caso a solicitação seja para horários com atividades previstas em QTS, especificar o motivo de não conseguir resolver a demanda em horário sem atividades em QTS.')
                             ->hintColor('primary')
-                            ->columnSpan(2)
+                            ->columnSpanFull()
                             ->helperText('Caso a solicitação seja para horários com atividades previstas em QTS, especificar o motivo de não conseguir resolver a demanda em horário sem atividades em QTS.')
                             ->placeholder('Solicito dispensa devido à consulta médica agendada com antecedência e este é o único horário disponível com o médico especialista. Não há possibilidade de reagendar para outro horário semelhante dentro do período de tratamento recomendado.')
                             ->label('Motivo (com detalhamento)'),
@@ -86,13 +87,13 @@ class LeaveResource extends Resource
                             ->hint('Atenção!')
                             ->hintColor('warning')
                             ->hintIcon('heroicon-m-exclamation-triangle', tooltip: 'Liste instruções e tempos que serão perdidos: Ex: 2 tempos TFM e 3 tempos de APH.')
-                            ->columnSpan(2)
+                            ->columnSpanFull()
                             ->placeholder('2 tempos TFM e 3 tempos de APH')
                             ->helperText('Liste instruções e tempos que serão perdidos: Ex: 2 tempos TFM e 3 tempos de APH')
                             ->label('Instruções e quantidade de tempos perdidos previstos em QTS'),
 
                         Checkbox::make('accept_terms')
-                            ->columnSpan(2)
+                            ->columnSpanFull()
                             ->accepted()
                             ->validationMessages([
                                 'accepted' => 'Dê ciência',
@@ -101,13 +102,14 @@ class LeaveResource extends Resource
                             ->label('Ciência de possibilidade de desligamento'),
 
                     ]),
+
                 FileUpload::make('file')
                     ->disk('s3')
                     ->visibility('private')
                     ->label('Arquivo comprobatório')
                     ->directory('leave')
                     ->openable()
-                    ->columnSpan(2)
+                    ->columnSpanFull()
                     ->downloadable()
                     ->maxSize(5000)
                     ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
@@ -119,7 +121,7 @@ class LeaveResource extends Resource
                             $get('user_id') !== auth()->user()->id) || $get('paid') === true),
 
                 Section::make('Deliberar dispensa (coordenação)')
-                    ->description('Determine se a dispensa será autorizada.')
+                    ->icon('heroicon-o-chat-bubble-left-ellipsis')
                     ->schema([
                         Radio::make('status')
                             ->options(StatusEnum::class)
@@ -128,13 +130,11 @@ class LeaveResource extends Resource
                             ->disabled(!auth()->user()->hasRole('super_admin')),
 
                         RichEditor::make('final_judgment_reason')
-                            ->columnSpan(2)
                             ->helperText('Campo para anotações sobre parecer.')
                             ->label('Observações da coordenação')
                             ->disabled(fn(Get $get): bool => (auth()->user()->hasExactRoles('panel_user') || $get('status') !== 'Em andamento')),
 
                         Checkbox::make('paid')
-                            ->columnSpan(2)
                             ->helperText('O aluno gozou a dispensa e anexou documento comprobatório.')
                             ->label('Arquivada')
                             ->disabled(!auth()->user()->hasRole('super_admin')),
