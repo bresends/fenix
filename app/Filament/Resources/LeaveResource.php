@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\StatusEnum;
 use App\Filament\Resources\LeaveResource\Pages;
+use App\Models\Fo;
 use App\Models\Leave;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
@@ -14,13 +15,18 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class LeaveResource extends Resource
@@ -206,11 +212,22 @@ class LeaveResource extends Resource
                     ->toggle(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                EditAction::make(),
+                Action::make('archive')
+                    ->label('Arquivar')
+                    ->hidden(!auth()->user()->hasRole('super_admin'))
+                    ->icon('heroicon-o-archive-box')
+                    ->color('gray')
+                    ->action(fn(Leave $record) => $record->update(['paid' => true]))
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    BulkAction::make('archive')
+                        ->label('Arquivar')
+                        ->hidden(!auth()->user()->hasRole('super_admin'))
+                        ->icon('heroicon-o-archive-box')
+                        ->action(fn(Collection $records) => $records->each->update(['paid' => true])),
                 ]),
             ]);
     }
