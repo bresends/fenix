@@ -2,6 +2,7 @@
 
 namespace App\Enums;
 
+use Filament\Support\Colors\Color;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
@@ -51,10 +52,15 @@ enum RankEnum: string implements HasColor, HasLabel
     public function getColor(): string|array|null
     {
         return match ($this) {
-            self::AL_SD, self::SD_1_CLASSE, self::SD_2_CLASSE, self::CB => 'success',
-            self::PRIMEIRO_SGT, self::SEGUNDO_SGT, self::TERCEIRO_SGT, self::ST, self::AL_OF_ADM, self::CAD, self::ASP_OF => 'info',
-            self::SEGUNDO_TEN, self::PRIMEIRO_TEN, self::CAP => 'warning',
-            self::MAJOR, self::TC, self::CEL => 'danger',
+            self::AL_SD => Color::Gray,
+            self::SD_1_CLASSE, self::SD_2_CLASSE, self::CB => Color::Pink,
+            self::PRIMEIRO_SGT, self::SEGUNDO_SGT, self::TERCEIRO_SGT, self::ST => Color::Purple,
+            self::AL_OF_ADM, => Color::Sky,
+            self::CAD, self::ASP_OF => Color::Teal,
+            self::SEGUNDO_TEN, self::PRIMEIRO_TEN => Color::Emerald,
+            self::CAP => Color::Yellow,
+            self::MAJOR, self::TC, => Color::Orange,
+            self::CEL => Color::Red,
         };
 
     }
