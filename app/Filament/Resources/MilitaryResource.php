@@ -76,7 +76,8 @@ class MilitaryResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->defaultSort('division', 'asc')
+            ->defaultSort('sort', 'desc')
+            ->reorderable('sort', auth()->user()->hasRole('super_admin'))
             ->persistSearchInSession()
             ->columns([
                 TextColumn::make('rank')

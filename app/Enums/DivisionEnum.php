@@ -2,6 +2,7 @@
 
 namespace App\Enums;
 
+use Filament\Support\Colors\Color;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
@@ -34,10 +35,10 @@ enum DivisionEnum: string implements HasColor, HasLabel
     public function getColor(): string|array|null
     {
         return match ($this) {
-            self::QP_ESPECIAL, self::QP_COMBATENTE, self::QP_MUSICO => 'success',
-            self::QOS_DENTISTA, self::QOS_MEDICO => 'gray',
-            self::QOA_MUSICO, self::QOA_ADMINISTRATIVO => 'warning',
-            self::QOC => 'danger',
+            self::QP_COMBATENTE, self::QP_MUSICO => Color::Neutral,
+            self::QP_ESPECIAL => Color::Stone,
+            self::QOS_DENTISTA, self::QOS_MEDICO, self::QOA_MUSICO, self::QOA_ADMINISTRATIVO => Color::Slate,
+            self::QOC => Color::Yellow,
         };
 
     }

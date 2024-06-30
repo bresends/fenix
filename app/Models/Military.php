@@ -19,6 +19,7 @@ class Military extends Model
         'name',
         'rank',
         'division',
+        'sort',
     ];
 
     protected function casts(): array
@@ -41,10 +42,10 @@ class Military extends Model
 
     public function sei(): Attribute
     {
-        $formatted_string = '0'.substr((string) $this->rg, 0, 1).'.'.substr((string) $this->rg, 1);
+        $formatted_string = '0' . substr((string)$this->rg, 0, 1) . '.' . substr((string)$this->rg, 1);
 
         return Attribute::make(
-            get: fn () => $this->rank->value.' '.$this->division->value.' '.$formatted_string.' '.$this->name
+            get: fn() => $this->rank->value . ' ' . $this->division->value . ' ' . $formatted_string . ' ' . $this->name
         );
     }
 }
