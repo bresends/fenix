@@ -2,10 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\StatusEnum;
 use App\Enums\MakeUpExamStatusEnum;
+use App\Enums\StatusEnum;
 use App\Filament\Resources\MakeUpExamResource\Pages;
-use App\Models\Leave;
 use App\Models\MakeUpExam;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
@@ -18,7 +17,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -53,6 +51,7 @@ class MakeUpExamResource extends Resource
             ->schema([
                 Section::make('Solicitar segunda chamada')
                     ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
+                    ->icon('heroicon-o-pencil-square')
                     ->columns(2)
                     ->schema([
                         TextInput::make('discipline_name')
@@ -92,7 +91,7 @@ class MakeUpExamResource extends Resource
                             ->hint('Atenção!')
                             ->hintIcon('heroicon-m-exclamation-triangle', tooltip: 'Liste detalhadamente o motivo')
                             ->hintColor('primary')
-                            ->columnSpan(2)
+                            ->columnSpanFull()
                             ->placeholder('Solicito segunda chamada de prova devido a minha baixa médica conforme atestado médico nº 22 (anexado no sistema). Fui orientado(a) a permanecer em repouso e seguir um tratamento imediato, o que impedira a realização da prova.')
                             ->label('Motivo da não realização da avaliação (com detalhes)'),
 
@@ -100,7 +99,7 @@ class MakeUpExamResource extends Resource
                             ->disk('r2')
                             ->visibility('private')
                             ->label('Arquivo')
-                            ->columnSpan(2)
+                            ->columnSpanFull()
                             ->directory('makeup-exams')
                             ->openable()
                             ->downloadable()
@@ -115,7 +114,7 @@ class MakeUpExamResource extends Resource
                     ]),
 
                 Section::make('Deliberar 2ª Chamada (coordenação)')
-                    ->description('Determine se a 2ª chamada será autorizada.')
+                    ->icon('heroicon-o-chat-bubble-left-ellipsis')
                     ->hiddenOn('create')
                     ->disabled(!auth()->user()->hasRole('super_admin'))
                     ->schema([
@@ -125,15 +124,12 @@ class MakeUpExamResource extends Resource
                             ->label('Parecer'),
 
                         RichEditor::make('final_judgment_reason')
-                            ->columnSpan(2)
                             ->helperText('Campo para anotações sobre parecer.')
                             ->label('Observações da coordenação'),
 
                         Checkbox::make('archived')
-                            ->columnSpan(2)
                             ->helperText('Segunda chamada concluída')
                             ->label('Encaminhada para a SETEB/Arquivada'),
-
                     ]),
             ]);
     }

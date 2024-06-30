@@ -21,7 +21,6 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -53,6 +52,7 @@ class ExamAppealResource extends Resource
             ->schema([
                 Section::make('Solicitar recurso')
                     ->columns(2)
+                    ->icon('heroicon-o-pencil-square')
                     ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
                     ->schema([
                         TextInput::make('discipline')
@@ -83,7 +83,7 @@ class ExamAppealResource extends Resource
                             ->disableToolbarButtons([
                                 'attachFiles',
                             ])
-                            ->columnSpan(2)
+                            ->columnSpanFull()
                             ->label('Fundamentação do recurso'),
 
                         RichEditor::make('bibliography')
@@ -91,11 +91,11 @@ class ExamAppealResource extends Resource
                             ->disableToolbarButtons([
                                 'attachFiles',
                             ])
-                            ->columnSpan(2)
+                            ->columnSpanFull()
                             ->label('Bibliografia'),
 
                         Checkbox::make('accept_terms')
-                            ->columnSpan(2)
+                            ->columnSpanFull()
                             ->accepted()
                             ->validationMessages([
                                 'accepted' => 'Dê ciência',
@@ -109,7 +109,7 @@ class ExamAppealResource extends Resource
                             ->label('Anexos (se houver)')
                             ->directory('exam-appeal')
                             ->openable()
-                            ->columnSpan(2)
+                            ->columnSpanFull()
                             ->downloadable()
                             ->maxSize(5000)
                             ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
@@ -121,8 +121,8 @@ class ExamAppealResource extends Resource
                     ]),
 
                 Section::make('Deliberar recurso (coordenação)')
-                    ->description('Determine se o encaminhamento do recurso será autorizado.')
                     ->hiddenOn('create')
+                    ->icon('heroicon-o-chat-bubble-left-ellipsis')
                     ->disabled(!auth()->user()->hasRole('super_admin'))
                     ->schema([
                         Radio::make('status')
@@ -138,7 +138,7 @@ class ExamAppealResource extends Resource
                             ->disabled((auth()->user()->hasRole('panel_user'))),
 
                         Checkbox::make('archived')
-                            ->columnSpan(2)
+                            ->columnSpanFull()
                             ->label('Encaminhado para a SETEB/Arquivado'),
                     ]),
             ]);

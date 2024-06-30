@@ -48,9 +48,10 @@ class FoResource extends Resource
         return $form
             ->schema([
                 Section::make('Emitir FO')
+                    ->columns(2)
+                    ->icon('heroicon-o-pencil-square')
                     ->disabled(auth()->user()->hasExactRoles('panel_user'))
                     ->disabledOn('edit')
-                    ->columns(2)
                     ->schema([
                         Select::make('type')
                             ->options(FoEnum::class)
@@ -107,15 +108,16 @@ class FoResource extends Resource
                             ->required(),
 
                         RichEditor::make('observation')
+                            ->columnSpanFull()
                             ->default(fn() => session()->has('dataFill') ? session()->get('dataFill')['observation'] : null)
                             ->label('Observações')
                             ->disableToolbarButtons([
                                 'attachFiles',
                             ])
-                            ->columnSpan(2),
                     ]),
 
                 Section::make('Ciência/Justificativa do aluno')
+                    ->icon('heroicon-o-check')
                     ->hiddenOn('create')
                     ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
                     ->schema([
@@ -128,9 +130,9 @@ class FoResource extends Resource
                     ]),
 
                 Section::make('Deliberação do FO (coordenação)')
+                    ->icon('heroicon-o-chat-bubble-left-ellipsis')
                     ->hiddenOn('create')
                     ->disabled(!auth()->user()->hasRole('super_admin'))
-                    ->description('Campo preenchido pela coordenação.')
                     ->schema([
                         Radio::make('status')
                             ->options(StatusFoEnum::class)
