@@ -6,7 +6,7 @@ use App\Enums\MakeUpExamStatusEnum;
 use App\Enums\StatusExamEnum;
 use App\Filament\Resources\ExamAppealResource\Pages;
 use App\Models\ExamAppeal;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Leave;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Radio;
@@ -17,15 +17,18 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Blade;
+use Illuminate\Database\Eloquent\Collection;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ExamAppealResource extends Resource
@@ -183,6 +186,11 @@ class ExamAppealResource extends Resource
                     ->badge()
                     ->searchable()
                     ->label('Parecer do encaminhamento'),
+
+                IconColumn::make('archived')
+                    ->label('Encaminhado para a SETEB/Arquivado')
+                    ->boolean()
+                    ->alignCenter(),
             ])
             ->filters([
                 SelectFilter::make('status')
@@ -193,17 +201,27 @@ class ExamAppealResource extends Resource
                     ->toggle(),
             ])
             ->actions([
-                EditAction::make(),
-                Tables\Actions\Action::make('pdf')
+                Action::make('pdf')
                     ->label('PDF')
                     ->color('success')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->url(fn(ExamAppeal $record) => route('pdf', $record))
                     ->openUrlInNewTab(),
+                Action::make('archive')
+                    ->label('Arquivar')
+                    ->hidden(!auth()->user()->hasRole('super_admin'))
+                    ->icon('heroicon-o-archive-box')
+                    ->color('gray')
+                    ->action(fn(ExamAppeal $record) => $record->update(['archived' => true])),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    BulkAction::make('archive')
+                        ->label('Arquivar')
+                        ->hidden(!auth()->user()->hasRole('super_admin'))
+                        ->icon('heroicon-o-archive-box')
+                        ->action(fn(Collection $records) => $records->each->update(['archived' => true])),
                 ]),
             ]);
     }

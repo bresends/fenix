@@ -19,13 +19,18 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class SwitchShiftResource extends Resource
@@ -237,7 +242,7 @@ class SwitchShiftResource extends Resource
                     ->label('Tipo')
                     ->limit(45)
                     ->toggleable()
-                    ->color(fn(string $state): string => 'gray')
+                    ->color('gray')
                     ->searchable(),
 
                 TextColumn::make('created_at')
@@ -281,11 +286,22 @@ class SwitchShiftResource extends Resource
                     ->toggle()
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                EditAction::make(),
+                Action::make('archive')
+                    ->label('Arquivar')
+                    ->hidden(!auth()->user()->hasRole('super_admin'))
+                    ->icon('heroicon-o-archive-box')
+                    ->color('gray')
+                    ->action(fn(SwitchShift $record) => $record->update(['paid' => true]))
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    BulkAction::make('archive')
+                        ->label('Arquivar')
+                        ->hidden(!auth()->user()->hasRole('super_admin'))
+                        ->icon('heroicon-o-archive-box')
+                        ->action(fn(Collection $records) => $records->each->update(['paid' => true])),
                 ]),
             ]);
     }
