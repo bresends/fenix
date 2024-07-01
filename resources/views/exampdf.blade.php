@@ -21,12 +21,13 @@
     <h1>{{$record->user->platoon}}</h1>
     <h1>Recurso Contra Gabarito Preliminar</h1>
     <p>Eu, {{$military->sei}}, ciente das regras e condições estabelecidas na Norma de Ensino nº 01 do Comando da
-        Academia e Ensino Bombeiro Militar, em especial quanto
-        ao que consta no Capítulo VIII, apresento recurso contra o gabarito preliminar da Prova
+        Academia e Ensino Bombeiro Militar, apresento recurso contra o gabarito preliminar da Prova
         de {{$record->discipline}} do
 
         @if (str_contains($record->user->platoon->value, 'CFO'))
             Curso de Formação de Oficiais - {{$record->user->platoon}}
+        @elseif(str_contains($record->user->platoon->value, 'CHOA'))
+            Curso de Habilitação de Oficiais de Administração - {{$record->user->platoon}}
         @else
             Curso de Formação de Praças - Pelotão {{$record->user->platoon}}
         @endif
@@ -50,17 +51,12 @@
     <p class="text-center name">{{$military->name}} - {{$military->rank}} {{$military->division}}</p>
 
     @if (str_contains($record->user->platoon->value, 'CFO'))
-        <p class="text-center">Aluno de Curso de Formação de Oficiais</p>
+        <p class="text-center">Aluno do Curso de Formação de Oficiais</p>
+    @elseif(str_contains($record->user->platoon->value, 'CHOA'))
+        <p class="text-center">Aluno do Curso de Habilitação de Oficiais de Administração</p>
     @else
-        <p class="text-center">Aluno de Curso de Formação de Praças</p>
+        <p class="text-center">Aluno do Curso de Formação de Praças</p>
     @endif
-
-    <hr>
-
-    <h1>Deliberação do Recurso contra Gabarito Preliminar</h1>
-
-    <h3>Parecer: <span>{{$record->status->value}}</span>.</h3>
-
 
 </main>
 
