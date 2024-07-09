@@ -70,6 +70,7 @@ class SwitchShiftResource extends Resource
                                     ->label('Local (Serviço 1)')
                                     ->prefix('📌')
                                     ->datalist([
+                                        'CAEBM',
                                         '1º BBM',
                                         '2º BBM',
                                         '8º BBM',
