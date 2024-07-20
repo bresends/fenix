@@ -25,13 +25,13 @@
         de {{$record->discipline}} do
 
         @if (str_contains($record->user->platoon->value, 'CFO'))
-            Curso de Formação de Oficiais - {{$record->user->platoon}}
+            Curso de Formação de Oficiais - {{$record->user->platoon}},
         @elseif(str_contains($record->user->platoon->value, 'CHOA'))
-            Curso de Habilitação de Oficiais de Administração - {{$record->user->platoon}}
+            Curso de Habilitação de Oficiais de Administração - {{$record->user->platoon}},
         @else
-            Curso de Formação de Praças - Pelotão {{$record->user->platoon}}
+            Curso de Formação de Praças - Pelotão {{$record->user->platoon}},
         @endif
-        , conforme exposto abaixo:</p>
+        conforme exposto abaixo:</p>
 
 
     <h3>Tipo de avaliação: <span>Avaliação {{$record->type}}</span></h3>
@@ -48,7 +48,8 @@
     <p class="text-right">
         Goiânia, {{ \Carbon\Carbon::parse($record->created_at)->translatedFormat('d \d\e F \d\e Y')}}</p>
 
-    <p class="text-center name">{{$military->name}} - {{$military->rank}} {{$military->division}}</p>
+    <p style="text-transform:uppercase" class="text-center name">{{$military->name}}
+        - {{$military->rank}} {{$military->division}}</p>
 
     @if (str_contains($record->user->platoon->value, 'CFO'))
         <p class="text-center">Aluno do Curso de Formação de Oficiais</p>
