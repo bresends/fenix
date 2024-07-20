@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\DownloadPdfController;
+use App\Http\Controllers\ExamAppealPdfController;
+use App\Http\Controllers\MakeUpExamPdfController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -9,7 +10,9 @@ Route::get('/', function () {
 });
 
 
-Route::get('pdf/{record}', DownloadPdfController::class)->name('pdf');
+Route::get('pdf/{record}/exam-appeal', ExamAppealPdfController::class)->name('exam-appeal-pdf');
+
+Route::get('pdf/{record}/make-up-exam', MakeUpExamPdfController::class)->name('make-up-exam-pdf');
 
 
 Route::get('/dashboard', function () {

@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Enums\MakeUpExamStatusEnum;
 use App\Enums\StatusEnum;
 use App\Filament\Resources\MakeUpExamResource\Pages;
+use App\Models\ExamAppeal;
 use App\Models\MakeUpExam;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
@@ -196,7 +197,12 @@ class MakeUpExamResource extends Resource
                     ->toggle()
             ])
             ->actions([
-                EditAction::make(),
+                Action::make('pdf')
+                    ->label('PDF')
+                    ->color('success')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->url(fn(MakeUpExam $record) => route('make-up-exam-pdf', $record))
+                    ->openUrlInNewTab(),
                 Action::make('archive')
                     ->label('Arquivar')
                     ->hidden(!auth()->user()->hasRole('super_admin'))
