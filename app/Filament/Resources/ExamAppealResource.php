@@ -205,7 +205,7 @@ class ExamAppealResource extends Resource
                     ->label('PDF')
                     ->color('success')
                     ->icon('heroicon-o-arrow-down-tray')
-                    ->url(fn(ExamAppeal $record) => route('pdf', $record))
+                    ->url(fn(ExamAppeal $record) => route('exam-appeal-pdf', $record))
                     ->openUrlInNewTab(),
                 Action::make('archive')
                     ->label('Arquivar')
