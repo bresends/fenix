@@ -4,8 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Enums\StatusEnum;
 use App\Filament\Resources\LeaveResource\Pages;
-use App\Models\Fo;
 use App\Models\Leave;
+use Carbon\Carbon;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
@@ -24,6 +24,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -38,6 +39,105 @@ class LeaveResource extends Resource
     protected static ?string $label = 'Dispensa';
 
     protected static ?string $navigationGroup = 'Documentos';
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                if (auth()->user()->hasExactRoles('panel_user')) {
+                    $query->where('user_id', auth()->user()->id);
+                }
+            })
+            ->defaultSort('id', 'desc')
+            ->columns([
+                TextColumn::make('id')
+                    ->numeric()
+                    ->label('Nº'),
+
+                TextColumn::make('user.platoon')
+                    ->label('Pelotão')
+                    ->badge()
+                    ->searchable()
+                    ->sortable(),
+
+                TextColumn::make('user.name')
+                    ->label('Nome')
+                    ->searchable(),
+
+                TextColumn::make('user.rg')
+                    ->label('Rg')
+                    ->searchable()
+                    ->sortable(),
+
+                TextColumn::make('created_at')
+                    ->dateTime('d/m/y H:i')
+                    ->sortable()
+                    ->label('Solicitado em'),
+
+                TextColumn::make('date_leave')
+                    ->dateTime('d/m/y H:i')
+                    ->sortable()
+                    ->label('Saída'),
+
+                TextColumn::make('date_back')
+                    ->dateTime('d/m/y H:i')
+                    ->sortable()
+                    ->label('Retorno'),
+
+                TextColumn::make('status')
+                    ->badge()
+                    ->searchable()
+                    ->label('Parecer'),
+
+                TextColumn::make('motive')
+                    ->limit(45)
+                    ->toggleable()
+                    ->html()
+                    ->label('Motivo'),
+
+                IconColumn::make('paid')
+                    ->label('Arquivada')
+                    ->boolean()
+                    ->alignCenter(),
+            ])
+            ->filters([
+                SelectFilter::make('status')
+                    ->options(StatusEnum::class)
+                    ->label('Parecer'),
+                TernaryFilter::make('date_leave')
+                    ->label('Dispensas (hoje)')
+                    ->placeholder('Todas as dispensas')
+                    ->trueLabel('Saídas')
+                    ->falseLabel('Retornos')
+                    ->queries(
+                        true: fn($query) => $query->whereDate('date_leave', '=', Carbon::today()),
+                        false: fn($query) => $query->whereDate('date_back', '=', Carbon::today()),
+                        blank: fn(Builder $query) => $query, // Won't  filter the query when it is blank.
+                    ),
+                Filter::make('paid')
+                    ->label('Arquivada')
+                    ->toggle(),
+            ])
+            ->actions([
+                EditAction::make(),
+                Action::make('archive')
+                    ->label('Arquivar')
+                    ->hidden(!auth()->user()->hasRole('super_admin'))
+                    ->icon('heroicon-o-archive-box')
+                    ->color('gray')
+                    ->action(fn(Leave $record) => $record->update(['paid' => true]))
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    BulkAction::make('archive')
+                        ->label('Arquivar')
+                        ->hidden(!auth()->user()->hasRole('super_admin'))
+                        ->icon('heroicon-o-archive-box')
+                        ->action(fn(Collection $records) => $records->each->update(['paid' => true])),
+                ]),
+            ]);
+    }
 
     public static function form(Form $form): Form
     {
@@ -140,95 +240,6 @@ class LeaveResource extends Resource
                             ->disabled(!auth()->user()->hasRole('super_admin')),
                     ])
                     ->hiddenOn('create'),
-            ]);
-    }
-
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->modifyQueryUsing(function (Builder $query) {
-                if (auth()->user()->hasExactRoles('panel_user')) {
-                    $query->where('user_id', auth()->user()->id);
-                }
-            })
-            ->defaultSort('id', 'desc')
-            ->columns([
-                TextColumn::make('id')
-                    ->numeric()
-                    ->label('Nº'),
-
-                TextColumn::make('user.platoon')
-                    ->label('Pelotão')
-                    ->badge()
-                    ->searchable()
-                    ->sortable(),
-
-                TextColumn::make('user.name')
-                    ->label('Nome')
-                    ->searchable(),
-
-                TextColumn::make('user.rg')
-                    ->label('Rg')
-                    ->searchable()
-                    ->sortable(),
-
-                TextColumn::make('created_at')
-                    ->dateTime('d/m/y H:i')
-                    ->sortable()
-                    ->label('Solicitado em'),
-
-                TextColumn::make('date_leave')
-                    ->dateTime('d/m/y H:i')
-                    ->sortable()
-                    ->label('Saída'),
-
-                TextColumn::make('date_back')
-                    ->dateTime('d/m/y H:i')
-                    ->sortable()
-                    ->label('Retorno'),
-
-                TextColumn::make('status')
-                    ->badge()
-                    ->searchable()
-                    ->label('Parecer'),
-
-                TextColumn::make('motive')
-                    ->limit(45)
-                    ->toggleable()
-                    ->html()
-                    ->label('Motivo'),
-
-                IconColumn::make('paid')
-                    ->label('Arquivada')
-                    ->boolean()
-                    ->alignCenter(),
-            ])
-            ->filters([
-                SelectFilter::make('status')
-                    ->options(StatusEnum::class)
-                    ->label('Parecer'),
-                Filter::make('paid')
-                    ->label('Arquivada')
-                    ->toggle(),
-            ])
-            ->actions([
-                EditAction::make(),
-                Action::make('archive')
-                    ->label('Arquivar')
-                    ->hidden(!auth()->user()->hasRole('super_admin'))
-                    ->icon('heroicon-o-archive-box')
-                    ->color('gray')
-                    ->action(fn(Leave $record) => $record->update(['paid' => true]))
-            ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    BulkAction::make('archive')
-                        ->label('Arquivar')
-                        ->hidden(!auth()->user()->hasRole('super_admin'))
-                        ->icon('heroicon-o-archive-box')
-                        ->action(fn(Collection $records) => $records->each->update(['paid' => true])),
-                ]),
             ]);
     }
 
