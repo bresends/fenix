@@ -20,6 +20,7 @@ class SickNote extends Model
         'restrictions',
         'archived',
         'received',
+        'observation',
         'user_id',
     ];
 
@@ -31,7 +32,7 @@ class SickNote extends Model
     public function dayBack(): Attribute
     {
         return Attribute::make(
-            get: fn () => Carbon::parse($this->date_issued)->addDays($this->days_absent)->toDateString(),
+            get: fn() => Carbon::parse($this->date_issued)->addDays($this->days_absent)->toDateString(),
         );
     }
 }

@@ -170,7 +170,6 @@ class FoResource extends Resource
                 TextColumn::make('user.platoon')
                     ->label('Pelotão')
                     ->badge()
-                    ->searchable()
                     ->sortable(),
 
                 TextColumn::make('user.name')
@@ -197,12 +196,10 @@ class FoResource extends Resource
                     ->label('Descrição do fato')
                     ->limit(45)
                     ->toggleable()
-                    ->color('gray')
-                    ->searchable(),
+                    ->color('gray'),
 
                 TextColumn::make('status')
                     ->badge()
-                    ->searchable()
                     ->label('Parecer'),
 
                 IconColumn::make('excuse')

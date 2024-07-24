@@ -8,6 +8,7 @@ use App\Models\SickNote;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -45,12 +46,11 @@ class SickNoteResource extends Resource
         return $form
             ->schema([
                 Section::make('Enviar atestado médico')
-                    ->disabledOn('edit')
-                    ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('received') === true)
                     ->icon('heroicon-o-pencil-square')
                     ->columns(2)
                     ->schema([
                         FileUpload::make('file')
+                            ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('received') === true)
                             ->disk('s3')
                             ->visibility('private')
                             ->label('Arquivo')
@@ -71,6 +71,7 @@ class SickNoteResource extends Resource
 
                         DatePicker::make('date_issued')
                             ->prefix('⏰️')
+                            ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('received') === true)
                             ->label('Data do atestado')
                             ->displayFormat('d/m/y')
                             ->native(false)
@@ -79,6 +80,7 @@ class SickNoteResource extends Resource
 
                         TextInput::make('days_absent')
                             ->prefix('🔢')
+                            ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('received') === true)
                             ->label('Quantidade de dias')
                             ->default(1)
                             ->required()
@@ -87,15 +89,25 @@ class SickNoteResource extends Resource
 
                         Textarea::make('motive')
                             ->required()
+                            ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('received') === true)
                             ->rows(5)
                             ->helperText('Especificar motivo do atestado médico.')
                             ->label('Motivo do atestado médico'),
 
                         Textarea::make('restrictions')
                             ->required()
+                            ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('received') === true)
                             ->rows(5)
                             ->helperText('Especificar restrições médicas com detalhes. Ex. Impedido de praticar corrida.')
                             ->label('Restrições/Recomendações Médicas'),
+
+                        RichEditor::make('observation')
+                            ->label('Observações')
+                            ->disabled(fn(string $operation, Get $get): bool => $get('received') === true && $get('archived') === true)
+                            ->columnSpanFull()
+                            ->disableToolbarButtons([
+                                'attachFiles',
+                            ])
 
 
                     ]),
@@ -135,9 +147,11 @@ class SickNoteResource extends Resource
                     ->label('Pelotão'),
 
                 TextColumn::make('user.rg')
+                    ->searchable()
                     ->label('Rg'),
 
                 TextColumn::make('user.name')
+                    ->searchable()
                     ->label('Nome'),
 
                 TextColumn::make('created_at')
