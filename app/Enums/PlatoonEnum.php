@@ -2,8 +2,10 @@
 
 namespace App\Enums;
 
-use Filament\Support\Contracts\HasLabel;
 use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasLabel;
+use Filament\Support\Colors\Color;
+
 
 enum PlatoonEnum: string implements HasLabel, HasColor
 {
@@ -17,6 +19,8 @@ enum PlatoonEnum: string implements HasLabel, HasColor
     case HOTEL = 'Hotel';
     case INDIA = 'Índia';
     case CFO1 = 'CFO-1';
+    case CFO1A = 'CFO-1 A';
+    case CFO1B = 'CFO-1 B';
     case CFO2 = 'CFO-2';
     case CFO3 = 'CFO-3';
     case CHOA = 'CHOA';
@@ -35,6 +39,8 @@ enum PlatoonEnum: string implements HasLabel, HasColor
             self::HOTEL => 'Hotel',
             self::INDIA => 'Índia',
             self::CFO1 => 'CFO-1',
+            self::CFO1A => 'CFO-1 A',
+            self::CFO1B => 'CFO-1 B',
             self::CFO2 => 'CFO-2',
             self::CFO3 => 'CFO-3',
             self::CHOA => 'CHOA',
@@ -42,23 +48,15 @@ enum PlatoonEnum: string implements HasLabel, HasColor
         };
     }
 
-    public function getColor(): string | array | null
+    public function getColor(): string|array|null
     {
         return match ($this) {
-            self::ALPHA => 'warning',
-            self::BRAVO => 'warning',
-            self::CHARLIE => 'warning',
-            self::DELTA => 'warning',
-            self::ECHO => 'warning',
-            self::FOXTROT => 'warning',
-            self::GOLF => 'warning',
-            self::HOTEL => 'warning',
-            self::INDIA => 'warning',
-            self::CFO1 => 'info',
-            self::CFO2 => 'info',
-            self::CFO3 => 'info',
-            self::CHOA => 'success',
-            self::ADMINISTRACAO => 'gray',
+            self::ALPHA, self::CHARLIE, self::BRAVO, self::DELTA, self::ECHO, self::FOXTROT, self::GOLF, self::HOTEL, self::INDIA => Color::Yellow,
+            self::CFO1, self::CFO1A => Color::Red,
+            self::CFO1B => Color::Orange,
+            self::CFO2, self::CFO3 => Color::Blue,
+            self::CHOA => Color::Green,
+            self::ADMINISTRACAO => Color::Gray,
         };
 
     }
