@@ -53,7 +53,7 @@ class SickNoteResource extends Resource
                             ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('received') === true)
                             ->disk('s3')
                             ->visibility('private')
-                            ->label('Arquivo')
+                            ->label('Atestado Médico')
                             ->columnSpanFull()
                             ->directory('sick-notes')
                             ->openable()
@@ -107,7 +107,23 @@ class SickNoteResource extends Resource
                             ->columnSpanFull()
                             ->disableToolbarButtons([
                                 'attachFiles',
-                            ])
+                            ]),
+
+                        FileUpload::make('csau')
+                            ->disabled(fn(string $operation, Get $get): bool => $get('received') === true && $get('archived') === true)
+                            ->disk('s3')
+                            ->visibility('private')
+                            ->label('Anexo (Atestado Homologado pelo CSAU)')
+                            ->columnSpanFull()
+                            ->directory('sick-notes')
+                            ->openable()
+                            ->downloadable()
+                            ->maxSize(5000)
+                            ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                            ->getUploadedFileNameForStorageUsing(
+                                fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
+                                    ->prepend('homologacao-csau-' . now()->format('Y-m-d') . '-' . auth()->user()->name),
+                            ),
 
 
                     ]),
