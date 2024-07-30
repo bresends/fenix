@@ -102,7 +102,7 @@ class UserResource extends Resource
                                             ->required()
                                             ->options(PlatoonEnum::class)
                                             ->default('Alpha')
-                                            ->disabled(!auth()->user()->hasRole('super_admin')),
+                                            ->disabled(!auth()->user()->hasAnyRole(['super_admin', 'admin'])),
 
                                         Select::make('roles')
                                             ->label('Perfis')
@@ -110,7 +110,7 @@ class UserResource extends Resource
                                             ->multiple()
                                             ->preload()
                                             ->searchable()
-                                            ->disabled(!auth()->user()->hasRole('super_admin')),
+                                            ->disabled(!auth()->user()->hasAnyRole(['super_admin', 'admin'])),
                                     ]),
                             ]),
 
@@ -215,7 +215,7 @@ class UserResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                if (!auth()->user()->hasRole('super_admin')) {
+                if (!auth()->user()->hasAnyRole(['super_admin', 'admin'])) {
                     $query->where('id', auth()->user()->id);
                 }
             })
@@ -244,7 +244,7 @@ class UserResource extends Resource
                     ->listWithLineBreaks()
                     ->badge()
                     ->sortable()
-                    ->hidden(!auth()->user()->hasRole('super_admin')),
+                    ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin'])),
             ])
             ->filters([
                 //

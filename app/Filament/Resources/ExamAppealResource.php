@@ -123,19 +123,17 @@ class ExamAppealResource extends Resource
                 Section::make('Deliberar recurso (coordenação)')
                     ->hiddenOn('create')
                     ->icon('heroicon-o-chat-bubble-left-ellipsis')
-                    ->disabled(!auth()->user()->hasRole('super_admin'))
+                    ->disabled(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
                     ->schema([
                         Radio::make('status')
                             ->options(StatusExamEnum::class)
                             ->default(StatusExamEnum::EM_ANDAMENTO->value)
-                            ->label('Parecer')
-                            ->disabled((auth()->user()->hasRole('panel_user'))),
+                            ->label('Parecer'),
 
                         RichEditor::make('final_judgment_reason')
                             ->columnSpan(2)
                             ->helperText('Campo para anotações sobre parecer.')
-                            ->label('Observações da coordenação')
-                            ->disabled((auth()->user()->hasRole('panel_user'))),
+                            ->label('Observações da coordenação'),
 
                         Checkbox::make('archived')
                             ->columnSpanFull()
@@ -209,7 +207,7 @@ class ExamAppealResource extends Resource
                     ->openUrlInNewTab(),
                 Action::make('archive')
                     ->label('Arquivar')
-                    ->hidden(!auth()->user()->hasRole('super_admin'))
+                    ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
                     ->icon('heroicon-o-archive-box')
                     ->color('gray')
                     ->action(fn(ExamAppeal $record) => $record->update(['archived' => true])),
@@ -219,7 +217,7 @@ class ExamAppealResource extends Resource
                     DeleteBulkAction::make(),
                     BulkAction::make('archive')
                         ->label('Arquivar')
-                        ->hidden(!auth()->user()->hasRole('super_admin'))
+                        ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
                         ->icon('heroicon-o-archive-box')
                         ->action(fn(Collection $records) => $records->each->update(['archived' => true])),
                 ]),
