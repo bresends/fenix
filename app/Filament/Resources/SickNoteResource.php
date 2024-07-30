@@ -140,7 +140,7 @@ class SickNoteResource extends Resource
                             ->label('Anexado no SEI/Arquivado'),
                     ])
                     ->hiddenOn('create')
-                    ->disabled(!auth()->user()->hasRole('super_admin')),
+                    ->disabled(!auth()->user()->hasAnyRole(['super_admin', 'admin'])),
             ]);
     }
 
@@ -217,7 +217,7 @@ class SickNoteResource extends Resource
                 EditAction::make(),
                 Action::make('archive')
                     ->label('Arquivar')
-                    ->hidden(!auth()->user()->hasRole('super_admin'))
+                    ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
                     ->icon('heroicon-o-archive-box')
                     ->color('gray')
                     ->action(fn(SickNote $record) => $record->update(['archived' => true]))
@@ -227,7 +227,7 @@ class SickNoteResource extends Resource
                     DeleteBulkAction::make(),
                     BulkAction::make('archive')
                         ->label('Arquivar')
-                        ->hidden(!auth()->user()->hasRole('super_admin'))
+                        ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
                         ->icon('heroicon-o-archive-box')
                         ->action(fn(Collection $records) => $records->each->update(['archived' => true])),
                 ]),

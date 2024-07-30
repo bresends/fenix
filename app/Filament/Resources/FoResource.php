@@ -132,7 +132,7 @@ class FoResource extends Resource
                 Section::make('Deliberação do FO (coordenação)')
                     ->icon('heroicon-o-chat-bubble-left-ellipsis')
                     ->hiddenOn('create')
-                    ->disabled(!auth()->user()->hasRole('super_admin'))
+                    ->disabled(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
                     ->schema([
                         Radio::make('status')
                             ->options(StatusFoEnum::class)
@@ -224,7 +224,7 @@ class FoResource extends Resource
                 EditAction::make(),
                 Action::make('archive')
                     ->label('Arquivar')
-                    ->hidden(!auth()->user()->hasRole('super_admin'))
+                    ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
                     ->icon('heroicon-o-archive-box')
                     ->color('gray')
                     ->action(fn(Fo $record) => $record->update(['paid' => true]))
@@ -234,7 +234,7 @@ class FoResource extends Resource
                     DeleteBulkAction::make(),
                     BulkAction::make('archive')
                         ->label('Arquivar')
-                        ->hidden(!auth()->user()->hasRole('super_admin'))
+                        ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
                         ->icon('heroicon-o-archive-box')
                         ->action(fn(Collection $records) => $records->each->update(['paid' => true])),
                 ]),

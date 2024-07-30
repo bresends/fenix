@@ -122,7 +122,7 @@ class LeaveResource extends Resource
                 EditAction::make(),
                 Action::make('archive')
                     ->label('Arquivar')
-                    ->hidden(!auth()->user()->hasRole('super_admin'))
+                    ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
                     ->icon('heroicon-o-archive-box')
                     ->color('gray')
                     ->action(fn(Leave $record) => $record->update(['paid' => true]))
@@ -132,7 +132,7 @@ class LeaveResource extends Resource
                     DeleteBulkAction::make(),
                     BulkAction::make('archive')
                         ->label('Arquivar')
-                        ->hidden(!auth()->user()->hasRole('super_admin'))
+                        ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
                         ->icon('heroicon-o-archive-box')
                         ->action(fn(Collection $records) => $records->each->update(['paid' => true])),
                 ]),
@@ -227,7 +227,7 @@ class LeaveResource extends Resource
                             ->options(StatusEnum::class)
                             ->default(StatusEnum::EM_ANDAMENTO->value)
                             ->label('Parecer')
-                            ->disabled(!auth()->user()->hasRole('super_admin')),
+                            ->disabled(!auth()->user()->hasAnyRole(['super_admin', 'admin'])),
 
                         RichEditor::make('final_judgment_reason')
                             ->helperText('Campo para anotações sobre parecer.')
@@ -237,7 +237,7 @@ class LeaveResource extends Resource
                         Checkbox::make('paid')
                             ->helperText('O aluno gozou a dispensa e anexou documento comprobatório.')
                             ->label('Arquivada')
-                            ->disabled(!auth()->user()->hasRole('super_admin')),
+                            ->disabled(!auth()->user()->hasAnyRole(['super_admin', 'admin'])),
                     ])
                     ->hiddenOn('create'),
             ]);

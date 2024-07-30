@@ -196,7 +196,7 @@ class SwitchShiftResource extends Resource
 
                 Section::make('Deliberar troca de serviço (coordenação)')
                     ->hiddenOn('create')
-                    ->disabled(!auth()->user()->hasRole('super_admin'))
+                    ->disabled(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
                     ->icon('heroicon-o-chat-bubble-left-ellipsis')
                     ->schema([
                         Radio::make('status')
@@ -291,7 +291,7 @@ class SwitchShiftResource extends Resource
                 EditAction::make(),
                 Action::make('archive')
                     ->label('Arquivar')
-                    ->hidden(!auth()->user()->hasRole('super_admin'))
+                    ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
                     ->icon('heroicon-o-archive-box')
                     ->color('gray')
                     ->action(fn(SwitchShift $record) => $record->update(['paid' => true]))
@@ -301,7 +301,7 @@ class SwitchShiftResource extends Resource
                     DeleteBulkAction::make(),
                     BulkAction::make('archive')
                         ->label('Arquivar')
-                        ->hidden(!auth()->user()->hasRole('super_admin'))
+                        ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
                         ->icon('heroicon-o-archive-box')
                         ->action(fn(Collection $records) => $records->each->update(['paid' => true])),
                 ]),
