@@ -63,7 +63,7 @@ class UserResource extends Resource
                                             ->validationMessages([
                                                 'unique' => 'Esse registro já existe na base de dados',
                                             ])
-                                            ->disabled(auth()->user()->hasRole('panel_user'))
+                                            ->disabled(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
                                             ->preload()
                                             ->searchable()
                                             ->live()
