@@ -19,11 +19,14 @@ class ListSickNotes extends ListRecords
                 ->icon('heroicon-s-queue-list'),
             'À deliberar' => Tab::make()
                 ->icon('heroicon-o-clock')
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('received', false)),
+                ->modifyQueryUsing(fn(Builder $query) => $query
+                    ->where('received', false)
+                    ->orWhere('ratified', false)),
             'À anexar no SEI' => Tab::make()
                 ->icon('heroicon-o-arrow-down-on-square')
                 ->modifyQueryUsing(fn(Builder $query) => $query
                     ->where('received', true)
+                    ->where('ratified', true)
                     ->where('archived', false)),
         ];
     }
