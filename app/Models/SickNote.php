@@ -23,6 +23,7 @@ class SickNote extends Model
         'observation',
         'user_id',
         'csau',
+        'ratified'
     ];
 
     public function user(): BelongsTo

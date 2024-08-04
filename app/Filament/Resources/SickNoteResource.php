@@ -135,6 +135,10 @@ class SickNoteResource extends Resource
                             ->helperText('Marque se o atestado médico foi recebido pelo DABM.')
                             ->label('Recebido/Ciente do DABM'),
 
+                        Checkbox::make('ratified')
+                            ->helperText('Marque se o atestado médico foi homologado pelo Comando de Saúde.')
+                            ->label('Homologado'),
+
                         Checkbox::make('archived')
                             ->helperText('Marque se o atestado médico foi anexado no SEI e pode ser arquivado.')
                             ->label('Anexado no SEI/Arquivado'),
@@ -194,6 +198,11 @@ class SickNoteResource extends Resource
 
                 IconColumn::make('received')
                     ->label('Recebido/Ciente do DABM')
+                    ->boolean()
+                    ->alignCenter(),
+
+                IconColumn::make('ratified')
+                    ->label('Homologado')
                     ->boolean()
                     ->alignCenter(),
 
