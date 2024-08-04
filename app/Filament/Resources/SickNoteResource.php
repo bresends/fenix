@@ -136,7 +136,7 @@ class SickNoteResource extends Resource
                             ->label('Recebido/Ciente do DABM'),
 
                         Checkbox::make('ratified')
-                            ->helperText('Marque se o atestado médico foi homologado pelo Comando de Saúde.')
+                            ->helperText('Marque se o atestado médico foi homologado pelo Comando ou CSAU.')
                             ->label('Homologado'),
 
                         Checkbox::make('archived')
