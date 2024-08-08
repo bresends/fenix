@@ -22,14 +22,6 @@ class Military extends Model
         'sort',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'rank' => RankEnum::class,
-            'division' => DivisionEnum::class,
-        ];
-    }
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -42,10 +34,22 @@ class Military extends Model
 
     public function sei(): Attribute
     {
-        $formatted_string = '0' . substr((string)$this->rg, 0, 1) . '.' . substr((string)$this->rg, 1);
+        if ($this->rg < 10000) {
+            $formatted_rg = '0' . substr((string)$this->rg, 0, 1) . '.' . substr((string)$this->rg, 1);
+        } else {
+            $formatted_rg = substr((string)$this->rg, 0, 2) . '.' . substr((string)$this->rg, 2);
+        }
 
         return Attribute::make(
-            get: fn() => $this->rank->value . ' ' . $this->division->value . ' ' . $formatted_string . ' ' . $this->name
+            get: fn() => $this->rank->value . ' ' . $this->division->value . ' ' . $formatted_rg . ' ' . $this->name
         );
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'rank' => RankEnum::class,
+            'division' => DivisionEnum::class,
+        ];
     }
 }

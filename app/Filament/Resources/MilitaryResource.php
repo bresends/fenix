@@ -51,7 +51,6 @@ class MilitaryResource extends Resource
                     ->placeholder('4140')
                     ->integer()
                     ->minValue(100)
-                    ->maxValue(10000)
                     ->required()
                     ->live()
                     ->unique(ignoreRecord: true),
