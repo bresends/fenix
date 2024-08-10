@@ -7,7 +7,7 @@ use App\Enums\StatusFoEnum;
 use App\Filament\Resources\FoResource\Pages;
 use App\Models\Fo;
 use App\Models\Military;
-use Carbon\Carbon;
+use App\Models\User;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Radio;
@@ -51,7 +51,14 @@ class FoResource extends Resource
                     ->columns(2)
                     ->icon('heroicon-o-pencil-square')
                     ->disabled(auth()->user()->hasExactRoles('panel_user'))
-                    ->disabledOn('edit')
+                    ->disabled(function (string $operation, Get $get): bool {
+                        $military = Military::firstWhere('rg', auth()->user()->rg);
+
+                        // Do not allow to edit or delete if the user is not the issuer or the FO is not in progress
+                        return $operation !== 'create' &&
+                            (!$military || $get('issuer') !== $military->id ||
+                                ($get('status') !== StatusFoEnum::EM_ANDAMENTO->value));
+                    })
                     ->schema([
                         Select::make('type')
                             ->options(FoEnum::class)
@@ -68,11 +75,16 @@ class FoResource extends Resource
                             ->displayFormat('d/m/y H:i')
                             ->native(false)
                             ->required()
-                            ->default(fn() => session()->has('dataFill') ? Carbon::parse(session()->get('dataFill')['date_issued'])->addHours(3) : now()),
+                            ->default(fn() => session()->has('dataFill') ? session()->get('dataFill')['date_issued'] : now()),
 
                         Select::make('user_id')
-                            ->relationship('user', 'name')
+                            ->relationship(
+                                name: 'user',
+                                titleAttribute: 'name',
+                                modifyQueryUsing: fn(Builder $query) => $query->orderBy('name'),
+                            )
                             ->searchable(['name', 'rg'])
+                            ->getOptionLabelFromRecordUsing(fn(User $record) => "({$record->platoon->value}) - {$record->name}")
                             ->label('Observado')
                             ->prefix('🔍')
                             ->preload()
