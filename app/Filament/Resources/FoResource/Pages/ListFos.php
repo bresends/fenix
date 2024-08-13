@@ -19,9 +19,14 @@ class ListFos extends ListRecords
         return [
             'Todos' => Tab::make()
                 ->icon('heroicon-s-queue-list'),
+            'Aguardando Ciência' => Tab::make()
+                ->icon('heroicon-o-chat-bubble-oval-left')
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('status', StatusFoEnum::EM_ANDAMENTO->value)
+                    ->whereNull('excuse')),
             'À deliberar' => Tab::make()
                 ->icon('heroicon-o-clock')
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('status', StatusFoEnum::EM_ANDAMENTO->value)),
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('status', StatusFoEnum::EM_ANDAMENTO->value)
+                    ->whereNotNull('excuse')),
             'Não cumpridos' => Tab::make()
                 ->icon('heroicon-o-document-minus')
                 ->modifyQueryUsing(fn(Builder $query) => $query

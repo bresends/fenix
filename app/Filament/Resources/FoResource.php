@@ -184,15 +184,16 @@ class FoResource extends Resource
                     ->badge()
                     ->sortable(),
 
+                TextColumn::make('user.rg')
+                    ->label('Rg')
+                    ->searchable()
+                    ->sortable(),
+
                 TextColumn::make('user.name')
                     ->label('Nome')
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('user.rg')
-                    ->label('Rg')
-                    ->searchable()
-                    ->sortable(),
 
                 TextColumn::make('created_at')
                     ->dateTime('d/m/y H:i')
@@ -210,14 +211,15 @@ class FoResource extends Resource
                     ->toggleable()
                     ->color('gray'),
 
+                TextColumn::make('excuse')
+                    ->label('Ciência/Justificativa')
+                    ->limit(50)
+                    ->html(true),
+
                 TextColumn::make('status')
                     ->badge()
                     ->label('Parecer'),
 
-                IconColumn::make('excuse')
-                    ->label('Ciência/Justificativa')
-                    ->boolean()
-                    ->alignCenter(),
 
                 IconColumn::make('paid')
                     ->label('Cumprido/Arquivado')
@@ -249,6 +251,13 @@ class FoResource extends Resource
                         ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
                         ->icon('heroicon-o-archive-box')
                         ->action(fn(Collection $records) => $records->each->update(['paid' => true])),
+                    BulkAction::make('accept')
+                        ->label('Deferir')
+                        ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
+                        ->icon('heroicon-o-check')
+                        ->requiresConfirmation()
+                        ->deselectRecordsAfterCompletion()
+                        ->action(fn(Collection $records) => $records->each->update(['status' => StatusFoEnum::DEFERIDO->value])),
                 ]),
             ]);
     }
