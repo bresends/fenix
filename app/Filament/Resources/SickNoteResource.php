@@ -104,6 +104,7 @@ class SickNoteResource extends Resource
                         RichEditor::make('observation')
                             ->label('Observações')
                             ->disabled(fn(string $operation, Get $get): bool => $get('received') === true && $get('archived') === true)
+                            ->dehydrated()
                             ->columnSpanFull()
                             ->disableToolbarButtons([
                                 'attachFiles',
