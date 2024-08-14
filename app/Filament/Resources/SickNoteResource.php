@@ -129,7 +129,7 @@ class SickNoteResource extends Resource
 
                     ]),
 
-                Section::make('Controle de dispensa médica (Coordenação)')
+                Section::make('Controle de dispensa médica (coordenação)')
                     ->icon('heroicon-o-chat-bubble-left-ellipsis')
                     ->schema([
                         Checkbox::make('received')
