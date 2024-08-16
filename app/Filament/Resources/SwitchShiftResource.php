@@ -6,6 +6,7 @@ use App\Enums\StatusEnum;
 use App\Filament\Resources\SwitchShiftResource\Pages;
 use App\Models\Military;
 use App\Models\SwitchShift;
+use App\Models\User;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Fieldset;
@@ -54,6 +55,17 @@ class SwitchShiftResource extends Resource
                     ->icon('heroicon-o-pencil-square')
                     ->columns(2)
                     ->schema([
+                        Select::make('user_id')
+                            ->relationship(
+                                name: 'user',
+                                titleAttribute: 'name',
+                            )
+                            ->hiddenOn('create')
+                            ->disabled()
+                            ->getOptionLabelFromRecordUsing(fn(User $record) => "({$record->platoon->value}) - {$record->name}")
+                            ->columnSpanFull()
+                            ->label('Solicitante')
+                            ->prefix('👨🏻‍🚒'),
 
                         Fieldset::make('Serviço em que será substituído')
                             ->schema([
