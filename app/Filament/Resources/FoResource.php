@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Enums\FoEnum;
+use App\Enums\PlatoonEnum;
 use App\Enums\StatusFoEnum;
 use App\Filament\Resources\FoResource\Pages;
 use App\Models\Fo;
@@ -42,6 +43,119 @@ class FoResource extends Resource
     protected static ?string $pluralModelLabel = 'Fatos Observados';
 
     protected static ?string $navigationGroup = 'Documentos';
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                if (auth()->user()->hasExactRoles('panel_user')) {
+                    $query->whereHas('user', function ($query) {
+                        $query->where('id', auth()->user()->id);
+                    });
+                }
+            })
+            ->defaultSort('id', 'desc')
+            ->columns([
+                TextColumn::make('id')
+                    ->label('FO')
+                    ->searchable()
+                    ->sortable(),
+
+                TextColumn::make('user.platoon')
+                    ->label('Pelotão')
+                    ->badge()
+                    ->sortable(),
+
+                TextColumn::make('user.rg')
+                    ->label('Rg')
+                    ->searchable()
+                    ->sortable(),
+
+                TextColumn::make('user.name')
+                    ->label('Nome')
+                    ->searchable()
+                    ->sortable(),
+
+
+                TextColumn::make('created_at')
+                    ->dateTime('d/m/y H:i')
+                    ->sortable()
+                    ->label('Emitido em'),
+
+                TextColumn::make('type')
+                    ->badge()
+                    ->label('Tipo'),
+
+                TextColumn::make('reason')
+                    ->badge()
+                    ->label('Descrição do fato')
+                    ->limit(45)
+                    ->toggleable()
+                    ->color('gray'),
+
+                TextColumn::make('excuse')
+                    ->label('Ciência/Justificativa')
+                    ->limit(50)
+                    ->html(true),
+
+                TextColumn::make('status')
+                    ->badge()
+                    ->label('Parecer'),
+
+
+                IconColumn::make('paid')
+                    ->label('Cumprido/Arquivado')
+                    ->boolean()
+                    ->alignCenter(),
+            ])
+            ->filters([
+                SelectFilter::make('status')
+                    ->options(StatusFoEnum::class)
+                    ->label('Parecer'),
+                Filter::make('user')
+                    ->form([
+                        Select::make('platoon')
+                            ->label('Pelotão')
+                            ->options(PlatoonEnum::class)
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['platoon'],
+                                fn(Builder $query, $platoon): Builder => $query->whereRelation('user', 'platoon', $platoon)
+                            );
+                    }),
+                Filter::make('paid')
+                    ->label('Cumprido/Arquivado')
+                    ->toggle(),
+            ])
+            ->actions([
+                EditAction::make(),
+                Action::make('archive')
+                    ->label('Arquivar')
+                    ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
+                    ->icon('heroicon-o-archive-box')
+                    ->color('gray')
+                    ->action(fn(Fo $record) => $record->update(['paid' => true]))
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    BulkAction::make('archive')
+                        ->label('Arquivar')
+                        ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
+                        ->icon('heroicon-o-archive-box')
+                        ->action(fn(Collection $records) => $records->each->update(['paid' => true])),
+                    BulkAction::make('accept')
+                        ->label('Deferir')
+                        ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
+                        ->icon('heroicon-o-check')
+                        ->requiresConfirmation()
+                        ->deselectRecordsAfterCompletion()
+                        ->action(fn(Collection $records) => $records->each->update(['status' => StatusFoEnum::DEFERIDO->value])),
+                ]),
+            ]);
+    }
 
     public static function form(Form $form): Form
     {
@@ -159,106 +273,6 @@ class FoResource extends Resource
                             ->helperText('FO cumprido em Ordem de Serviço e/ou arquivado.')
                             ->label('Cumprido/Arquivado'),
                     ]),
-            ]);
-    }
-
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->modifyQueryUsing(function (Builder $query) {
-                if (auth()->user()->hasExactRoles('panel_user')) {
-                    $query->whereHas('user', function ($query) {
-                        $query->where('id', auth()->user()->id);
-                    });
-                }
-            })
-            ->defaultSort('id', 'desc')
-            ->columns([
-                TextColumn::make('id')
-                    ->label('FO')
-                    ->searchable()
-                    ->sortable(),
-
-                TextColumn::make('user.platoon')
-                    ->label('Pelotão')
-                    ->badge()
-                    ->sortable(),
-
-                TextColumn::make('user.rg')
-                    ->label('Rg')
-                    ->searchable()
-                    ->sortable(),
-
-                TextColumn::make('user.name')
-                    ->label('Nome')
-                    ->searchable()
-                    ->sortable(),
-
-
-                TextColumn::make('created_at')
-                    ->dateTime('d/m/y H:i')
-                    ->sortable()
-                    ->label('Emitido em'),
-
-                TextColumn::make('type')
-                    ->badge()
-                    ->label('Tipo'),
-
-                TextColumn::make('reason')
-                    ->badge()
-                    ->label('Descrição do fato')
-                    ->limit(45)
-                    ->toggleable()
-                    ->color('gray'),
-
-                TextColumn::make('excuse')
-                    ->label('Ciência/Justificativa')
-                    ->limit(50)
-                    ->html(true),
-
-                TextColumn::make('status')
-                    ->badge()
-                    ->label('Parecer'),
-
-
-                IconColumn::make('paid')
-                    ->label('Cumprido/Arquivado')
-                    ->boolean()
-                    ->alignCenter(),
-            ])
-            ->filters([
-                SelectFilter::make('status')
-                    ->options(StatusFoEnum::class)
-                    ->label('Parecer'),
-                Filter::make('paid')
-                    ->label('Cumprido/Arquivado')
-                    ->toggle(),
-            ])
-            ->actions([
-                EditAction::make(),
-                Action::make('archive')
-                    ->label('Arquivar')
-                    ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
-                    ->icon('heroicon-o-archive-box')
-                    ->color('gray')
-                    ->action(fn(Fo $record) => $record->update(['paid' => true]))
-            ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    BulkAction::make('archive')
-                        ->label('Arquivar')
-                        ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
-                        ->icon('heroicon-o-archive-box')
-                        ->action(fn(Collection $records) => $records->each->update(['paid' => true])),
-                    BulkAction::make('accept')
-                        ->label('Deferir')
-                        ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
-                        ->icon('heroicon-o-check')
-                        ->requiresConfirmation()
-                        ->deselectRecordsAfterCompletion()
-                        ->action(fn(Collection $records) => $records->each->update(['status' => StatusFoEnum::DEFERIDO->value])),
-                ]),
             ]);
     }
 

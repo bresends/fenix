@@ -3,10 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Enums\MakeUpExamStatusEnum;
+use App\Enums\PlatoonEnum;
 use App\Enums\StatusExamEnum;
 use App\Filament\Resources\ExamAppealResource\Pages;
 use App\Models\ExamAppeal;
 use App\Models\Leave;
+use App\Models\User;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Radio;
@@ -55,6 +57,18 @@ class ExamAppealResource extends Resource
                     ->icon('heroicon-o-pencil-square')
                     ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
                     ->schema([
+                        Select::make('user_id')
+                            ->relationship(
+                                name: 'user',
+                                titleAttribute: 'name',
+                            )
+                            ->hiddenOn('create')
+                            ->disabled()
+                            ->getOptionLabelFromRecordUsing(fn(User $record) => "({$record->platoon->value}) - {$record->name}")
+                            ->columnSpanFull()
+                            ->label('Solicitante')
+                            ->prefix('👨🏻‍🚒'),
+
                         TextInput::make('discipline')
                             ->label('Nome da disciplina (conforme consta no Plano de Curso)')
                             ->placeholder('Salvamento Terrestre')

@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Enums\StatusEnum;
 use App\Filament\Resources\LeaveResource\Pages;
 use App\Models\Leave;
+use App\Models\User;
 use Carbon\Carbon;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
@@ -12,6 +13,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
@@ -148,6 +150,18 @@ class LeaveResource extends Resource
                     ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
                     ->columns(2)
                     ->schema([
+                        Select::make('user_id')
+                            ->relationship(
+                                name: 'user',
+                                titleAttribute: 'name',
+                            )
+                            ->hiddenOn('create')
+                            ->disabled()
+                            ->getOptionLabelFromRecordUsing(fn(User $record) => "({$record->platoon->value}) - {$record->name}")
+                            ->columnSpanFull()
+                            ->label('Solicitante')
+                            ->prefix('👨🏻‍🚒'),
+
                         DateTimePicker::make('date_leave')
                             ->prefix('➡️️')
                             ->label('Data e horário de saída:')

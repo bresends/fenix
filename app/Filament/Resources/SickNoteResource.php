@@ -5,11 +5,13 @@ namespace App\Filament\Resources;
 use App\Enums\StatusEnum;
 use App\Filament\Resources\SickNoteResource\Pages;
 use App\Models\SickNote;
+use App\Models\User;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -49,6 +51,18 @@ class SickNoteResource extends Resource
                     ->icon('heroicon-o-pencil-square')
                     ->columns(2)
                     ->schema([
+                        Select::make('user_id')
+                            ->relationship(
+                                name: 'user',
+                                titleAttribute: 'name',
+                            )
+                            ->hiddenOn('create')
+                            ->disabled()
+                            ->getOptionLabelFromRecordUsing(fn(User $record) => "({$record->platoon->value}) - {$record->name}")
+                            ->columnSpanFull()
+                            ->label('Remetente')
+                            ->prefix('👨🏻‍🚒'),
+
                         FileUpload::make('file')
                             ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('received') === true)
                             ->disk('s3')

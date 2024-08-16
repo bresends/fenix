@@ -7,6 +7,7 @@ use App\Enums\StatusEnum;
 use App\Filament\Resources\MakeUpExamResource\Pages;
 use App\Models\ExamAppeal;
 use App\Models\MakeUpExam;
+use App\Models\User;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -55,6 +56,18 @@ class MakeUpExamResource extends Resource
                     ->icon('heroicon-o-pencil-square')
                     ->columns(2)
                     ->schema([
+                        Select::make('user_id')
+                            ->relationship(
+                                name: 'user',
+                                titleAttribute: 'name',
+                            )
+                            ->hiddenOn('create')
+                            ->disabled()
+                            ->getOptionLabelFromRecordUsing(fn(User $record) => "({$record->platoon->value}) - {$record->name}")
+                            ->columnSpanFull()
+                            ->label('Solicitante')
+                            ->prefix('👨🏻‍🚒'),
+
                         TextInput::make('discipline_name')
                             ->label('Nome da disciplina (conforme consta no Plano de Curso)')
                             ->placeholder('Salvamento Terrestre')
