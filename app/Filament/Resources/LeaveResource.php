@@ -3,6 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Enums\StatusEnum;
+use App\Enums\StatusExamEnum;
+use App\Enums\StatusFoEnum;
 use App\Filament\Resources\LeaveResource\Pages;
 use App\Models\Leave;
 use App\Models\User;
@@ -234,26 +236,56 @@ class LeaveResource extends Resource
                     ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' &&
                             $get('user_id') !== auth()->user()->id) || $get('paid') === true),
 
-                Section::make('Deliberar dispensa (coordenação)')
+                Section::make('Deliberar recurso (coordenação)')
+                    ->hiddenOn('create')
                     ->icon('heroicon-o-chat-bubble-left-ellipsis')
+                    ->disabled(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
                     ->schema([
                         Radio::make('status')
                             ->options(StatusEnum::class)
-                            ->default(StatusEnum::EM_ANDAMENTO->value)
+                            ->default(StatusFoEnum::EM_ANDAMENTO->value)
                             ->label('Parecer')
-                            ->disabled(!auth()->user()->hasAnyRole(['super_admin', 'admin'])),
+                            ->live()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if ($state !== StatusEnum::EM_ANDAMENTO->value) {
+                                    $set('evaluated_by', auth()->id());
+                                    $set('evaluated_at', now());
+                                }
+                            }),
 
                         RichEditor::make('final_judgment_reason')
                             ->helperText('Campo para anotações sobre parecer.')
                             ->label('Observações da coordenação')
-                            ->disabled(fn(Get $get): bool => (auth()->user()->hasExactRoles('panel_user') || $get('status') !== 'Em andamento')),
+                            ->disabled(fn(Get $get): bool => $get('paid') === true),
 
                         Checkbox::make('paid')
                             ->helperText('O aluno gozou a dispensa e anexou documento comprobatório.')
                             ->label('Arquivada')
-                            ->disabled(!auth()->user()->hasAnyRole(['super_admin', 'admin'])),
                     ])
                     ->hiddenOn('create'),
+
+                Section::make('Decisor da dispensa')
+                    ->hiddenOn('create')
+                    ->columns(2)
+                    ->hidden(fn(Get $get): bool => $get('status') === StatusExamEnum::EM_ANDAMENTO->value)
+                    ->icon('heroicon-o-scale')
+                    ->schema([
+                        Select::make('evaluated_by')
+                            ->label('Deliberada por')
+                            ->prefix('👨🏻‍⚖️')
+                            ->relationship('evaluator', 'name')
+                            ->disabled()
+                            ->dehydrated(),
+
+                        DateTimePicker::make('evaluated_at')
+                            ->prefix('📆️️')
+                            ->label('Deliberada em')
+                            ->seconds(false)
+                            ->displayFormat('d/m/y H:i')
+                            ->native(false)
+                            ->disabled()
+                            ->dehydrated(),
+                    ]),
             ]);
     }
 

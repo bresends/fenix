@@ -10,6 +10,7 @@ use App\Models\ExamAppeal;
 use App\Models\Leave;
 use App\Models\User;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\RichEditor;
@@ -142,16 +143,47 @@ class ExamAppealResource extends Resource
                         Radio::make('status')
                             ->options(StatusExamEnum::class)
                             ->default(StatusExamEnum::EM_ANDAMENTO->value)
-                            ->label('Parecer'),
+                            ->label('Parecer')
+                            ->live()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if ($state !== StatusExamEnum::EM_ANDAMENTO->value) {
+                                    $set('evaluated_by', auth()->id());
+                                    $set('evaluated_at', now());
+                                }
+                            }),
 
                         RichEditor::make('final_judgment_reason')
                             ->columnSpan(2)
                             ->helperText('Campo para anotações sobre parecer.')
+                            ->disabled(fn(Get $get): bool => $get('archived') === true)
                             ->label('Observações da coordenação'),
 
                         Checkbox::make('archived')
                             ->columnSpanFull()
                             ->label('Encaminhado para a SETEB/Arquivado'),
+                    ]),
+
+                Section::make('Decisor do recurso')
+                    ->hiddenOn('create')
+                    ->columns(2)
+                    ->hidden(fn(Get $get): bool => $get('status') === StatusExamEnum::EM_ANDAMENTO->value)
+                    ->icon('heroicon-o-scale')
+                    ->schema([
+                        Select::make('evaluated_by')
+                            ->label('Deliberado por')
+                            ->prefix('👨🏻‍⚖️')
+                            ->relationship('evaluator', 'name')
+                            ->disabled()
+                            ->dehydrated(),
+
+                        DateTimePicker::make('evaluated_at')
+                            ->prefix('📆️️')
+                            ->label('Deliberado em')
+                            ->seconds(false)
+                            ->displayFormat('d/m/y H:i')
+                            ->native(false)
+                            ->disabled()
+                            ->dehydrated(),
                     ]),
             ]);
     }

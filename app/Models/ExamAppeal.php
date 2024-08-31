@@ -26,6 +26,8 @@ class ExamAppeal extends Model
         'status',
         'final_judgment_reason',
         'archived',
+        'evaluated_by',
+        'evaluated_at',
     ];
 
     protected function casts(): array
@@ -38,5 +40,10 @@ class ExamAppeal extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function evaluator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'evaluated_by');
     }
 }

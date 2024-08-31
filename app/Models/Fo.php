@@ -24,6 +24,8 @@ class Fo extends Model
         'final_judgment_reason',
         'paid',
         'date_issued',
+        'evaluated_by',
+        'evaluated_at',
     ];
 
     protected function casts(): array
@@ -42,5 +44,10 @@ class Fo extends Model
     public function issuer(): BelongsTo
     {
         return $this->belongsTo(Military::class, 'issuer');
+    }
+
+    public function evaluator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'evaluated_by');
     }
 }

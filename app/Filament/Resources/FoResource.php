@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\FoEnum;
 use App\Enums\PlatoonEnum;
+use App\Enums\StatusExamEnum;
 use App\Enums\StatusFoEnum;
 use App\Filament\Resources\FoResource\Pages;
 use App\Models\Fo;
@@ -152,7 +153,7 @@ class FoResource extends Resource
                         ->icon('heroicon-o-check')
                         ->requiresConfirmation()
                         ->deselectRecordsAfterCompletion()
-                        ->action(fn(Collection $records) => $records->each->update(['status' => StatusFoEnum::DEFERIDO->value])),
+                        ->action(fn(Collection $records) => $records->each->update(['status' => StatusFoEnum::DEFERIDO->value, 'evaluated_by' => auth()->id(), 'evaluated_at' => now()])),
                 ]),
             ]);
     }
@@ -263,15 +264,46 @@ class FoResource extends Resource
                         Radio::make('status')
                             ->options(StatusFoEnum::class)
                             ->default(StatusFoEnum::EM_ANDAMENTO->value)
-                            ->label('Parecer'),
+                            ->label('Parecer')
+                            ->live()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if ($state !== StatusFoEnum::EM_ANDAMENTO->value) {
+                                    $set('evaluated_by', auth()->id());
+                                    $set('evaluated_at', now());
+                                }
+                            }),
 
                         RichEditor::make('final_judgment_reason')
                             ->helperText('Campo para anotações sobre parecer do FO, ordem de serviço, etc.')
+                            ->disabled(fn(Get $get): bool => $get('paid') === true)
                             ->label('Observações da coordenação'),
 
                         Checkbox::make('paid')
                             ->helperText('FO cumprido em Ordem de Serviço e/ou arquivado.')
                             ->label('Cumprido/Arquivado'),
+                    ]),
+
+                Section::make('Decisor do Fato Observado')
+                    ->hiddenOn('create')
+                    ->columns(2)
+                    ->hidden(fn(Get $get): bool => $get('status') === StatusExamEnum::EM_ANDAMENTO->value)
+                    ->icon('heroicon-o-scale')
+                    ->schema([
+                        Select::make('evaluated_by')
+                            ->label('Deliberado por')
+                            ->prefix('👨🏻‍⚖️')
+                            ->relationship('evaluator', 'name')
+                            ->disabled()
+                            ->dehydrated(),
+
+                        DateTimePicker::make('evaluated_at')
+                            ->prefix('📆️️')
+                            ->label('Deliberado em')
+                            ->seconds(false)
+                            ->displayFormat('d/m/y H:i')
+                            ->native(false)
+                            ->disabled()
+                            ->dehydrated(),
                     ]),
             ]);
     }

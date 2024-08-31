@@ -23,7 +23,9 @@ class SickNote extends Model
         'observation',
         'user_id',
         'csau',
-        'ratified'
+        'ratified',
+        'evaluated_by',
+        'evaluated_at',
     ];
 
     public function user(): BelongsTo
@@ -36,5 +38,10 @@ class SickNote extends Model
         return Attribute::make(
             get: fn() => Carbon::parse($this->date_issued)->addDays($this->days_absent)->toDateString(),
         );
+    }
+
+    public function evaluator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'evaluated_by');
     }
 }
