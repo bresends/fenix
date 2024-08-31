@@ -29,6 +29,8 @@ class SwitchShift extends Model
         'status',
         'final_judgment_reason',
         'paid',
+        'evaluated_by',
+        'evaluated_at',
     ];
 
     protected function casts(): array
@@ -52,5 +54,10 @@ class SwitchShift extends Model
         return Attribute::make(
             get: fn() => $military->rank . ' ' . $military->division . ' ' . $formatted_string . ' ' . $military->name
         );
+    }
+
+    public function evaluator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'evaluated_by');
     }
 }

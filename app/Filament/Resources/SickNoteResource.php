@@ -3,12 +3,16 @@
 namespace App\Filament\Resources;
 
 use App\Enums\StatusEnum;
+use App\Enums\StatusExamEnum;
+use App\Enums\StatusFoEnum;
 use App\Filament\Resources\SickNoteResource\Pages;
 use App\Models\SickNote;
 use App\Models\User;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -145,10 +149,19 @@ class SickNoteResource extends Resource
 
                 Section::make('Controle de dispensa médica (coordenação)')
                     ->icon('heroicon-o-chat-bubble-left-ellipsis')
+                    ->disabled(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
+                    ->hiddenOn('create')
                     ->schema([
                         Checkbox::make('received')
                             ->helperText('Marque se o atestado médico foi recebido pelo DABM.')
-                            ->label('Recebido/Ciente do DABM'),
+                            ->label('Recebido/Ciente do DABM')
+                            ->live()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if ($state !== StatusEnum::EM_ANDAMENTO->value) {
+                                    $set('evaluated_by', auth()->id());
+                                    $set('evaluated_at', now());
+                                }
+                            }),
 
                         Checkbox::make('ratified')
                             ->helperText('Marque se o atestado médico foi homologado pelo Comando ou CSAU.')
@@ -157,9 +170,30 @@ class SickNoteResource extends Resource
                         Checkbox::make('archived')
                             ->helperText('Marque se o atestado médico foi anexado no SEI e pode ser arquivado.')
                             ->label('Anexado no SEI/Arquivado'),
-                    ])
+                    ]),
+
+                Section::make('Recepção do Atestado Médico')
                     ->hiddenOn('create')
-                    ->disabled(!auth()->user()->hasAnyRole(['super_admin', 'admin'])),
+                    ->columns(2)
+                    ->hidden(fn(Get $get): bool => $get('received') === false)
+                    ->icon('heroicon-o-inbox-arrow-down')
+                    ->schema([
+                        Select::make('evaluated_by')
+                            ->label('Recebido por')
+                            ->prefix('👨🏻‍⚖️')
+                            ->relationship('evaluator', 'name')
+                            ->disabled()
+                            ->dehydrated(),
+
+                        DateTimePicker::make('evaluated_at')
+                            ->prefix('📆️️')
+                            ->label('Recebido em')
+                            ->seconds(false)
+                            ->displayFormat('d/m/y H:i')
+                            ->native(false)
+                            ->disabled()
+                            ->dehydrated(),
+                    ]),
             ]);
     }
 

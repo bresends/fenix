@@ -23,6 +23,8 @@ class MakeUpExam extends Model
         'date_back',
         'final_judgment_reason',
         'archived',
+        'evaluated_by',
+        'evaluated_at',
     ];
 
     protected function casts(): array
@@ -36,5 +38,10 @@ class MakeUpExam extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function evaluator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'evaluated_by');
     }
 }

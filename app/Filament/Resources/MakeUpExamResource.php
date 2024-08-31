@@ -4,12 +4,15 @@ namespace App\Filament\Resources;
 
 use App\Enums\MakeUpExamStatusEnum;
 use App\Enums\StatusEnum;
+use App\Enums\StatusExamEnum;
+use App\Enums\StatusFoEnum;
 use App\Filament\Resources\MakeUpExamResource\Pages;
 use App\Models\ExamAppeal;
 use App\Models\MakeUpExam;
 use App\Models\User;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\RichEditor;
@@ -134,8 +137,15 @@ class MakeUpExamResource extends Resource
                     ->schema([
                         Radio::make('status')
                             ->options(StatusEnum::class)
-                            ->default(StatusEnum::EM_ANDAMENTO->value)
-                            ->label('Parecer'),
+                            ->default(StatusFoEnum::EM_ANDAMENTO->value)
+                            ->label('Parecer')
+                            ->live()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if ($state !== StatusEnum::EM_ANDAMENTO->value) {
+                                    $set('evaluated_by', auth()->id());
+                                    $set('evaluated_at', now());
+                                }
+                            }),
 
                         RichEditor::make('final_judgment_reason')
                             ->helperText('Campo para anotações sobre parecer.')
@@ -144,6 +154,29 @@ class MakeUpExamResource extends Resource
                         Checkbox::make('archived')
                             ->helperText('Segunda chamada concluída')
                             ->label('Encaminhada para a SETEB/Arquivada'),
+                    ]),
+
+                Section::make('Decisor da Segunda Chamada')
+                    ->hiddenOn('create')
+                    ->columns(2)
+                    ->hidden(fn(Get $get): bool => $get('status') === StatusExamEnum::EM_ANDAMENTO->value)
+                    ->icon('heroicon-o-scale')
+                    ->schema([
+                        Select::make('evaluated_by')
+                            ->label('Deliberada por')
+                            ->prefix('👨🏻‍⚖️')
+                            ->relationship('evaluator', 'name')
+                            ->disabled()
+                            ->dehydrated(),
+
+                        DateTimePicker::make('evaluated_at')
+                            ->prefix('📆️️')
+                            ->label('Deliberada em')
+                            ->seconds(false)
+                            ->displayFormat('d/m/y H:i')
+                            ->native(false)
+                            ->disabled()
+                            ->dehydrated(),
                     ]),
             ]);
     }

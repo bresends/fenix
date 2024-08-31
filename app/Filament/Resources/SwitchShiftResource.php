@@ -3,6 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Enums\StatusEnum;
+use App\Enums\StatusExamEnum;
+use App\Enums\StatusFoEnum;
 use App\Filament\Resources\SwitchShiftResource\Pages;
 use App\Models\Military;
 use App\Models\SwitchShift;
@@ -213,8 +215,15 @@ class SwitchShiftResource extends Resource
                     ->schema([
                         Radio::make('status')
                             ->options(StatusEnum::class)
-                            ->default(StatusEnum::EM_ANDAMENTO->value)
-                            ->label('Parecer'),
+                            ->default(StatusFoEnum::EM_ANDAMENTO->value)
+                            ->label('Parecer')
+                            ->live()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if ($state !== StatusEnum::EM_ANDAMENTO->value) {
+                                    $set('evaluated_by', auth()->id());
+                                    $set('evaluated_at', now());
+                                }
+                            }),
 
                         RichEditor::make('final_judgment_reason')
                             ->helperText('Campo para anotações sobre parecer.')
@@ -222,6 +231,29 @@ class SwitchShiftResource extends Resource
 
                         Checkbox::make('paid')
                             ->label('Informado às OBMs/Arquivado'),
+                    ]),
+
+                Section::make('Decisor da Troca de Serviço')
+                    ->hiddenOn('create')
+                    ->columns(2)
+                    ->hidden(fn(Get $get): bool => $get('status') === StatusExamEnum::EM_ANDAMENTO->value)
+                    ->icon('heroicon-o-scale')
+                    ->schema([
+                        Select::make('evaluated_by')
+                            ->label('Deliberada por')
+                            ->prefix('👨🏻‍⚖️')
+                            ->relationship('evaluator', 'name')
+                            ->disabled()
+                            ->dehydrated(),
+
+                        DateTimePicker::make('evaluated_at')
+                            ->prefix('📆️️')
+                            ->label('Deliberada em')
+                            ->seconds(false)
+                            ->displayFormat('d/m/y H:i')
+                            ->native(false)
+                            ->disabled()
+                            ->dehydrated(),
                     ]),
             ]);
     }

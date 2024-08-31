@@ -23,6 +23,8 @@ class Leave extends Model
         'status',
         'final_judgment_reason',
         'paid',
+        'evaluated_by',
+        'evaluated_at',
     ];
 
     protected function casts(): array
@@ -35,5 +37,10 @@ class Leave extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function evaluator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'evaluated_by');
     }
 }
