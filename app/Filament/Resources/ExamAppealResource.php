@@ -94,12 +94,12 @@ class ExamAppealResource extends Resource
                             ->required(),
 
                         RichEditor::make('motive')
+                            ->label('Fundamentação do recurso')
                             ->required()
-                            ->disableToolbarButtons([
-                                'attachFiles',
-                            ])
                             ->columnSpanFull()
-                            ->label('Fundamentação do recurso'),
+                            ->fileAttachmentsDisk('r2')
+                            ->fileAttachmentsDirectory('exam-appeal-motive')
+                            ->fileAttachmentsVisibility('private'),
 
                         RichEditor::make('bibliography')
                             ->required()
