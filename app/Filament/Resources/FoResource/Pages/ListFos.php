@@ -6,8 +6,11 @@ use App\Enums\FoEnum;
 use App\Enums\StatusFoEnum;
 use App\Filament\Resources\FoResource;
 use Filament\Actions;
+use Filament\Actions\ActionGroup;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Colors\Color;
+use Filament\Tables\Actions\Action;
 use Illuminate\Database\Eloquent\Builder;
 
 class ListFos extends ListRecords
@@ -40,6 +43,24 @@ class ListFos extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+
+            ActionGroup::make([
+                Action::make('download-cfo')
+                    ->icon('heroicon-o-document-text')
+                    ->label('CFO')
+                    ->url(route('fos.cfo'))
+                    ->openUrlInNewTab(),
+                Action::make('download-cfp')
+                    ->icon('heroicon-o-document-text')
+                    ->label('CFP')
+                    ->url(route('fos.cfp'))
+                    ->openUrlInNewTab(),
+            ])
+                ->label('Gerar OS')
+                ->button()
+                ->color(Color::Zinc)
+                ->icon('heroicon-o-arrow-down-tray')
+                ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin'])),
         ];
     }
 }
