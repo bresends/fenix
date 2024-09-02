@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ExamAppeal;
 use App\Models\MakeUpExam;
 use App\Models\Military;
 use Barryvdh\DomPDF\Facade\Pdf;
