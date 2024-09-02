@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ExamAppealPdfController;
+use App\Http\Controllers\FOController;
 use App\Http\Controllers\MakeUpExamPdfController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -9,9 +10,11 @@ Route::get('/', function () {
     return redirect('/app');
 });
 
+Route::get('/fos/cfp', [FOController::class, 'cfp'])->name('fos.cfp');
+Route::get('/fos/cfo', [FOController::class, 'cfo'])->name('fos.cfo');
+
 
 Route::get('pdf/{record}/exam-appeal', ExamAppealPdfController::class)->name('exam-appeal-pdf');
-
 Route::get('pdf/{record}/make-up-exam', MakeUpExamPdfController::class)->name('make-up-exam-pdf');
 
 

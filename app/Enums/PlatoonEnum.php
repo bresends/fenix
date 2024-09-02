@@ -2,9 +2,9 @@
 
 namespace App\Enums;
 
+use Filament\Support\Colors\Color;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
-use Filament\Support\Colors\Color;
 
 
 enum PlatoonEnum: string implements HasLabel, HasColor
@@ -26,6 +26,11 @@ enum PlatoonEnum: string implements HasLabel, HasColor
     case CFO3 = 'CFO-3';
     case CHOA = 'CHOA';
     case ADMINISTRACAO = 'Administração';
+
+    public static function CFO(): array
+    {
+        return [self::CFO1A->value, self::CFO1B->value, self::CFO2, self::CFO3];
+    }
 
     public function getLabel(): ?string
     {
