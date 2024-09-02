@@ -5,14 +5,14 @@ namespace App\Http\Controllers;
 use App\Enums\FoEnum;
 use App\Enums\PlatoonEnum;
 use App\Enums\StatusFoEnum;
-use App\Models\FO;
+use App\Models\Fo;
 use Illuminate\Support\Facades\Response;
 
 class FOController extends Controller
 {
     public function cfp()
     {
-        $fos = FO::select('fos.id', 'users.platoon', 'users.rg', 'users.name')
+        $fos = Fo::select('fos.id', 'users.platoon', 'users.rg', 'users.name')
             ->leftJoin('users', 'fos.user_id', '=', 'users.id')
             ->where('fos.type', FoEnum::Negativo->value)
             ->where('fos.status', StatusFoEnum::DEFERIDO->value)
@@ -29,7 +29,7 @@ class FOController extends Controller
             'Content-Disposition' => 'attachment; filename="' . $csvFileName . '"',
         ];
 
-        $callback = function() use ($fos) {
+        $callback = function () use ($fos) {
             $handle = fopen('php://output', 'wb');
             fputcsv($handle, ['Nº do FO', 'Pelotão', 'RG', 'Posto/Grad.', 'Nome']);
 
@@ -51,7 +51,7 @@ class FOController extends Controller
 
     public function cfo()
     {
-        $fos = FO::select('fos.id', 'users.platoon', 'users.rg', 'users.name')
+        $fos = Fo::select('fos.id', 'users.platoon', 'users.rg', 'users.name')
             ->leftJoin('users', 'fos.user_id', '=', 'users.id')
             ->where('fos.type', 'Negativo')
             ->where('fos.status', 'Deferido')
@@ -68,7 +68,7 @@ class FOController extends Controller
             'Content-Disposition' => 'attachment; filename="' . $csvFileName . '"',
         ];
 
-        $callback = function() use ($fos) {
+        $callback = function () use ($fos) {
             $handle = fopen('php://output', 'wb');
             fputcsv($handle, ['Nº do FO', 'Pelotão', 'RG', 'Posto/Grad.', 'Nome']);
 
