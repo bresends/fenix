@@ -20,6 +20,7 @@ class FOController extends Controller
             ->whereNotIn('users.platoon', PlatoonEnum::CFO())
             ->orderBy('users.platoon')
             ->orderBy('users.name')
+            ->orderBy('fos.id')
             ->get();
 
         $csvFileName = 'fos_cfp_' . date('Y-m-d') . '.csv';
@@ -59,6 +60,7 @@ class FOController extends Controller
             ->whereIn('users.platoon', PlatoonEnum::CFO())
             ->orderBy('users.platoon')
             ->orderBy('users.name')
+            ->orderBy('fos.id')
             ->get();
 
         $csvFileName = 'fos_cfo_' . date('Y-m-d') . '.csv';
