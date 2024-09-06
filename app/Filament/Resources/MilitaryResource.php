@@ -79,6 +79,7 @@ class MilitaryResource extends Resource
             ->reorderable('sort', auth()->user()->hasRole('super_admin'))
             ->persistSearchInSession()
             ->columns([
+
                 TextColumn::make('rank')
                     ->label('Posto/Grad.')
                     ->badge()
@@ -89,6 +90,10 @@ class MilitaryResource extends Resource
                     ->sortable()
                     ->label('Quadro'),
 
+                TextColumn::make('platoon')
+                    ->label('Pelotão')
+                    ->badge(),
+                
                 TextColumn::make('rg')
                     ->searchable()
                     ->label('Rg')
