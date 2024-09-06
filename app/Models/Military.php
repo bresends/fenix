@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\DivisionEnum;
+use App\Enums\PlatoonEnum;
 use App\Enums\RankEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -42,6 +43,16 @@ class Military extends Model
 
         return Attribute::make(
             get: fn() => $this->rank->value . ' ' . $this->division->value . ' ' . $formatted_rg . ' ' . $this->name
+        );
+    }
+
+    public function platoon(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $user = User::where('name', $this->name)->first();
+                return $user ? $user->platoon : PlatoonEnum::ADMINISTRACAO->value;
+            }
         );
     }
 
