@@ -50,7 +50,7 @@ class Military extends Model
     {
         return Attribute::make(
             get: function () {
-                $user = User::where('name', $this->name)->first();
+                $user = User::where('rg', $this->rg)->first();
                 return $user ? $user->platoon : PlatoonEnum::ADMINISTRACAO->value;
             }
         );
