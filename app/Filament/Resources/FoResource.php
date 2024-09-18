@@ -154,16 +154,6 @@ class FoResource extends Resource
                         ->requiresConfirmation()
                         ->deselectRecordsAfterCompletion()
                         ->action(fn(Collection $records) => $records->each->update(['status' => StatusFoEnum::DEFERIDO->value, 'evaluated_by' => auth()->id(), 'evaluated_at' => now()])),
-
-                    Action::make('download-cfp')
-                        ->icon('heroicon-o-document-text')
-                        ->label('Gerar OS (CFP)')
-                        ->url(route('fos.cfp'))
-                        ->openUrlInNewTab(),
-                    BulkAction::make('download-cfo')
-                        ->label('Gerar OS (CFO)')
-                        ->icon('heroicon-o-document-text')
-                        ->action(fn(Collection $records) => $records->each->forceDelete()),
                 ]),
             ]);
     }
