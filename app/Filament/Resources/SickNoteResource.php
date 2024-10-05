@@ -8,11 +8,11 @@ use App\Enums\StatusFoEnum;
 use App\Filament\Resources\SickNoteResource\Pages;
 use App\Models\SickNote;
 use App\Models\User;
+use Carbon\Carbon;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -264,12 +264,23 @@ class SickNoteResource extends Resource
                 SelectFilter::make('status')
                     ->options(StatusEnum::class)
                     ->label('Parecer'),
+                SelectFilter::make('date_issued')
+                    ->label('Atestados em vigor')
+                    ->options([
+                        'ongoing' => 'Vigentes',
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        if ($data['value'] === 'ongoing') {
+                            return $query->whereDate('date_issued', '>=', Carbon::today()->subDays($query->first()->days_absent ?? 0));
+                        }
+                        return $query;
+                    }),
                 Filter::make('received')
                     ->label("Recebido/Ciente do DABM")
                     ->toggle(),
                 Filter::make('archived')
                     ->label("Anexado no SEI/Arquivado")
-                    ->toggle()
+                    ->toggle(),
             ])
             ->actions([
                 EditAction::make(),
