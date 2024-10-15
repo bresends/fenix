@@ -148,8 +148,10 @@ class MakeUpExamResource extends Resource
                             }),
 
                         RichEditor::make('final_judgment_reason')
+                            ->label('Observações da coordenação')
                             ->helperText('Campo para anotações sobre parecer.')
-                            ->label('Observações da coordenação'),
+                            ->disabled(fn(Get $get): bool => $get('archived') === true)
+                            ->dehydrated(),
 
                         Checkbox::make('archived')
                             ->helperText('Segunda chamada concluída')

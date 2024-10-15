@@ -153,10 +153,11 @@ class ExamAppealResource extends Resource
                             }),
 
                         RichEditor::make('final_judgment_reason')
+                            ->label('Observações da coordenação')
                             ->columnSpan(2)
                             ->helperText('Campo para anotações sobre parecer.')
                             ->disabled(fn(Get $get): bool => $get('archived') === true)
-                            ->label('Observações da coordenação'),
+                            ->dehydrated(),
 
                         Checkbox::make('archived')
                             ->columnSpanFull()

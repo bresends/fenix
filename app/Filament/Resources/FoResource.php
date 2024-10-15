@@ -276,6 +276,7 @@ class FoResource extends Resource
                         RichEditor::make('final_judgment_reason')
                             ->helperText('Campo para anotações sobre parecer do FO, ordem de serviço, etc.')
                             ->disabled(fn(Get $get): bool => $get('paid') === true)
+                            ->dehydrated()
                             ->label('Observações da coordenação'),
 
                         Checkbox::make('paid')
