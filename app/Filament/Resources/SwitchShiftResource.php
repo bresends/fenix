@@ -227,7 +227,9 @@ class SwitchShiftResource extends Resource
 
                         RichEditor::make('final_judgment_reason')
                             ->helperText('Campo para anotações sobre parecer.')
-                            ->label('Observações da coordenação'),
+                            ->label('Observações da coordenação')
+                            ->disabled(fn(Get $get): bool => $get('paid') === true)
+                            ->dehydrated(),
 
                         Checkbox::make('paid')
                             ->label('Informado às OBMs/Arquivado'),

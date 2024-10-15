@@ -256,7 +256,8 @@ class LeaveResource extends Resource
                         RichEditor::make('final_judgment_reason')
                             ->helperText('Campo para anotações sobre parecer.')
                             ->label('Observações da coordenação')
-                            ->disabled(fn(Get $get): bool => $get('paid') === true),
+                            ->disabled(fn(Get $get): bool => $get('paid') === true)
+                            ->dehydrated(),
 
                         Checkbox::make('paid')
                             ->helperText('O aluno gozou a dispensa e anexou documento comprobatório.')
