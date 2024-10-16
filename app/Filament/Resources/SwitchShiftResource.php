@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Enums\StatusEnum;
 use App\Enums\StatusExamEnum;
-use App\Enums\StatusFoEnum;
 use App\Filament\Resources\SwitchShiftResource\Pages;
 use App\Models\Military;
 use App\Models\SwitchShift;
@@ -215,7 +214,7 @@ class SwitchShiftResource extends Resource
                     ->schema([
                         Radio::make('status')
                             ->options(StatusEnum::class)
-                            ->default(StatusFoEnum::EM_ANDAMENTO->value)
+                            ->default(StatusEnum::EM_ANDAMENTO->value)
                             ->label('Parecer')
                             ->live()
                             ->afterStateUpdated(function ($state, callable $set) {
@@ -350,6 +349,13 @@ class SwitchShiftResource extends Resource
                         ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
                         ->icon('heroicon-o-archive-box')
                         ->action(fn(Collection $records) => $records->each->update(['paid' => true])),
+                    BulkAction::make('accept')
+                        ->label('Deferir')
+                        ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
+                        ->icon('heroicon-o-check')
+                        ->requiresConfirmation()
+                        ->deselectRecordsAfterCompletion()
+                        ->action(fn(Collection $records) => $records->each->update(['status' => StatusEnum::DEFERIDO->value, 'evaluated_by' => auth()->id(), 'evaluated_at' => now()])),
                 ]),
             ]);
     }
