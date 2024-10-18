@@ -4,6 +4,8 @@ namespace App\Filament\Resources\FoResource\Pages;
 
 use App\Filament\Resources\FoResource;
 use App\Models\Fo;
+use App\Models\User;
+use App\Notifications\FoWarning;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
@@ -50,5 +52,16 @@ class CreateFo extends CreateRecord
     protected function getRedirectUrl(): string
     {
         return static::getResource()::getUrl('index');
+    }
+
+    protected function afterCreate(): void
+    {
+        $fo = $this->record;
+
+        $user = $fo->user;
+
+        if ($user) {
+            $user->notify(new FoWarning($fo));  // Pass the FO to the notification
+        }
     }
 }
