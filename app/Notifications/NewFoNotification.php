@@ -2,13 +2,14 @@
 
 namespace App\Notifications;
 
+use App\Channels\WhatsAppChannel;
 use App\Models\Fo;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class FoWarning extends Notification
+class NewFoNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 

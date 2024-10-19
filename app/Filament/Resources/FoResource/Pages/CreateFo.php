@@ -5,7 +5,7 @@ namespace App\Filament\Resources\FoResource\Pages;
 use App\Filament\Resources\FoResource;
 use App\Models\Fo;
 use App\Models\User;
-use App\Notifications\FoWarning;
+use App\Notifications\NewFoNotification;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
@@ -61,7 +61,7 @@ class CreateFo extends CreateRecord
         $user = $fo->user;
 
         if ($user) {
-            $user->notify(new FoWarning($fo));  // Pass the FO to the notification
+            $user->notify(new NewFoNotification($fo));  // Pass the FO to the notification
         }
     }
 }
