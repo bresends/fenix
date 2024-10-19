@@ -29,7 +29,7 @@ class FoWarning extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', WhatsAppChannel::class];
     }
 
     /**
@@ -43,6 +43,33 @@ class FoWarning extends Notification
             ->subject('Notificacão de FO')
             ->markdown('mail.fo.created', ['url' => $url, 'fo' => $this->fo]);
 
+    }
+
+    /**
+     * Get the WhatsApp representation of the notification.
+     */
+    public function toWhatsApp(object $notifiable): array
+    {
+        return [
+            'message' => "*Notificação de FO*
+
+Olá {$notifiable->name}!
+
+Você está recebendo esta mensagem porque recebeu um FO.
+
+*FO n°:* {$this->fo->id}
+*Tipo:* {$this->fo->type->value}
+*Data:* {$this->fo->created_at->format('d/m/Y H:i')}
+*Motivo:* {$this->fo->reason}
+
+Para visualizar o FO, acesse o link:
+" . url("/app/fos/{$this->fo->id}/edit") . "
+
+*Atenção:* Conforme o Art. 61 da NE-03, você tem até 1 hora antes do término do expediente do dia útil seguinte ao recebimento deste FO para apresentar justificativa ou dar ciência.
+
+Atenciosamente,
+CAEBM",
+        ];
     }
 
     /**
