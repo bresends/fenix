@@ -31,4 +31,10 @@ return [
         ],
     ],
 
+    'whatsapp' => [
+        'apikey' => env('WHATSAPP_API_KEY'),
+        'url' => env('WHATSAPP_API_URL'),
+        'instance' => env('WHATSAPP_INSTANCE_NAME'),
+    ],
+
 ];
