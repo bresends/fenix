@@ -209,6 +209,7 @@ class SickNoteResource extends Resource
             ->columns([
                 TextColumn::make('id')
                     ->numeric()
+                    ->searchable()
                     ->label('Nº'),
 
                 TextColumn::make('user.platoon')
@@ -236,10 +237,13 @@ class SickNoteResource extends Resource
                 TextColumn::make('days_absent')
                     ->label('Dias afastado'),
 
-                TextColumn::make('dayBack')
+                TextColumn::make('day_back')
                     ->dateTime('d/m/y')
-                    ->sortable()
-                    ->label('Data de retorno'),
+                    ->label('Data de retorno')
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        return $query->orderByRaw("(date_issued + INTERVAL '1 day' * days_absent) " . $direction);
+                    }),
+
 
                 TextColumn::make('motive')
                     ->limit(40)

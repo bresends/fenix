@@ -243,7 +243,6 @@ class UserResource extends Resource
                     ->label('Perfis')
                     ->listWithLineBreaks()
                     ->badge()
-                    ->sortable()
                     ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin'])),
             ])
             ->filters([
