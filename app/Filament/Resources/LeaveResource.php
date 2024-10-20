@@ -56,12 +56,12 @@ class LeaveResource extends Resource
             ->columns([
                 TextColumn::make('id')
                     ->numeric()
+                    ->searchable()
                     ->label('Nº'),
 
                 TextColumn::make('user.platoon')
                     ->label('Pelotão')
                     ->badge()
-                    ->searchable()
                     ->sortable(),
 
                 TextColumn::make('user.name')
@@ -90,7 +90,6 @@ class LeaveResource extends Resource
 
                 TextColumn::make('status')
                     ->badge()
-                    ->searchable()
                     ->label('Parecer'),
 
                 TextColumn::make('motive')

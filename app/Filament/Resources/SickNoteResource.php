@@ -209,6 +209,7 @@ class SickNoteResource extends Resource
             ->columns([
                 TextColumn::make('id')
                     ->numeric()
+                    ->searchable()
                     ->label('Nº'),
 
                 TextColumn::make('user.platoon')

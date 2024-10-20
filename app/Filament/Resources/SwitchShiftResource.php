@@ -272,6 +272,7 @@ class SwitchShiftResource extends Resource
             ->columns([
                 TextColumn::make('id')
                     ->numeric()
+                    ->searchable()
                     ->label('Nº'),
 
                 TextColumn::make('user.platoon')
@@ -279,9 +280,11 @@ class SwitchShiftResource extends Resource
                     ->label('Pelotão'),
 
                 TextColumn::make('user.rg')
+                    ->searchable()
                     ->label('Rg'),
 
                 TextColumn::make('user.name')
+                    ->searchable()
                     ->label('Solicitante'),
 
                 TextColumn::make('type')
@@ -289,8 +292,7 @@ class SwitchShiftResource extends Resource
                     ->label('Tipo')
                     ->limit(45)
                     ->toggleable()
-                    ->color('gray')
-                    ->searchable(),
+                    ->color('gray'),
 
                 TextColumn::make('created_at')
                     ->dateTime('d/m/y H:i')

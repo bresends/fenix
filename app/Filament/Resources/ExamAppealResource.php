@@ -201,13 +201,16 @@ class ExamAppealResource extends Resource
             ->columns([
                 TextColumn::make('id')
                     ->numeric()
+                    ->searchable()
                     ->label('Nº'),
 
                 TextColumn::make('user.platoon')
                     ->badge()
+                    ->sortable()
                     ->label('Pelotão'),
 
                 TextColumn::make('user.rg')
+                    ->searchable()
                     ->label('Rg'),
 
                 TextColumn::make('user.name')
@@ -215,8 +218,7 @@ class ExamAppealResource extends Resource
                     ->label('Nome'),
 
                 TextColumn::make('discipline')
-                    ->label('Disciplina')
-                    ->searchable(),
+                    ->label('Disciplina'),
 
                 TextColumn::make('question')
                     ->label('Questão/Item Avalidado')
@@ -229,7 +231,6 @@ class ExamAppealResource extends Resource
 
                 TextColumn::make('status')
                     ->badge()
-                    ->searchable()
                     ->label('Parecer do encaminhamento'),
 
                 IconColumn::make('archived')
