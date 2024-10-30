@@ -98,6 +98,11 @@ class LeaveResource extends Resource
                     ->html()
                     ->label('Motivo'),
 
+                IconColumn::make('file')
+                    ->label('Comprovante')
+                    ->boolean()
+                    ->alignCenter(),
+
                 IconColumn::make('paid')
                     ->label('Arquivada')
                     ->boolean()
