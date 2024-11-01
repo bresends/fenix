@@ -113,7 +113,7 @@ class MakeUpExamResource extends Resource
                             ->label('Motivo da não realização da avaliação (com detalhes)'),
 
                         FileUpload::make('file')
-                            ->disk('r2')
+                            ->disk('minio')
                             ->visibility('private')
                             ->label('Arquivo')
                             ->columnSpanFull()
@@ -125,7 +125,8 @@ class MakeUpExamResource extends Resource
                             ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                             ->getUploadedFileNameForStorageUsing(
                                 fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
-                                    ->prepend('segunda-chamada-'),
+                                    ->prepend('segunda-chamada-' . now()->format('Y-m-d') . '-' . auth()->user()->name . '-' . now()->format('s'))
+
                             ),
 
                     ]),

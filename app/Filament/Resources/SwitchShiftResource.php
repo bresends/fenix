@@ -180,7 +180,7 @@ class SwitchShiftResource extends Resource
                             ->label('Motivo (com detalhamento)'),
 
                         FileUpload::make('file')
-                            ->disk('r2')
+                            ->disk('minio')
                             ->visibility('private')
                             ->label('Anexar arquivo (se houver)')
                             ->columnSpan(2)
@@ -191,70 +191,71 @@ class SwitchShiftResource extends Resource
                             ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                             ->getUploadedFileNameForStorageUsing(
                                 fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
-                                    ->prepend('troca-serviço-'),
+                                    ->prepend('troca-serviço-' . now()->format('Y-m-d') . '-' . auth()->user()->name . '-' . now()->format('s'))
+
                             ),
-                    ]),
 
-                Section::make('Ciência do 2º aluno envolvido')
-                    ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('first_shift_paying_military'
-                            ) !== auth()->user()->name) || $get('status') !== 'Em andamento')
-                    ->hiddenOn('create')
-                    ->icon('heroicon-o-check')
-                    ->columns(2)
-                    ->schema([
-                        Checkbox::make('accepted')
-                            ->label('Aceito a presente solicitação de troca de serviço.')
-                            ->required(),
-                    ]),
+                        Section::make('Ciência do 2º aluno envolvido')
+                            ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('first_shift_paying_military'
+                                    ) !== auth()->user()->name) || $get('status') !== 'Em andamento')
+                            ->hiddenOn('create')
+                            ->icon('heroicon-o-check')
+                            ->columns(2)
+                            ->schema([
+                                Checkbox::make('accepted')
+                                    ->label('Aceito a presente solicitação de troca de serviço.')
+                                    ->required(),
+                            ]),
 
-                Section::make('Deliberar troca de serviço (coordenação)')
-                    ->hiddenOn('create')
-                    ->disabled(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
-                    ->icon('heroicon-o-chat-bubble-left-ellipsis')
-                    ->schema([
-                        Radio::make('status')
-                            ->options(StatusEnum::class)
-                            ->default(StatusEnum::EM_ANDAMENTO->value)
-                            ->label('Parecer')
-                            ->live()
-                            ->afterStateUpdated(function ($state, callable $set) {
-                                if ($state !== StatusEnum::EM_ANDAMENTO->value) {
-                                    $set('evaluated_by', auth()->id());
-                                    $set('evaluated_at', now());
-                                }
-                            }),
+                        Section::make('Deliberar troca de serviço (coordenação)')
+                            ->hiddenOn('create')
+                            ->disabled(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
+                            ->icon('heroicon-o-chat-bubble-left-ellipsis')
+                            ->schema([
+                                Radio::make('status')
+                                    ->options(StatusEnum::class)
+                                    ->default(StatusEnum::EM_ANDAMENTO->value)
+                                    ->label('Parecer')
+                                    ->live()
+                                    ->afterStateUpdated(function ($state, callable $set) {
+                                        if ($state !== StatusEnum::EM_ANDAMENTO->value) {
+                                            $set('evaluated_by', auth()->id());
+                                            $set('evaluated_at', now());
+                                        }
+                                    }),
 
-                        RichEditor::make('final_judgment_reason')
-                            ->helperText('Campo para anotações sobre parecer.')
-                            ->label('Observações da coordenação')
-                            ->disabled(fn(Get $get): bool => $get('paid') === true)
-                            ->dehydrated(),
+                                RichEditor::make('final_judgment_reason')
+                                    ->helperText('Campo para anotações sobre parecer.')
+                                    ->label('Observações da coordenação')
+                                    ->disabled(fn(Get $get): bool => $get('paid') === true)
+                                    ->dehydrated(),
 
-                        Checkbox::make('paid')
-                            ->label('Informado às OBMs/Arquivado'),
-                    ]),
+                                Checkbox::make('paid')
+                                    ->label('Informado às OBMs/Arquivado'),
+                            ]),
 
-                Section::make('Decisor da Troca de Serviço')
-                    ->hiddenOn('create')
-                    ->columns(2)
-                    ->hidden(fn(Get $get): bool => $get('status') === StatusExamEnum::EM_ANDAMENTO->value)
-                    ->icon('heroicon-o-scale')
-                    ->schema([
-                        Select::make('evaluated_by')
-                            ->label('Deliberada por')
-                            ->prefix('👨🏻‍⚖️')
-                            ->relationship('evaluator', 'name')
-                            ->disabled()
-                            ->dehydrated(),
+                        Section::make('Decisor da Troca de Serviço')
+                            ->hiddenOn('create')
+                            ->columns(2)
+                            ->hidden(fn(Get $get): bool => $get('status') === StatusExamEnum::EM_ANDAMENTO->value)
+                            ->icon('heroicon-o-scale')
+                            ->schema([
+                                Select::make('evaluated_by')
+                                    ->label('Deliberada por')
+                                    ->prefix('👨🏻‍⚖️')
+                                    ->relationship('evaluator', 'name')
+                                    ->disabled()
+                                    ->dehydrated(),
 
-                        DateTimePicker::make('evaluated_at')
-                            ->prefix('📆️️')
-                            ->label('Deliberada em')
-                            ->seconds(false)
-                            ->displayFormat('d/m/y H:i')
-                            ->native(false)
-                            ->disabled()
-                            ->dehydrated(),
+                                DateTimePicker::make('evaluated_at')
+                                    ->prefix('📆️️')
+                                    ->label('Deliberada em')
+                                    ->seconds(false)
+                                    ->displayFormat('d/m/y H:i')
+                                    ->native(false)
+                                    ->disabled()
+                                    ->dehydrated(),
+                            ]),
                     ]),
             ]);
     }
