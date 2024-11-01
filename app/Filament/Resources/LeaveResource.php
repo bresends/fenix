@@ -236,7 +236,7 @@ class LeaveResource extends Resource
                     ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                     ->getUploadedFileNameForStorageUsing(
                         fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
-                            ->prepend('dispensa-' . now()->format('Y-m-d') . '-' . auth()->user()->name . '-' . now()->format('s'))
+                            ->prepend(now()->format('Y-m-d') . '-dispensa-' . str_replace(' ', '_', auth()->user()->name) . '-' . now()->format('i-s') . '-')
                     )
                     ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' &&
                             $get('user_id') !== auth()->user()->id) || $get('paid') === true),
