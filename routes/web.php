@@ -4,6 +4,7 @@ use App\Http\Controllers\ExamAppealPdfController;
 use App\Http\Controllers\FOController;
 use App\Http\Controllers\MakeUpExamPdfController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SwitchShiftPdfController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -16,6 +17,7 @@ Route::get('/fos/cfo', [FOController::class, 'cfo'])->name('fos.cfo');
 
 Route::get('pdf/{record}/exam-appeal', ExamAppealPdfController::class)->name('exam-appeal-pdf');
 Route::get('pdf/{record}/make-up-exam', MakeUpExamPdfController::class)->name('make-up-exam-pdf');
+Route::get('pdf/{record}/switch-shift', SwitchShiftPdfController::class)->name('switch-shift-pdf');
 
 
 Route::get('/dashboard', function () {
