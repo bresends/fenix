@@ -125,7 +125,7 @@ class MakeUpExamResource extends Resource
                             ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                             ->getUploadedFileNameForStorageUsing(
                                 fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
-                                    ->prepend(now()->format('Y-m-d') . '-segunda-chamada-' . str_replace(' ', '_', auth()->user()->name) . '-' . now()->format('i-s') . '-')
+                                    ->prepend(now()->format('Y-m-d') . '-segunda-chamada-' . str_replace(' ', '_', auth()->user()->name) . '-' . now()->format('h-i-s') . '-')
                             ),
 
                     ]),
