@@ -84,7 +84,7 @@ class SickNoteResource extends Resource
                             ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                             ->getUploadedFileNameForStorageUsing(
                                 fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
-                                    ->prepend('atestado-medico-' . now()->format('Y-m-d') . '-' . auth()->user()->name),
+                                    ->prepend('atestado-medico-' . now()->format('Y-m-d') . '-' . auth()->user()->name . '-' . now()->format('s'))
                             ),
 
                         DatePicker::make('date_issued')
@@ -141,7 +141,7 @@ class SickNoteResource extends Resource
                             ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                             ->getUploadedFileNameForStorageUsing(
                                 fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
-                                    ->prepend('homologacao-csau-' . now()->format('Y-m-d') . '-' . auth()->user()->name),
+                                    ->prepend('homologacao-csau-' . now()->format('Y-m-d') . '-' . auth()->user()->name . '-' . now()->format('s')),
                             ),
 
 

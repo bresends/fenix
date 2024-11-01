@@ -33,6 +33,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Psy\Util\Str;
 
 class LeaveResource extends Resource
 {
@@ -235,7 +236,7 @@ class LeaveResource extends Resource
                     ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                     ->getUploadedFileNameForStorageUsing(
                         fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
-                            ->prepend('dispensa-'),
+                            ->prepend('dispensa-' . now()->format('Y-m-d') . '-' . auth()->user()->name . '-' . now()->format('s'))
                     )
                     ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' &&
                             $get('user_id') !== auth()->user()->id) || $get('paid') === true),

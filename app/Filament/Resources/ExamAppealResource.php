@@ -119,7 +119,7 @@ class ExamAppealResource extends Resource
                             ->label('Declaro ciência da regras e condições estabelecidas na NE 01.'),
 
                         FileUpload::make('file')
-                            ->disk('r2')
+                            ->disk('minio')
                             ->visibility('private')
                             ->label('Anexos (se houver)')
                             ->directory('exam-appeal')
@@ -130,7 +130,7 @@ class ExamAppealResource extends Resource
                             ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                             ->getUploadedFileNameForStorageUsing(
                                 fn(TemporaryUploadedFile $file): string => (string)str($file->getClientOriginalName())
-                                    ->prepend('recurso-'),
+                                    ->prepend('recurso-' . now()->format('Y-m-d') . '-' . auth()->user()->name . '-' . now()->format('s'))
                             ),
 
                     ]),
