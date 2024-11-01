@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Enums\StatusEnum;
 use App\Enums\StatusExamEnum;
 use App\Filament\Resources\SwitchShiftResource\Pages;
+use App\Models\MakeUpExam;
 use App\Models\Military;
 use App\Models\SwitchShift;
 use App\Models\User;
@@ -335,7 +336,13 @@ class SwitchShiftResource extends Resource
                     ->toggle()
             ])
             ->actions([
-                EditAction::make(),
+                Action::make('pdf')
+                    ->hidden(fn(SwitchShift $record) => $record->status->value !== StatusEnum::DEFERIDO->value)
+                    ->label('PDF')
+                    ->color('success')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->url(fn(SwitchShift $record) => route('switch-shift-pdf', $record))
+                    ->openUrlInNewTab(),
                 Action::make('archive')
                     ->label('Arquivar')
                     ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
