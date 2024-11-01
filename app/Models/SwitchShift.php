@@ -45,17 +45,6 @@ class SwitchShift extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function requester(): Attribute
-    {
-        $user = User::firstWhere('id', $this->user_id);
-        $military = Military::firstWhere('name', $user->name);
-        $formatted_string = '0' . substr((string)$military->rg, 0, 1) . '.' . substr((string)$military->rg, 1);
-
-        return Attribute::make(
-            get: fn() => $military->rank . ' ' . $military->division . ' ' . $formatted_string . ' ' . $military->name
-        );
-    }
-
     public function evaluator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'evaluated_by');
