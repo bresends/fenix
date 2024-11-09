@@ -26,6 +26,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('app')
             ->login()
+            ->passwordReset()
             ->colors([
                 'primary' => Color::Red,
             ])
@@ -41,7 +42,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->renderHook(
                 'panels::head.start',
-                fn () => view('descriptionTag'),
+                fn() => view('descriptionTag'),
             )
             ->middleware([
                 EncryptCookies::class,
