@@ -25,6 +25,13 @@ class ListLeaves extends ListRecords
                 ->icon('heroicon-o-question-mark-circle')
                 ->modifyQueryUsing(fn(Builder $query) => $query
                     ->where('status', "!=", StatusFoEnum::EM_ANDAMENTO->value)
+                    ->whereNull('file')
+                    ->where('paid', false)),
+            'Comprovante anexado' => Tab::make()
+                ->icon('heroicon-o-arrow-down-on-square')
+                ->modifyQueryUsing(fn(Builder $query) => $query
+                    ->where('status', "!=", StatusFoEnum::EM_ANDAMENTO->value)
+                    ->whereNotNull('file')
                     ->where('paid', false)),
         ];
     }
