@@ -2,6 +2,9 @@
 
 namespace App\Policies;
 
+use App\Enums\StatusEnum;
+use App\Enums\StatusFoEnum;
+use App\Models\Military;
 use App\Models\User;
 use App\Models\Fo;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -47,7 +50,17 @@ class FoPolicy
      */
     public function delete(User $user, Fo $fo): bool
     {
-        return $user->can('delete_fo');
+        if ($user->can('delete_fo')) {
+            return true;
+        }
+
+        if ($fo->status->value !== StatusFoEnum::EM_ANDAMENTO->value) {
+            return false;
+        }
+
+        $issuer = Military::firstWhere('id', $fo->issuer);
+
+        return $user->rg === $issuer->rg;
     }
 
     /**

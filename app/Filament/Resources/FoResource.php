@@ -10,6 +10,7 @@ use App\Filament\Resources\FoResource\Pages;
 use App\Models\Fo;
 use App\Models\Military;
 use App\Models\User;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Radio;
@@ -131,7 +132,7 @@ class FoResource extends Resource
                     ->toggle(),
             ])
             ->actions([
-                EditAction::make(),
+                DeleteAction::make(),
                 Action::make('archive')
                     ->label('Arquivar')
                     ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin']))
