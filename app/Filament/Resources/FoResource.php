@@ -131,10 +131,6 @@ class FoResource extends Resource
                                 fn(Builder $query, $platoon): Builder => $query->whereRelation('user', 'platoon', $platoon)
                             );
                     }),
-                Filter::make('excuse_timestamp')
-                    ->label('Justificativa atrasada')
-                    ->toggle()
-                    ->query(fn(Builder $query) => $query->whereNull('excuse')->where('date_issued', '<=', now()->subDays(2)->setTime(17, 0))),
                 Filter::make('paid')
                     ->label('Cumprido/Arquivado')
                     ->toggle(),
