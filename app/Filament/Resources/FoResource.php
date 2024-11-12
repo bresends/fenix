@@ -10,7 +10,6 @@ use App\Filament\Resources\FoResource\Pages;
 use App\Models\Fo;
 use App\Models\Military;
 use App\Models\User;
-use Filament\Tables\Actions\DeleteAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Radio;
@@ -24,8 +23,8 @@ use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -100,6 +99,11 @@ class FoResource extends Resource
                     ->limit(50)
                     ->html(true),
 
+                TextColumn::make('excuse_timestamp')
+                    ->dateTime('d/m/y H:i')
+                    ->sortable()
+                    ->label('Justificado em'),
+
                 TextColumn::make('status')
                     ->badge()
                     ->label('Parecer'),
@@ -127,6 +131,10 @@ class FoResource extends Resource
                                 fn(Builder $query, $platoon): Builder => $query->whereRelation('user', 'platoon', $platoon)
                             );
                     }),
+                Filter::make('excuse_timestamp')
+                    ->label('Justificativa atrasada')
+                    ->toggle()
+                    ->query(fn(Builder $query) => $query->whereNull('excuse')->where('date_issued', '<=', now()->subDays(2)->setTime(17, 0))),
                 Filter::make('paid')
                     ->label('Cumprido/Arquivado')
                     ->toggle(),
@@ -253,7 +261,20 @@ class FoResource extends Resource
                             ->disableToolbarButtons([
                                 'attachFiles',
                             ])
-                            ->label('Dê ciência ou justifique o FO recebido'),
+                            ->label('Dê ciência ou justifique o FO recebido')
+                            ->live()
+                            ->afterStateUpdated(fn(callable $set) => $set('excuse_timestamp', now())),
+
+                        DateTimePicker::make('excuse_timestamp')
+                            ->hidden(fn(Get $get): bool => empty($get('excuse')))
+                            ->required(fn(Get $get): bool => filled($get('excuse')))
+                            ->prefix('📆️️')
+                            ->label('Justificado em')
+                            ->seconds(false)
+                            ->displayFormat('d/m/y H:i')
+                            ->native(false)
+                            ->disabled()
+                            ->dehydrated(),
 
                     ]),
 
