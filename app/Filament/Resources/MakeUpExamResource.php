@@ -113,7 +113,7 @@ class MakeUpExamResource extends Resource
                             ->label('Motivo da não realização da avaliação (com detalhes)'),
 
                         FileUpload::make('file')
-                            ->disk('minio')
+                            ->disk('r2')
                             ->visibility('private')
                             ->label('Arquivo')
                             ->columnSpanFull()
