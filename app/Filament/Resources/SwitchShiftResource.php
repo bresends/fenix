@@ -165,7 +165,7 @@ class SwitchShiftResource extends Resource
                             ->required(),
 
                     ]),
-                
+
                 Section::make('Motivo da troca de serviço')
                     ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('status') !== 'Em andamento')
                     ->icon('heroicon-o-pencil-square')
@@ -182,7 +182,7 @@ class SwitchShiftResource extends Resource
                             ->label('Motivo (com detalhamento)'),
 
                         FileUpload::make('file')
-                            ->disk('minio')
+                            ->disk('r2')
                             ->visibility('private')
                             ->label('Anexar arquivo (se houver)')
                             ->columnSpan(2)
