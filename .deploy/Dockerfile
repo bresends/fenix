@@ -25,18 +25,23 @@ ARG NEW_RELIC_AGENT_VERSION
 ARG NEW_RELIC_LICENSE_KEY
 ARG NEW_RELIC_APPNAME
 
-RUN curl -L https://download.newrelic.com/php_agent/archive/${NEW_RELIC_AGENT_VERSION}/newrelic-php5-${NEW_RELIC_AGENT_VERSION}-linux.tar.gz | tar -C /tmp -zx \
-    && export NR_INSTALL_USE_CP_NOT_LN=1 \
-    && export NR_INSTALL_SILENT=1 \
-    && /tmp/newrelic-php5-${NEW_RELIC_AGENT_VERSION}-linux/newrelic-install install \
-    && rm -rf /tmp/newrelic-php5-* /tmp/nrinstall*
-
-# Configure New Relic
-RUN sed -i \
-  -e "s/newrelic.license[[:space:]]*=[[:space:]]*.*/newrelic.license = ${NEW_RELIC_LICENSE_KEY}/" \
-  -e "s/newrelic.appname[[:space:]]*=[[:space:]]*.*/newrelic.appname = ${NEW_RELIC_APPNAME}/" \
-  -e "\$a newrelic.daemon.address=newrelic-php-daemon:31339" \
-  /usr/local/etc/php/conf.d/newrelic.ini
+RUN \
+    cd /tmp \
+    # Discover the latest released version:
+    && export NEW_RELIC_AGENT_VERSION=$(curl -s https://download.newrelic.com/php_agent/release/ | grep -o '[1-9][0-9]\?\(\.[0-9]\+\)\{3\}' | head -n1) \
+    # Discover libc provider
+    && export NR_INSTALL_PLATFORM=$(ldd --version 2>&1 | grep -q musl && echo "linux-musl" || echo "linux") \
+    # Download the discovered version:
+    && curl -o newrelic-php-agent.tar.gz https://download.newrelic.com/php_agent/release/newrelic-php5-${NEW_RELIC_AGENT_VERSION}-${NR_INSTALL_PLATFORM}.tar.gz \
+    # Install the downloaded agent:
+    && tar xzf newrelic-php-agent.tar.gz \
+    && NR_INSTALL_USE_CP_NOT_LN=1 NR_INSTALL_SILENT=0 ./*/newrelic-install install \
+    # Configure the agent to use license key from NEW_RELIC_LICENSE_KEY env var:
+    && sed -ie 's/[ ;]*newrelic.license[[:space:]]=.*/newrelic.license=${NEW_RELIC_LICENSE_KEY}/' $(php-config --ini-dir)/newrelic.ini \
+    # Configure the agent to use app name from NEW_RELIC_APP_NAME env var:
+    && sed -ie 's/[ ;]*newrelic.appname[[:space:]]=.*/newrelic.appname=${NEW_RELIC_APP_NAME}/' $(php-config --ini-dir)/newrelic.ini \
+    # Cleanup temporary files:
+    && rm newrelic-php-agent.tar.gz && rm -rf newrelic-php5-*-linux
 
 
 
