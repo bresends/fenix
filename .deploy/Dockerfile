@@ -66,6 +66,16 @@ RUN chown -R $NON_ROOT_USER:$NON_ROOT_GROUP /etc/crontabs/$NON_ROOT_USER && setc
 # Ensure the storage directory has the correct ownership to show user uploaded data
 RUN mkdir -p /srv/app/public/storage && chown -R $NON_ROOT_USER:$NON_ROOT_GROUP /srv/app/public/storage
 
+# Fix New Relic permissions
+RUN mkdir -p /var/log/newrelic /var/run/newrelic \
+    && chown -R $NON_ROOT_USER:$NON_ROOT_GROUP /var/log/newrelic /var/run/newrelic \
+    && chmod -R 775 /var/log/newrelic /var/run/newrelic
+
+RUN touch /var/log/newrelic/newrelic-daemon.log \
+    && chown $NON_ROOT_USER:$NON_ROOT_GROUP /var/log/newrelic/newrelic-daemon.log \
+    && chmod 664 /var/log/newrelic/newrelic-daemon.log
+
+
 # Switch to non-root 'app' user & install app dependencies
 COPY composer.json composer.lock ./
 RUN chown -R $NON_ROOT_USER:$NON_ROOT_GROUP $LARAVEL_PATH
