@@ -21,4 +21,13 @@ class EditFo extends EditRecord
     {
         return static::getResource()::getUrl('index');
     }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if (!empty($data['excuse']) && $this->record->excuse !== $data['excuse']) {
+            $data['excuse_timestamp'] = now();
+        }
+
+        return $data;
+    }
 }
