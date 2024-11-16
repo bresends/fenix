@@ -100,6 +100,10 @@ class FoResource extends Resource
                     ->limit(50)
                     ->html(true),
 
+                TextColumn::make('excuse_timestamp')
+                    ->dateTime('d/m/y H:i')
+                    ->label('Justificado em'),
+                
                 TextColumn::make('status')
                     ->badge()
                     ->label('Parecer'),
@@ -253,9 +257,21 @@ class FoResource extends Resource
                             ->disableToolbarButtons([
                                 'attachFiles',
                             ])
+                            ->live()
+                            ->afterStateUpdated(fn(callable $set) => $set('excuse_timestamp', now()))
                             ->label('Dê ciência ou justifique o FO recebido'),
 
+                        DateTimePicker::make('excuse_timestamp')
+                            ->hidden(fn(Get $get): bool => empty($get('excuse')))
+                            ->prefix('📆️️')
+                            ->label('Justificado em')
+                            ->seconds(false)
+                            ->displayFormat('d/m/y H:i')
+                            ->native(false)
+                            ->disabled()
+                            ->dehydrated(),
                     ]),
+
 
                 Section::make('Deliberação do FO (coordenação)')
                     ->icon('heroicon-o-chat-bubble-left-ellipsis')
