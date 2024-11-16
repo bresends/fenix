@@ -103,7 +103,7 @@ class FoResource extends Resource
                 TextColumn::make('excuse_timestamp')
                     ->dateTime('d/m/y H:i')
                     ->label('Justificado em'),
-                
+
                 TextColumn::make('status')
                     ->badge()
                     ->label('Parecer'),
@@ -257,8 +257,7 @@ class FoResource extends Resource
                             ->disableToolbarButtons([
                                 'attachFiles',
                             ])
-                            ->live()
-                            ->afterStateUpdated(fn(callable $set) => $set('excuse_timestamp', now()))
+                            ->dehydrated()
                             ->label('Dê ciência ou justifique o FO recebido'),
 
                         DateTimePicker::make('excuse_timestamp')
