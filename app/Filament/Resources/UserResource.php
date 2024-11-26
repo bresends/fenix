@@ -19,6 +19,7 @@ use Filament\Resources\Resource;
 use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -239,6 +240,17 @@ class UserResource extends Resource
 
                 TextColumn::make('email'),
 
+                TextColumn::make('sick_notes_count')
+                    ->label('Atestados')
+                    ->sortable()
+                    ->counts('sick_notes'),
+
+                TextColumn::make('leaves_count')
+                    ->label('Dispensas')
+                    ->sortable()
+                    ->counts('leaves'),
+
+
                 TextColumn::make('roles.name')
                     ->label('Perfis')
                     ->listWithLineBreaks()
@@ -246,7 +258,19 @@ class UserResource extends Resource
                     ->hidden(!auth()->user()->hasAnyRole(['super_admin', 'admin'])),
             ])
             ->filters([
-                //
+                Filter::make('platoon')
+                    ->form([
+                        Select::make('platoon')
+                            ->label('Pelotão')
+                            ->options(PlatoonEnum::class)
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['platoon'],
+                                fn(Builder $query, $platoon): Builder => $query->where('platoon', $platoon)
+                            );
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
