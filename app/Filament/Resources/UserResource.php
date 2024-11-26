@@ -220,7 +220,7 @@ class UserResource extends Resource
                     $query->where('id', auth()->user()->id);
                 }
             })
-            ->defaultSort('platoon', 'asc')
+            ->defaultSort('name', 'asc')
             ->columns([
                 TextColumn::make('platoon')
                     ->icon('heroicon-o-users')
@@ -249,7 +249,6 @@ class UserResource extends Resource
                     ->label('Dispensas')
                     ->sortable()
                     ->counts('leaves'),
-
 
                 TextColumn::make('roles.name')
                     ->label('Perfis')
