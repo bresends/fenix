@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AbsentController;
 use App\Http\Controllers\ExamAppealPdfController;
 use App\Http\Controllers\FOController;
 use App\Http\Controllers\MakeUpExamPdfController;
@@ -13,6 +14,7 @@ Route::get('/', function () {
 
 Route::get('/fos/cfp', [FOController::class, 'cfp'])->name('fos.cfp');
 Route::get('/fos/cfo', [FOController::class, 'cfo'])->name('fos.cfo');
+Route::get('/absent', [AbsentController::class, 'generate'])->name('absent-excel');
 
 
 Route::get('pdf/{record}/exam-appeal', ExamAppealPdfController::class)->name('exam-appeal-pdf');
