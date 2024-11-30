@@ -8,8 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Leave extends Model
-{
+class Leave extends Model {
     use HasFactory;
 
     protected $fillable = [
@@ -27,20 +26,19 @@ class Leave extends Model
         'evaluated_at',
     ];
 
-    protected function casts(): array
-    {
+    protected function casts(): array {
         return [
             'status' => StatusEnum::class,
+            'date_leave' => 'date',
+            'date_back' => 'date',
         ];
     }
 
-    public function user(): BelongsTo
-    {
+    public function user(): BelongsTo {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function evaluator(): BelongsTo
-    {
+    public function evaluator(): BelongsTo {
         return $this->belongsTo(User::class, 'evaluated_by');
     }
 }

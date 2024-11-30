@@ -11,25 +11,24 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class AbsentController extends Controller
-{
-    public function generate(): BinaryFileResponse
-    {
-        $leaves = Leave::select('leaves.id', 'users.platoon', 'users.rg', 'users.name', 'leaves.motive')
-            ->leftJoin('users', 'leaves.user_id', '=', 'users.id')
-            ->orderBy('users.platoon')
-            ->orderBy('users.name')
-            ->orderBy('leaves.id')
-            ->get();
+class AbsentController extends Controller {
+    public function generate(): BinaryFileResponse {
+        $leaves = Leave::select('leaves.id', 'leaves.motive', 'leaves.date_leave', 'leaves.date_back', 'users.platoon', 'users.rg', 'users.name')
+                       ->leftJoin('users', 'leaves.user_id', '=', 'users.id')
+                       ->orderBy('users.platoon')
+                       ->orderBy('users.name')
+                       ->orderBy('leaves.id')
+                       ->get();
 
-        $sick_notes = SickNote::select('sick_notes.id', 'users.platoon', 'users.rg', 'users.name', 'sick_notes.motive')
-            ->leftJoin('users', 'sick_notes.user_id', '=', 'users.id')
-            ->orderBy('users.platoon')
-            ->orderBy('users.name')
-            ->orderBy('sick_notes.id')
-            ->get();
+        $sick_notes = SickNote::select('sick_notes.id', 'users.platoon', 'users.rg', 'users.name', 'sick_notes.motive', 'sick_notes.date_issued', 'sick_notes.days_absent')
+                              ->leftJoin('users', 'sick_notes.user_id', '=', 'users.id')
+                              ->orderBy('users.platoon')
+                              ->orderBy('users.name')
+                              ->orderBy('sick_notes.id')
+                              ->get();
 
-        $groupedData = $leaves->merge($sick_notes)->groupBy('user_id');
+        $groupedData = $leaves->merge($sick_notes)
+                              ->groupBy('user_id');
 
         $groupedData = $groupedData->sortBy(function ($item) {
             return $item->first()->platoon . $item->first()->name;
@@ -37,24 +36,28 @@ class AbsentController extends Controller
 
         $excelFile = $this->generateExcel($groupedData, 'dispensas_atestados');
 
-        return Response::download($excelFile, 'dispensas_atestados_' . date('Y-m-d') . '.xlsx')->deleteFileAfterSend(true);
+        return Response::download($excelFile, 'dispensas_atestados_' . date('Y-m-d') . '.xlsx')
+                       ->deleteFileAfterSend(true);
     }
 
-    private function generateExcel($groupedData, $filename)
-    {
+    private function generateExcel($groupedData, $filename) {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Dispensas');
 
         // Updated headers with "Type" column
-        $headers = ['Nº da Dispensa/Atestado', 'Pelotão', 'RG', 'Posto/Grad.', 'Nome', 'Motivo', 'Tipo'];
+        $headers = ['Nº da Dispensa/Atestado', 'Pelotão', 'RG', 'Posto/Grad.', 'Nome', 'Motivo', 'Data', 'Total Dias',
+            'Tipo'];
         $sheet->fromArray($headers, NULL, 'A1');
-        $sheet->getStyle('A1:G1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:I1')
+              ->getFont()
+              ->setBold(true);
 
         // Sort by Platoon and Name before adding to the Excel sheet
-        $sortedData = $groupedData->flatten()->sortBy(function ($item) {
-            return $item->platoon . $item->name;
-        });
+        $sortedData = $groupedData->flatten()
+                                  ->sortBy(function ($item) {
+                                      return $item->platoon . $item->name;
+                                  });
 
         // Populate data
         $row = 2;
@@ -75,25 +78,40 @@ class AbsentController extends Controller
             $sheet->setCellValue('D' . $row, $division);
             $sheet->setCellValue('E' . $row, $leave->name ?? 'N/A');
             $sheet->setCellValue('F' . $row, $type); // Add type column
-            $sheet->setCellValue('G' . $row, strip_tags($leave->motive) ?? 'N/A');
+            $sheet->setcellvalue('G' . $row, $type === 'Dispensa' ? $leave->date_leave->format('d/m/Y') . ' a ' .
+                $leave->date_back->format('d/m/Y') : $leave->date_issued->format('d/m/Y') . ' a ' .
+                $leave->day_back->format('d/m/Y'));
+            $sheet->setCellValue('H' . $row, $type === 'Dispensa' ? $leave->date_leave->diffInDays($leave->date_back) + 1 : $leave->days_absent);
+            $sheet->setCellValue('I' . $row, strip_tags($leave->motive) ?? 'N/A');
             $row++;
         }
 
         // Auto-size the name columns
-        $sheet->getColumnDimension('E')->setAutoSize(true);
-        $sheet->getColumnDimension('G')->setWidth(100);
-        $sheet->getStyle('G1:G' . ($row - 1))->getAlignment()
-            ->setVertical(Alignment::VERTICAL_TOP)
-            ->setWrapText(true);
+        $sheet->getColumnDimension('E')
+              ->setAutoSize(true);
 
-        $sheet->getStyle('A1:G' . ($row - 1))->applyFromArray([
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => Border::BORDER_THIN,
-                    'color' => ['argb' => 'FF000000'],
-                ],
-            ],
-        ]);
+        // Set the width of the "Motivo" column to 100
+        $sheet->getColumnDimension('I')
+              ->setWidth(100);
+
+        // Set the width of "Data" to fit the content
+        $sheet->getColumnDimension('G')
+              ->setWidth(25);
+
+        $sheet->getStyle('I1:I' . ($row - 1))
+              ->getAlignment()
+              ->setVertical(Alignment::VERTICAL_TOP)
+              ->setWrapText(true);
+
+        $sheet->getStyle('A1:I' . ($row - 1))
+              ->applyFromArray([
+                  'borders' => [
+                      'allBorders' => [
+                          'borderStyle' => Border::BORDER_THIN,
+                          'color' => ['argb' => 'FF000000'],
+                      ],
+                  ],
+              ]);
 
         // Create Excel file
         $writer = new Xlsx($spreadsheet);
