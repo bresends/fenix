@@ -8,8 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class SickNote extends Model
-{
+class SickNote extends Model {
     use HasFactory;
 
     protected $fillable = [
@@ -28,20 +27,23 @@ class SickNote extends Model
         'evaluated_at',
     ];
 
-    public function user(): BelongsTo
-    {
+    protected $casts = [
+        'date_issued' => 'date',
+        'day_back' => 'date',
+    ];
+
+    public function user(): BelongsTo {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function dayBack(): Attribute
-    {
+    public function dayBack(): Attribute {
         return Attribute::make(
-            get: fn() => Carbon::parse($this->date_issued)->addDays($this->days_absent)->toDateString(),
+            get: fn() => Carbon::parse($this->date_issued)
+                               ->addDays($this->days_absent),
         );
     }
 
-    public function evaluator(): BelongsTo
-    {
+    public function evaluator(): BelongsTo {
         return $this->belongsTo(User::class, 'evaluated_by');
     }
 }
