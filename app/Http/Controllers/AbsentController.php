@@ -7,7 +7,6 @@ use App\Models\SickNote;
 use Illuminate\Support\Facades\Response;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -17,104 +16,98 @@ class AbsentController extends Controller {
                        ->leftJoin('users', 'leaves.user_id', '=', 'users.id')
                        ->orderBy('users.platoon')
                        ->orderBy('users.name')
-                       ->orderBy('leaves.id')
                        ->get();
 
-        $sick_notes = SickNote::select('sick_notes.id', 'users.platoon', 'users.rg', 'users.name', 'sick_notes.motive', 'sick_notes.date_issued', 'sick_notes.days_absent')
-                              ->leftJoin('users', 'sick_notes.user_id', '=', 'users.id')
-                              ->orderBy('users.platoon')
-                              ->orderBy('users.name')
-                              ->orderBy('sick_notes.id')
-                              ->get();
+        $sickNotes = SickNote::select('sick_notes.id', 'users.platoon', 'users.rg', 'users.name', 'sick_notes.motive', 'sick_notes.date_issued', 'sick_notes.days_absent')
+                             ->leftJoin('users', 'sick_notes.user_id', '=', 'users.id')
+                             ->orderBy('users.platoon')
+                             ->orderBy('users.name')
+                             ->get();
 
-        $groupedData = $leaves->merge($sick_notes)
-                              ->groupBy('user_id');
+        $data = $this->prepareData($leaves, $sickNotes);
 
-        $groupedData = $groupedData->sortBy(function ($item) {
-            return $item->first()->platoon . $item->first()->name;
-        });
+        $filePath = $this->generateExcel($data, 'dispensas_atestados');
 
-        $excelFile = $this->generateExcel($groupedData, 'dispensas_atestados');
-
-        return Response::download($excelFile, 'dispensas_atestados_' . date('Y-m-d') . '.xlsx')
+        return Response::download($filePath, 'dispensas_atestados_' . date('Y-m-d') . '.xlsx')
                        ->deleteFileAfterSend(true);
     }
 
-    private function generateExcel($groupedData, $filename) {
+    private function prepareData($leaves, $sickNotes) {
+        $formattedLeaves = $leaves->map(function ($leave) {
+            return [
+                'id' => $leave->id,
+                'platoon' => $leave->platoon ?? 'N/A',
+                'rg' => $leave->rg ?? 'N/A',
+                'division' => $this->getDivision($leave->platoon),
+                'name' => $leave->name ?? 'N/A',
+                'type' => 'Dispensa',
+                'date_range' => $leave->date_leave->format('d/m/Y') . ' a ' . $leave->date_back->format('d/m/Y'),
+                'total_days' => $leave->date_leave->startOfDay()
+                                                  ->diffInDays($leave->date_back->startOfDay()) + 1,
+                'motive' => strip_tags($leave->motive) ?? 'N/A',
+            ];
+        });
+
+        $formattedSickNotes = $sickNotes->map(function ($note) {
+            return [
+                'id' => $note->id,
+                'platoon' => $note->platoon ?? 'N/A',
+                'rg' => $note->rg ?? 'N/A',
+                'division' => $this->getDivision($note->platoon),
+                'name' => $note->name ?? 'N/A',
+                'type' => 'Atestado',
+                'date_range' => $note->date_issued->format('d/m/Y') . ' a ' . $note->date_issued->addDays($note->days_absent)
+                                                                                                ->format('d/m/Y'),
+                'total_days' => $note->days_absent,
+                'motive' => strip_tags($note->motive) ?? 'N/A',
+            ];
+        });
+
+        // Merge and sort data
+        return $formattedLeaves->merge($formattedSickNotes)
+                               ->sortBy(['platoon', 'name']);
+    }
+
+    private function getDivision($platoon) {
+        if (str_contains($platoon, 'CFO')) {
+            return 'Cad';
+        }
+
+        if (str_contains($platoon, 'CHOA')) {
+            return 'Al Of Adm';
+        }
+        return 'Al Sd';
+    }
+
+    private function generateExcel($data, $filename) {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setTitle('Dispensas');
 
-        // Updated headers with "Type" column
-        $headers = ['Nº da Dispensa/Atestado', 'Pelotão', 'RG', 'Posto/Grad.', 'Nome', 'Motivo', 'Data', 'Total Dias',
-            'Tipo'];
-        $sheet->fromArray($headers, NULL, 'A1');
+        // Set headers
+        $headers = ['Nº da Dispensa/Atestado', 'Pelotão', 'RG', 'Posto/Grad.', 'Nome', 'Tipo', 'Data', 'Total Dias', 'Motivo'];
+        $sheet->fromArray($headers, null, 'A1');
         $sheet->getStyle('A1:I1')
               ->getFont()
               ->setBold(true);
 
-        // Sort by Platoon and Name before adding to the Excel sheet
-        $sortedData = $groupedData->flatten()
-                                  ->sortBy(function ($item) {
-                                      return $item->platoon . $item->name;
-                                  });
-
         // Populate data
-        $row = 2;
-        $division = 'Al Sd';
-        foreach ($sortedData as $leave) {
-            if (str_contains($leave->platoon, 'CFO')) {
-                $division = 'Cad';
-            } elseif (str_contains($leave->platoon, 'CHOA')) {
-                $division = 'Al Of Adm';
-            }
+        $sheet->fromArray($data->toArray(), null, 'A2');
 
-            // Determine the type (Dispensa or Estado)
-            $type = $leave instanceof Leave ? 'Dispensa' : 'Atestado';
-
-            $sheet->setCellValue('A' . $row, $leave->id);
-            $sheet->setCellValue('B' . $row, $leave->platoon ?? 'N/A');
-            $sheet->setCellValue('C' . $row, $leave->rg ?? 'N/A');
-            $sheet->setCellValue('D' . $row, $division);
-            $sheet->setCellValue('E' . $row, $leave->name ?? 'N/A');
-            $sheet->setCellValue('F' . $row, $type); // Add type column
-            $sheet->setcellvalue('G' . $row, $type === 'Dispensa' ? $leave->date_leave->format('d/m/Y') . ' a ' .
-                $leave->date_back->format('d/m/Y') : $leave->date_issued->format('d/m/Y') . ' a ' .
-                $leave->day_back->format('d/m/Y'));
-            $sheet->setCellValue('H' . $row, $type === 'Dispensa' ? $leave->date_leave->startOfDay()
-                                                                                      ->diffInDays($leave->date_back->startOfDay()) + 1 : $leave->days_absent);
-            $sheet->setCellValue('I' . $row, strip_tags($leave->motive) ?? 'N/A');
-            $row++;
+        // Auto-size columns
+        foreach (['B', 'E', 'G'] as $col) {
+            $sheet->getColumnDimension($col)
+                  ->setAutoSize(true);
         }
 
-        // Auto-size the name columns
-        $sheet->getColumnDimension('E')
-              ->setAutoSize(true);
-
-        // Set the width of the "Motivo" column to 100
         $sheet->getColumnDimension('I')
               ->setWidth(100);
 
-        // Set the width of "Data" to fit the content
-        $sheet->getColumnDimension('G')
-              ->setWidth(25);
-
-        $sheet->getStyle('I1:I' . ($row - 1))
+        $sheet->getStyle('I')
               ->getAlignment()
               ->setVertical(Alignment::VERTICAL_TOP)
               ->setWrapText(true);
 
-        $sheet->getStyle('A1:I' . ($row - 1))
-              ->applyFromArray([
-                  'borders' => [
-                      'allBorders' => [
-                          'borderStyle' => Border::BORDER_THIN,
-                          'color' => ['argb' => 'FF000000'],
-                      ],
-                  ],
-              ]);
-
-        // Create Excel file
+        // Save to a temporary file
         $writer = new Xlsx($spreadsheet);
         $tempFile = tempnam(sys_get_temp_dir(), $filename);
         $writer->save($tempFile);
