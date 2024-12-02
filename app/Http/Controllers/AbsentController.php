@@ -81,7 +81,8 @@ class AbsentController extends Controller {
             $sheet->setcellvalue('G' . $row, $type === 'Dispensa' ? $leave->date_leave->format('d/m/Y') . ' a ' .
                 $leave->date_back->format('d/m/Y') : $leave->date_issued->format('d/m/Y') . ' a ' .
                 $leave->day_back->format('d/m/Y'));
-            $sheet->setCellValue('H' . $row, $type === 'Dispensa' ? $leave->date_leave->diffInDays($leave->date_back) + 1 : $leave->days_absent);
+            $sheet->setCellValue('H' . $row, $type === 'Dispensa' ? $leave->date_leave->startOfDay()
+                                                                                      ->diffInDays($leave->date_back->startOfDay()) + 1 : $leave->days_absent);
             $sheet->setCellValue('I' . $row, strip_tags($leave->motive) ?? 'N/A');
             $row++;
         }
