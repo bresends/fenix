@@ -29,8 +29,8 @@ class Leave extends Model {
     protected function casts(): array {
         return [
             'status' => StatusEnum::class,
-            'date_leave' => 'date',
-            'date_back' => 'date',
+            'date_leave' => 'datetime',
+            'date_back' => 'datetime',
         ];
     }
 
