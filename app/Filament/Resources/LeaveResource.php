@@ -55,7 +55,6 @@ class LeaveResource extends Resource {
             ->defaultSort('id', 'desc')
             ->columns([
                 TextColumn::make('id')
-                          ->numeric()
                           ->searchable()
                           ->label('Nº'),
 
