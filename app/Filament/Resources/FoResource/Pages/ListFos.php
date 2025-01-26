@@ -7,6 +7,7 @@ use App\Enums\StatusFoEnum;
 use App\Filament\Resources\FoResource;
 use Filament\Actions;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Colors\Color;
@@ -39,7 +40,7 @@ class ListFos extends ListRecords {
 
     protected function getHeaderActions(): array {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
 
             ActionGroup::make([
                 Action::make('download-cfo')
