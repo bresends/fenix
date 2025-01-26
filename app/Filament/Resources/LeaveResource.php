@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\PlatoonEnum;
 use App\Enums\StatusEnum;
 use App\Enums\StatusExamEnum;
 use App\Enums\StatusFoEnum;
@@ -111,6 +112,19 @@ class LeaveResource extends Resource {
                 SelectFilter::make('status')
                             ->options(StatusEnum::class)
                             ->label('Parecer'),
+                Filter::make('user')
+                      ->form([
+                          Select::make('platoon')
+                                ->label('Pelotão')
+                                ->options(PlatoonEnum::class)
+                      ])
+                      ->query(function (Builder $query, array $data): Builder {
+                          return $query
+                              ->when(
+                                  $data['platoon'],
+                                  fn(Builder $query, $platoon): Builder => $query->whereRelation('user', 'platoon', $platoon)
+                              );
+                      }),
                 TernaryFilter::make('date_leave')
                              ->label('Dispensas (hoje)')
                              ->placeholder('Todas as dispensas')
@@ -307,9 +321,9 @@ class LeaveResource extends Resource {
 
     public static function getPages(): array {
         return [
-            'index' => Pages\ListLeaves::route('/'),
+            'index'  => Pages\ListLeaves::route('/'),
             'create' => Pages\CreateLeave::route('/create'),
-            'edit' => Pages\EditLeave::route('/{record}/edit'),
+            'edit'   => Pages\EditLeave::route('/{record}/edit'),
         ];
     }
 }
