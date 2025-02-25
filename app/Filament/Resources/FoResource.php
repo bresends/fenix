@@ -104,10 +104,16 @@ class FoResource extends Resource
                     ->dateTime('d/m/y H:i')
                     ->label('Justificado em'),
 
+                TextColumn::make('issuer.name')
+                    ->label('Observador')
+                    ->getStateUsing(function (Fo $record): ?string {
+                        $military = Military::find($record->issuer);
+                        return $military ? $military->sei : null;
+                    }),
+
                 TextColumn::make('status')
                     ->badge()
                     ->label('Parecer'),
-
 
                 IconColumn::make('paid')
                     ->label('Cumprido/Arquivado')
