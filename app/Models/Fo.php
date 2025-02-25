@@ -44,7 +44,7 @@ class Fo extends Model
 
     public function issuer(): BelongsTo
     {
-        return $this->belongsTo(Military::class, 'issuer');
+        return $this->belongsTo(Military::class, 'issuer_id', 'id');
     }
 
     public function evaluator(): BelongsTo
