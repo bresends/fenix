@@ -6,7 +6,7 @@ use Filament\Support\Colors\Color;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum PlatoonEnum: string implements HasLabel, HasColor
+enum PlatoonEnum: string implements HasColor, HasLabel
 {
     case ALPHA = 'Alpha';
     case BRAVO = 'Bravo';
@@ -18,11 +18,17 @@ enum PlatoonEnum: string implements HasLabel, HasColor
     case HOTEL = 'Hotel';
     case INDIA = 'Índia';
     case JULIET = 'Juliet';
+    case ZULU = 'Zulu';
     case CFO1 = 'CFO-1';
     case CFO1A = 'CFO-1 A';
     case CFO1B = 'CFO-1 B';
+    case CFO2A = 'CFO-2 A';
+    case CFO2B = 'CFO-2 B';
+    case CFO3A = 'CFO-3 A';
+    case CFO3B = 'CFO-3 B';
     case CFO2 = 'CFO-2';
     case CFO3 = 'CFO-3';
+
     case CHOA = 'CHOA';
     case EAS = 'EAS';
     case CAS = 'CAS';
@@ -30,7 +36,7 @@ enum PlatoonEnum: string implements HasLabel, HasColor
 
     public static function CFO(): array
     {
-        return [self::CFO1A->value, self::CFO1B->value, self::CFO2, self::CFO3];
+        return [self::CFO1A, self::CFO1B, self::CFO2, self::CFO2A, self::CFO2B, self::CFO3, self::CFO3A, self::CFO3B];
     }
 
     public function getLabel(): ?string
@@ -46,9 +52,14 @@ enum PlatoonEnum: string implements HasLabel, HasColor
             self::HOTEL => 'Hotel',
             self::INDIA => 'Índia',
             self::JULIET => 'Juliet',
+            self::ZULU => 'Zulu',
             self::CFO1 => 'CFO-1',
             self::CFO1A => 'CFO-1 A',
             self::CFO1B => 'CFO-1 B',
+            self::CFO2A => 'CFO-2 A',
+            self::CFO2B => 'CFO-2 B',
+            self::CFO3A => 'CFO-3 A',
+            self::CFO3B => 'CFO-3 B',
             self::CFO2 => 'CFO-2',
             self::CFO3 => 'CFO-3',
             self::CHOA => 'CHOA',
@@ -61,9 +72,9 @@ enum PlatoonEnum: string implements HasLabel, HasColor
     public function getColor(): string|array|null
     {
         return match ($this) {
-            self::ALPHA, self::CHARLIE, self::BRAVO, self::DELTA, self::ECHO, self::FOXTROT, self::GOLF, self::HOTEL, self::INDIA, self::JULIET, self::EAS => Color::Yellow,
-            self::CFO1, self::CFO1A => Color::Red,
-            self::CFO1B => Color::Orange,
+            self::ALPHA, self::CHARLIE, self::BRAVO, self::DELTA, self::ECHO, self::FOXTROT, self::GOLF, self::HOTEL, self::INDIA, self::JULIET, self::ZULU, self::EAS => Color::Yellow,
+            self::CFO1, self::CFO1A, self::CFO2A, self::CFO3A => Color::Red,
+            self::CFO1B, self::CFO2B, self::CFO3B => Color::Orange,
             self::CFO2, self::CFO3 => Color::Blue,
             self::CHOA, self::CAS => Color::Green,
             self::ADMINISTRACAO => Color::Gray,
