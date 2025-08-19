@@ -32,6 +32,7 @@ enum PlatoonEnum: string implements HasColor, HasLabel
     case CHOA = 'CHOA';
     case EAS = 'EAS';
     case CAS = 'CAS';
+    case EAC = 'EAC';
     case ADMINISTRACAO = 'Administração';
 
     public static function CFO(): array
@@ -65,6 +66,7 @@ enum PlatoonEnum: string implements HasColor, HasLabel
             self::CHOA => 'CHOA',
             self::CAS => 'CAS',
             self::EAS => 'EAS',
+            self::EAC => 'EAC',
             self::ADMINISTRACAO => 'Administração',
         };
     }
@@ -72,7 +74,7 @@ enum PlatoonEnum: string implements HasColor, HasLabel
     public function getColor(): string|array|null
     {
         return match ($this) {
-            self::ALPHA, self::CHARLIE, self::BRAVO, self::DELTA, self::ECHO, self::FOXTROT, self::GOLF, self::HOTEL, self::INDIA, self::JULIET, self::ZULU, self::EAS => Color::Yellow,
+            self::ALPHA, self::CHARLIE, self::BRAVO, self::DELTA, self::ECHO, self::FOXTROT, self::GOLF, self::HOTEL, self::INDIA, self::JULIET, self::ZULU, self::EAC, self::EAS => Color::Yellow,
             self::CFO1, self::CFO1A, self::CFO2A, self::CFO3A => Color::Red,
             self::CFO1B, self::CFO2B, self::CFO3B => Color::Orange,
             self::CFO2, self::CFO3 => Color::Blue,
