@@ -18,33 +18,6 @@ RUN setcap 'cap_net_bind_service=+ep' /usr/local/bin/caddy
 # Install composer
 COPY --from=composer/composer:2 /usr/bin/composer /usr/local/bin/composer
 
-####### Observability #######
-
-# Install New Relic
-ARG NEW_RELIC_AGENT_VERSION
-ARG NEW_RELIC_LICENSE_KEY
-ARG NEW_RELIC_APPNAME
-
-RUN \
-    cd /tmp \
-    # Discover the latest released version:
-    && export NEW_RELIC_AGENT_VERSION=$(curl -s https://download.newrelic.com/php_agent/release/ | grep -o '[1-9][0-9]\?\(\.[0-9]\+\)\{3\}' | head -n1) \
-    # Discover libc provider
-    && export NR_INSTALL_PLATFORM=$(ldd --version 2>&1 | grep -q musl && echo "linux-musl" || echo "linux") \
-    # Download the discovered version:
-    && curl -o newrelic-php-agent.tar.gz https://download.newrelic.com/php_agent/release/newrelic-php5-${NEW_RELIC_AGENT_VERSION}-${NR_INSTALL_PLATFORM}.tar.gz \
-    # Install the downloaded agent:
-    && tar xzf newrelic-php-agent.tar.gz \
-    && NR_INSTALL_USE_CP_NOT_LN=1 NR_INSTALL_SILENT=0 ./*/newrelic-install install \
-    # Configure the agent to use license key from NEW_RELIC_LICENSE_KEY env var:
-    && sed -ie 's/[ ;]*newrelic.license[[:space:]]=.*/newrelic.license=${NEW_RELIC_LICENSE_KEY}/' $(php-config --ini-dir)/newrelic.ini \
-    # Configure the agent to use app name from NEW_RELIC_APP_NAME env var:
-    && sed -ie 's/[ ;]*newrelic.appname[[:space:]]=.*/newrelic.appname=${NEW_RELIC_APP_NAME}/' $(php-config --ini-dir)/newrelic.ini \
-    # Cleanup temporary files:
-    && rm newrelic-php-agent.tar.gz && rm -rf newrelic-php5-*-linux
-
-
-
 #######     APP     #######
 FROM php-system-setup AS app-setup
 
@@ -62,19 +35,6 @@ RUN addgroup $NON_ROOT_USER wheel
 COPY ./.deploy/config/crontab /etc/crontabs/$NON_ROOT_USER
 RUN chmod 777 /usr/sbin/crond
 RUN chown -R $NON_ROOT_USER:$NON_ROOT_GROUP /etc/crontabs/$NON_ROOT_USER && setcap cap_setgid=ep /usr/sbin/crond
-
-# Ensure the storage directory has the correct ownership to show user uploaded data
-RUN mkdir -p /srv/app/public/storage && chown -R $NON_ROOT_USER:$NON_ROOT_GROUP /srv/app/public/storage
-
-# Fix New Relic permissions
-RUN mkdir -p /var/log/newrelic /var/run/newrelic \
-    && chown -R $NON_ROOT_USER:$NON_ROOT_GROUP /var/log/newrelic /var/run/newrelic \
-    && chmod -R 775 /var/log/newrelic /var/run/newrelic
-
-RUN touch /var/log/newrelic/newrelic-daemon.log \
-    && chown $NON_ROOT_USER:$NON_ROOT_GROUP /var/log/newrelic/newrelic-daemon.log \
-    && chmod 664 /var/log/newrelic/newrelic-daemon.log
-
 
 # Switch to non-root 'app' user & install app dependencies
 COPY composer.json composer.lock ./
