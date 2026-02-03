@@ -1,6 +1,13 @@
 :80 {
     root * /srv/app/public
 
+    # SECURITY: Block direct PHP execution (except index.php)
+    @block_php {
+        path *.php
+        not path /index.php
+    }
+    respond @block_php 404
+
     @websockets {
         header Connection *upgrade*
         header Upgrade    websocket
