@@ -180,10 +180,11 @@ class FoResource extends Resource
                     ->disabled(function (string $operation, Get $get): bool {
                         $military = Military::firstWhere('rg', auth()->user()->rg);
 
-                        // Do not allow to edit or delete if the user is not the issuer or the FO is not in progress
+                        // Do not allow to edit or delete if the user is not the issuer, the FO is not in progress, or the student has already justified
                         return $operation !== 'create' &&
                             (!$military || $get('issuer') !== $military->id ||
-                                ($get('status') !== StatusFoEnum::EM_ANDAMENTO->value));
+                                $get('status') !== StatusFoEnum::EM_ANDAMENTO->value ||
+                                !empty($get('excuse')));
                     })
                     ->schema([
                         Select::make('type')
