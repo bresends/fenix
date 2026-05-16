@@ -240,7 +240,6 @@ class LeaveResource extends Resource {
                        ]),
 
                 FileUpload::make('file')
-                          ->optimize('jpg')
                           ->disk('s3')
                           ->visibility('private')
                           ->label('Arquivo comprobatório')
