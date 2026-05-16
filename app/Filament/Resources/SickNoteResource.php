@@ -64,7 +64,6 @@ class SickNoteResource extends Resource {
                                  ->prefix('👨🏻‍🚒'),
 
                            FileUpload::make('file')
-                                     ->optimize('jpg')
                                      ->disabled(fn(string $operation, Get $get): bool => ($operation === 'edit' && $get('user_id') !== auth()->user()->id) || $get('received') === true)
                                      ->disk('s3')
                                      ->visibility('private')
@@ -127,7 +126,6 @@ class SickNoteResource extends Resource {
                                      ]),
 
                            FileUpload::make('csau')
-                                     ->optimize('jpg')
                                      ->disabled(fn(string $operation, Get $get): bool => $get('received') === true && $get('archived') === true)
                                      ->disk('s3')
                                      ->visibility('private')

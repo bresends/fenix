@@ -117,7 +117,6 @@ class ExamAppealResource extends Resource
                             ->label('Declaro ciência da regras e condições estabelecidas na NE 01.'),
 
                         FileUpload::make('file')
-                            ->optimize('jpg')
                             ->disk('r2')
                             ->visibility('private')
                             ->label('Anexos (se houver)')

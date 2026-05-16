@@ -181,7 +181,6 @@ class SwitchShiftResource extends Resource
                             ->label('Motivo (com detalhamento)'),
 
                         FileUpload::make('file')
-                            ->optimize('jpg')
                             ->disk('r2')
                             ->visibility('private')
                             ->label('Anexar arquivo (se houver)')
