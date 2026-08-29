@@ -1,0 +1,37 @@
+services:
+  fenix:
+    build:
+      context: .
+      dockerfile: .deploy/Dockerfile
+    image: fenix:local
+    container_name: fenix
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_URL: https://fenix.cbmgo.org
+      APP_TIMEZONE: America/Sao_Paulo
+      APP_KEY: ${APP_KEY:?APP_KEY is required}
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_DATABASE: fenix
+      DB_USERNAME: postgres
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - postgres-backend
+      - caddy-proxy
+
+networks:
+  postgres-backend:
+    external: true
+  caddy-proxy:
+    external: true
