@@ -1,32 +1,62 @@
+x-fenix-environment: &fenix-environment
+  APP_ENV: production
+  APP_DEBUG: "false"
+  APP_URL: https://fenix.cbmgo.org
+  APP_TIMEZONE: America/Sao_Paulo
+  APP_KEY: ${APP_KEY:?APP_KEY is required}
+  DB_CONNECTION: pgsql
+  DB_HOST: postgres
+  DB_PORT: "5432"
+  DB_DATABASE: fenix
+  DB_USERNAME: postgres
+  DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+  QUEUE_CONNECTION: redis
+  REDIS_CLIENT: phpredis
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"
+  REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
+  LOG_CHANNEL: stderr
+  SESSION_SECURE_COOKIE: "true"
+  PHP_DATE_TIMEZONE: America/Sao_Paulo
+  PHP_MAX_EXECUTION_TIME: "30"
+  PHP_MEMORY_LIMIT: 512M
+  PHP_OPCACHE_ENABLE: "1"
+  PHP_OPCACHE_VALIDATE_TIMESTAMPS: "0"
+  PHP_POST_MAX_SIZE: 35M
+  PHP_UPLOAD_MAX_FILE_SIZE: 30M
+
+x-fenix-service: &fenix-service
+  build:
+    context: .
+    dockerfile: .deploy/Dockerfile
+    target: production
+  image: fenix:frankenphp
+  restart: unless-stopped
+  init: true
+  env_file:
+    - .env
+  environment: *fenix-environment
+  cap_drop:
+    - ALL
+  security_opt:
+    - no-new-privileges:true
+  networks:
+    - postgres-backend
+    - redis-backend
+
 services:
   fenix:
-    build:
-      context: .
-      dockerfile: .deploy/Dockerfile
-    image: fenix:local
-    container_name: fenix
-    restart: unless-stopped
-    env_file:
-      - .env
+    <<: *fenix-service
     environment:
-      APP_ENV: production
-      APP_DEBUG: "false"
-      APP_URL: https://fenix.cbmgo.org
-      APP_TIMEZONE: America/Sao_Paulo
-      APP_KEY: ${APP_KEY:?APP_KEY is required}
-      DB_CONNECTION: pgsql
-      DB_HOST: postgres
-      DB_PORT: "5432"
-      DB_DATABASE: fenix
-      DB_USERNAME: postgres
-      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
-      QUEUE_CONNECTION: redis
-      REDIS_CLIENT: phpredis
-      REDIS_HOST: redis
-      REDIS_PORT: "6379"
-      REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
+      <<: *fenix-environment
+      AUTORUN_ENABLED: "true"
+      AUTORUN_LARAVEL_MIGRATION_ISOLATION: "true"
+      AUTORUN_LARAVEL_STORAGE_LINK: "false"
+      CADDY_AUTO_HTTPS: "off"
+      HEALTHCHECK_PATH: /up
+      SSL_MODE: "off"
     healthcheck:
-      test: ["CMD", "curl", "--fail", "--silent", "http://localhost"]
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:8080/up"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -35,6 +65,31 @@ services:
       - postgres-backend
       - redis-backend
       - caddy-proxy
+
+  horizon:
+    <<: *fenix-service
+    command: ["php", "/var/www/html/artisan", "horizon"]
+    depends_on:
+      fenix:
+        condition: service_healthy
+        restart: true
+    stop_signal: SIGTERM
+    stop_grace_period: 1h
+    healthcheck:
+      test: ["CMD", "healthcheck-horizon"]
+      start_period: 10s
+
+  scheduler:
+    <<: *fenix-service
+    command: ["php", "/var/www/html/artisan", "schedule:work"]
+    depends_on:
+      fenix:
+        condition: service_healthy
+        restart: true
+    stop_signal: SIGTERM
+    healthcheck:
+      test: ["CMD", "healthcheck-schedule"]
+      start_period: 10s
 
 networks:
   postgres-backend:
