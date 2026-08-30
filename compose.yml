@@ -10,7 +10,9 @@ x-fenix-environment: &fenix-environment
   DB_DATABASE: fenix
   DB_USERNAME: postgres
   DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
-  QUEUE_CONNECTION: redis
+  CACHE_STORE: ${CACHE_STORE:-redis}
+  QUEUE_CONNECTION: ${QUEUE_CONNECTION:-redis}
+  SESSION_DRIVER: ${SESSION_DRIVER:-redis}
   REDIS_CLIENT: phpredis
   REDIS_HOST: redis
   REDIS_PORT: "6379"
