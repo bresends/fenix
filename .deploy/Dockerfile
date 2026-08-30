@@ -1,63 +1,61 @@
-FROM php:8.3.33-fpm-alpine AS php-system-setup
+FROM serversideup/php:8.3-frankenphp AS php-dependencies
 
-# Install system dependencies
-RUN apk add --no-cache dcron busybox-suid libcap curl zip unzip git
-
-# Install PHP extensions
-COPY --from=mlocati/php-extension-installer:2.11.12 /usr/bin/install-php-extensions /usr/bin/
-RUN install-php-extensions intl bcmath gd pdo_mysql pdo_pgsql opcache redis uuid exif pcntl zip
-
-# Install supervisord implementation
-RUN apk update && apk add --no-cache supervisor
-
-# Install caddy
-COPY --from=caddy:2.11.4 /usr/bin/caddy /usr/local/bin/caddy
-RUN setcap 'cap_net_bind_service=+ep' /usr/local/bin/caddy
-
-# Install composer
-COPY --from=composer/composer:2.10.2 /usr/bin/composer /usr/local/bin/composer
-
-#######     APP     #######
-FROM php-system-setup AS app-setup
-
-# Set working directory
-ENV LARAVEL_PATH=/srv/app
-WORKDIR $LARAVEL_PATH
-
-# Add non-root user: 'app'
-ARG NON_ROOT_GROUP=app
-ARG NON_ROOT_USER=app
-RUN addgroup -S $NON_ROOT_GROUP && adduser -S $NON_ROOT_USER -G $NON_ROOT_GROUP
-RUN addgroup $NON_ROOT_USER wheel
-
-# Set cron job
-COPY ./.deploy/config/crontab /etc/crontabs/$NON_ROOT_USER
-RUN chmod 755 /usr/sbin/crond
-RUN chown -R $NON_ROOT_USER:$NON_ROOT_GROUP /etc/crontabs/$NON_ROOT_USER && setcap cap_setgid=ep /usr/sbin/crond
-
-# Switch to non-root 'app' user & install app dependencies
-COPY composer.json composer.lock ./
-RUN chown -R $NON_ROOT_USER:$NON_ROOT_GROUP $LARAVEL_PATH
-USER $NON_ROOT_USER
-RUN composer install --prefer-dist --no-scripts --no-dev --no-autoloader
-RUN rm -rf /home/$NON_ROOT_USER/.composer
-
-# Copy app
-COPY --chown=$NON_ROOT_USER:$NON_ROOT_GROUP . $LARAVEL_PATH/
-COPY ./.deploy/config/php/local.ini /usr/local/etc/php/conf.d/local.ini
-
-# Install the `npm` package
 USER root
-RUN apk add --no-cache npm
 
-RUN npm ci && npm run build
+RUN install-php-extensions \
+    intl \
+    bcmath \
+    gd \
+    pdo_pgsql \
+    redis \
+    uuid \
+    exif \
+    pcntl \
+    zip
 
-RUN rm -rf node_modules
+USER www-data
+WORKDIR /var/www/html
 
-USER $NON_ROOT_USER
+COPY --chown=www-data:www-data composer.json composer.lock ./
 
-# Start app
-EXPOSE 80
-COPY ./.deploy/entrypoint.sh /
+RUN composer install \
+    --prefer-dist \
+    --no-interaction \
+    --no-progress \
+    --no-dev \
+    --no-scripts \
+    --no-autoloader
 
-ENTRYPOINT ["sh", "/entrypoint.sh"]
+FROM node:22-alpine AS frontend
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund
+
+COPY resources ./resources
+COPY postcss.config.js tailwind.config.js vite.config.js ./
+COPY --from=php-dependencies /var/www/html/vendor ./vendor
+
+RUN npm run build
+
+FROM php-dependencies AS production
+
+COPY --chown=www-data:www-data . ./
+COPY --from=frontend --chown=www-data:www-data /app/public/build ./public/build
+
+RUN composer dump-autoload \
+    --no-interaction \
+    --no-dev \
+    --optimize
+
+USER root
+
+# Application code is immutable to the runtime user. Laravel only needs write
+# access to its cache and storage directories.
+RUN chown -R root:root /var/www/html \
+    && chown -R www-data:www-data /var/www/html/bootstrap/cache /var/www/html/storage \
+    && chmod -R u=rwX,g=rX,o=rX /var/www/html \
+    && chmod -R u=rwX,g=rwX,o= /var/www/html/bootstrap/cache /var/www/html/storage
+
+USER www-data
