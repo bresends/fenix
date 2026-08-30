@@ -47,6 +47,7 @@ x-fenix-service: &fenix-service
 services:
   fenix:
     <<: *fenix-service
+    container_name: fenix
     environment:
       <<: *fenix-environment
       AUTORUN_ENABLED: "true"
@@ -68,6 +69,7 @@ services:
 
   horizon:
     <<: *fenix-service
+    container_name: fenix-horizon
     command: ["php", "/var/www/html/artisan", "horizon"]
     depends_on:
       fenix:
@@ -81,6 +83,7 @@ services:
 
   scheduler:
     <<: *fenix-service
+    container_name: fenix-scheduler
     command: ["php", "/var/www/html/artisan", "schedule:work"]
     depends_on:
       fenix:
