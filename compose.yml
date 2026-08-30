@@ -20,6 +20,11 @@ services:
       DB_DATABASE: fenix
       DB_USERNAME: postgres
       DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      QUEUE_CONNECTION: redis
+      REDIS_CLIENT: phpredis
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
     healthcheck:
       test: ["CMD", "curl", "--fail", "--silent", "http://localhost"]
       interval: 30s
@@ -28,10 +33,13 @@ services:
       start_period: 60s
     networks:
       - postgres-backend
+      - redis-backend
       - caddy-proxy
 
 networks:
   postgres-backend:
+    external: true
+  redis-backend:
     external: true
   caddy-proxy:
     external: true
