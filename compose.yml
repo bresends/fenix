@@ -48,6 +48,8 @@ services:
   fenix:
     <<: *fenix-service
     container_name: fenix
+    cap_add:
+      - NET_BIND_SERVICE
     environment:
       <<: *fenix-environment
       AUTORUN_ENABLED: "true"
