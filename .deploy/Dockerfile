@@ -1,4 +1,4 @@
-FROM serversideup/php:8.3-frankenphp AS php-dependencies
+FROM serversideup/php:8.5-frankenphp AS php-dependencies
 
 USER root
 
