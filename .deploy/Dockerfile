@@ -26,7 +26,7 @@ RUN composer install \
     --no-scripts \
     --no-autoloader
 
-FROM node:22-alpine AS frontend
+FROM node:26-alpine AS frontend
 
 WORKDIR /app
 
