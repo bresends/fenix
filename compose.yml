@@ -17,6 +17,7 @@ x-fenix-environment: &fenix-environment
   REDIS_HOST: redis
   REDIS_PORT: "6379"
   REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
+  SENTRY_LARAVEL_DSN: ${SENTRY_LARAVEL_DSN:?SENTRY_LARAVEL_DSN is required}
   LOG_CHANNEL: stack
   LOG_STACK: single,sentry_logs
   SESSION_SECURE_COOKIE: "true"
