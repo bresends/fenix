@@ -11,7 +11,10 @@ RUN install-php-extensions \
     uuid \
     exif \
     pcntl \
+    excimer \
     zip
+
+COPY .deploy/php/sentry.ini /usr/local/etc/php/conf.d/zzz-sentry.ini
 
 USER www-data
 WORKDIR /var/www/html
